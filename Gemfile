@@ -1,6 +1,11 @@
 source 'https://rubygems.org'
 ruby '2.1.0'
 
+# Gems for omniauth via https://www.twilio.com/blog/2014/09/gmail-api-oauth-rails.html
+gem 'omniauth', '~> 1.2.2'
+gem 'omniauth-google-oauth2'
+gem 'json'
+
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.0'
 # Use postgresql as the database for Active Record
