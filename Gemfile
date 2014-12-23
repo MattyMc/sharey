@@ -34,8 +34,11 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Heroku gems
 gem 'rails_12factor', group: :production
 
-# Installing figaro for privacy 
+# Installing figaro for privacy in application.yml
 gem "figaro"
+
+# For testing
+gem 'shoulda', group: :test
 
 # Use Unicorn as the app server
 # gem 'unicorn'

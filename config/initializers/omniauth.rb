@@ -3,4 +3,8 @@ Rails.application.config.middleware.use OmniAuth::Builder do
   scope: ['email',
     'https://www.googleapis.com/auth/gmail.modify'],
     access_type: 'offline'}
+
+
 end
+
+OmniAuth.config.on_failure = SessionsController.action(:oauth_failure)
