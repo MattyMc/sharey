@@ -35,8 +35,10 @@ class SessionsControllerTest < ActionController::TestCase
 
     get :create 
 
-    assert_equal result_hash, assigns["auth"]
-    assert User.find_by_email( result_hash["email"]), "Should create a user"
+    user = User.find_by_uid result_hash["uid"]
+
+    assert_equal User.find_by_uid("1237389427398"), assigns["user"]
+    assert User.find_by_email(result_hash[:email]), "Should create a user"
     assert_response :success
   end
 
