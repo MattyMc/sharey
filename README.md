@@ -32,6 +32,6 @@ A little passion project. Please go away :)
 
 ###Deploying
 
-- I've used a shortcut of adding secrets.yml to git, pushing to Heroku, then removing secrets.yml from version control. 
+- I've used a shortcut of adding secrets.yml to git, pushing to Heroku, then removing secrets.yml from version control to push to GitHub. It can be easily removed by: ```$ git rm config/secrets.yml``` 
 - Other wise, deply as normal to Heroku
 
