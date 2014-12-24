@@ -6,7 +6,6 @@ class UserTest < ActiveSupport::TestCase
   should validate_presence_of :email
   should validate_presence_of :image_url
   should validate_presence_of :access_token
-  should validate_presence_of :refresh_token
   should validate_presence_of :expires_at
   should validate_presence_of :uid
 

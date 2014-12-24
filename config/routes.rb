@@ -1,14 +1,16 @@
 Rails.application.routes.draw do
   
+  root to: 'sessions#index'
+  # get '/auth/:provider/callback' => 'sessions#create'
+  # get '/sign_in' => 'sessions#new', :as => :sign_in
+  get '/sign_out' => 'sessions#destroy', :as => :sign_out
+  # get '/auth/failure' => 'sessions#failure'
 
 
-
-  get 'sessions/new'
-
+  # get 'sessions/new'
   get 'sessions/create'
 
   # Routes for Gmail Authentication
-  root to: 'sessions#new'
   resources :sessions, only: :index
   get "/auth/:provider/callback" => 'sessions#create'
   

@@ -22,11 +22,12 @@ ActiveRecord::Schema.define(version: 20141222194749) do
     t.string   "email"
     t.string   "image_url"
     t.string   "uid"
+    t.string   "sharey_session_cookie"
     t.string   "access_token"
     t.string   "refresh_token"
     t.datetime "expires_at"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
   end
 
 end

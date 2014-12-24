@@ -2,9 +2,11 @@ require 'net/http'
 require 'json'
 
 class User < ActiveRecord::Base
-  validates :first_name, :uid, :last_name, :email, :access_token, :expires_at, :image_url, :refresh_token, presence: true
-  validates :email, :uid, uniqueness: { case_sensitive: false }
+  validates :first_name, :uid, :last_name, :email, :sharey_session_cookie, :access_token, :expires_at, :image_url, presence: true
+  validates :email, :uid, :sharey_session_cookie, uniqueness: { case_sensitive: false }
   
+  before_validation :generate_session_cookie
+
   # Class methods
   def self.find_or_create_from_google_callback omniauth_callback
     auth_cred = omniauth_callback['credentials']
@@ -29,6 +31,13 @@ class User < ActiveRecord::Base
       User.create! auth
     end
   end
+
+  def generate_session_cookie
+    self.sharey_session_cookie = ((0...20).map { (65 + rand(40)).chr }.join + "pam"*5).split("").shuffle.join
+  end
+
+
+
 
 # --------------------------------
 # UNUSED AND UNTESTED METHODS

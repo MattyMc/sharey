@@ -1,0 +1,10 @@
+<h1>Sharey Homepage - Sessions#index</h1>
+<h2>It's pathetic... I know... but it's something.</h2>
+<ul>
+<% if user_signed_in? %>
+  <li><%= "Hello " + @current_user.first_name + "!" %></li>
+  <li><%= link_to 'Sign out', sign_out_path %></li>
+<% else %>
+  <li><%= link_to "Sign in with Google", '/auth/google_oauth2' %></li>
+<% end %>
+</ul>

@@ -1,11 +1,15 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-# one:
-#   first_name: MyString
-#   last_name: MyString
-#   access_token: MyString
-#   refresh_token: MyString
-#   expires_at: 2014-12-22 14:47:49
+pam:
+  first_name: Pam
+  last_name: Murray
+  email: pammurray@matthew.com
+  image_url: http://www.something.com/babeimage.jpg
+  uid: 930428394820394
+  sharey_session_cookie: bjsakdlbfjk3b234234
+  access_token: ab3b234lbj3fbjkb234
+  refresh_token: dnflaf3nkjb23bb3kj2b
+  expires_at: 2014-12-22 14:47:49
 
 # two:
 #   first_name: MyString
