@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.1.0'
+ruby "2.1.5"
 
 # Gems for omniauth via https://www.twilio.com/blog/2014/09/gmail-api-oauth-rails.html
 gem 'omniauth', '~> 1.2.2'
