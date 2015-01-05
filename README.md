@@ -17,11 +17,11 @@ A little passion project. Please go away :)
 ###To launch a local server
 
 - Use ```$ thin start --ssl``` although I find the deafult rails server works fine.
-- Note: config.force_ssl = true in production.rb and development.rb
+- Note: config.force_ssl has been set to true in both production.rb and development.rb
 
 ###Notes on sessions and user persistance
 
-- A sessions['current\_user\_id'] attribute is used to keep track of users sessions. 
+- A sessions['current\_user\_id'] attribute is used to keep track of users sessions (on the website). A cookie, sharey\_session\_cookie is used for more persistent session storage
 
 	- A few helper methods in the ApplicationController use this to fetch/verify users.
 	- This attribute should be destroyed upon leaving the page. It should not persist very long. 
@@ -30,8 +30,21 @@ A little passion project. Please go away :)
 	- This should get recreated/stored upon each user login
 	- This should *not* get destroyed when a user logs out, as we don't want to force users to login on each new share
 
+###Secrets - Figaro
+
+Using figaro to keep track of all secrets in **config/application.yml**. Secrets can be stored in here as key, value pairs and will be automatically available as environment variables. For example:
+
+    GMAIL_USERNAME: username
+
+Can be accessed as:
+
+    ENV["GMAIL_USERNAME"]
+
+In tests, these can be accessed as:
+
+    Figaro.env.gmail_username
+
 ###Deploying
 
-- I've used a shortcut of adding secrets.yml to git, pushing to Heroku, then removing secrets.yml from version control to push to GitHub. It can be easily removed by: ```$ git rm config/secrets.yml``` 
-- Other wise, deply as normal to Heroku
-
+    rake figaro:heroku
+    git push heroku master
