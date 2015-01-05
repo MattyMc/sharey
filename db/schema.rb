@@ -17,17 +17,21 @@ ActiveRecord::Schema.define(version: 20141222194749) do
   enable_extension "plpgsql"
 
   create_table "users", force: :cascade do |t|
+    t.string   "uid"
+    t.string   "name"
     t.string   "first_name"
     t.string   "last_name"
     t.string   "email"
-    t.string   "image_url"
-    t.string   "uid"
-    t.string   "sharey_session_cookie"
-    t.string   "access_token"
+    t.string   "image"
+    t.string   "token"
     t.string   "refresh_token"
+    t.string   "sharey_session_cookie"
     t.datetime "expires_at"
     t.datetime "created_at",            null: false
     t.datetime "updated_at",            null: false
   end
+
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["uid"], name: "index_users_on_uid", unique: true, using: :btree
 
 end

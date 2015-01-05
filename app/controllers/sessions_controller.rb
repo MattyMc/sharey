@@ -7,16 +7,14 @@ class SessionsController < ApplicationController
 
   # Action catches the callback from Google's API
   def create
-    raise "Missing parameters" if request.nil?
-    raise "Missing parameters" if request.env.nil?
-    
     # raise "foo"
-    @current_user = User.find_or_create_from_google_callback(request.env['omniauth.auth'])
-    # reset_session
+    @current_user = User.find_or_create_from_google_callback google_response
+
+    @current_user.refresh_tokens google_response
+
     cookies.permanent[:sharey_session_cookie] = @current_user.sharey_session_cookie
     session['current_user_id'] = @current_user.id
 
-    get_current_user
     redirect_to root_url, :notice => 'Signed in!'
   end
 
@@ -31,7 +29,17 @@ class SessionsController < ApplicationController
     render text:"failed..."
   end
 
+  private
+
   def get_current_user
     @current_user ||= current_user
+  end
+
+  def google_response
+    raise "Missing parameters" if request.nil?
+    raise "Missing parameters" if request.env.nil?
+    raise "OmniAuth error. Parameters not defined." if request.env['omniauth.auth'].nil?
+
+    request.env['omniauth.auth']
   end
 end

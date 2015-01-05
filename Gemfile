@@ -1,6 +1,8 @@
 source 'https://rubygems.org'
 ruby "2.1.5"
 
+gem 'httplog', group: :development
+
 # Gems for omniauth via https://www.twilio.com/blog/2014/09/gmail-api-oauth-rails.html
 gem 'omniauth', '~> 1.2.2'
 gem 'omniauth-google-oauth2'
