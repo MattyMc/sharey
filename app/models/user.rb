@@ -15,15 +15,20 @@ class User < ActiveRecord::Base
   def self.find_or_create_from_google_callback google_response
     # Check if a User exists
     user = User.find_by uid:google_response[:uid]
-    
     return user unless user.nil?
 
     # Lets extract the parameters we're interested in
-    user_params = google_response[:info].merge google_response[:credentials].except(:expires)
-    user_params['uid'] = google_response[:uid]
-
-    # Convert expires_at to a Datetime 
-    user_params['expires_at'] = Time.at(user_params['expires_at'].to_i).to_datetime
+    user_params = {
+      uid: google_response[:uid],
+      name: google_response[:info][:name],
+      email: google_response[:info][:email],
+      first_name: google_response[:info][:first_name],
+      last_name: google_response[:info][:last_name],
+      image: google_response[:info][:image],
+      token: google_response[:credentials][:token],
+      refresh_token: google_response[:credentials][:refresh_token],
+      expires_at: Time.at(google_response[:credentials][:expires_at].to_i).to_datetime
+    }
 
     User.create! user_params
   end
@@ -54,10 +59,11 @@ class User < ActiveRecord::Base
   # end
 
   def refresh_tokens google_response
-    new_attributes = google_response.slice(:token, :refresh_token).select do |key,val|
+    new_attributes = google_response[:credentials].slice(:token, :refresh_token).select do |key,val|
       !val.nil? and !val.empty? and self[key] != val
     end
     self.update_attributes! new_attributes unless new_attributes.empty?
+    logger.warn new_attributes.inspect
   end
 
   def generate_session_cookie

@@ -171,7 +171,7 @@ class SessionsControllerTest < ActionController::TestCase
     get :destroy
 
     old_sharey_session_cookie = pam.reload.sharey_session_cookie
-    @request.env['omniauth.auth']['token'] = "somenewtoken"
+    @request.env['omniauth.auth']['credentials']['token'] = "somenewtoken"
 
     get :create, provider: "google_oauth2"
     refute_equal old_sharey_session_cookie, pam.reload.sharey_session_cookie, "token has changed, should update cookie"
@@ -207,8 +207,8 @@ class SessionsControllerTest < ActionController::TestCase
     pam = users(:pam)
     @request.env['omniauth.auth'] = pam.to_request.dup
 
-    @request.env['omniauth.auth']["token"] = "newtoken"
-    @request.env['omniauth.auth']["refresh_token"] = "new_refresh_token"
+    @request.env['omniauth.auth']['credentials']["token"] = "newtoken"
+    @request.env['omniauth.auth']['credentials']["refresh_token"] = "new_refresh_token"
 
     get :create, provider: "google_oauth2"
 

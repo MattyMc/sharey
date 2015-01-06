@@ -113,7 +113,7 @@ class UserTest < ActiveSupport::TestCase
     pam[:token] = "sometoken"
     pam.save
     # Change the token to empty
-    google_response["token"] = ""
+    google_response[:credentials][:token] = ""
     pam.refresh_tokens google_response
     assert_equal "sometoken", pam.reload.token
   end
@@ -125,7 +125,7 @@ class UserTest < ActiveSupport::TestCase
     pam[:token] = "sometoken"
     pam.save
     # Change the token to empty
-    google_response["token"] = nil
+    google_response[:credentials][:token] = nil
     pam.refresh_tokens google_response
     assert_equal "sometoken", pam.reload.token
   end
@@ -137,7 +137,7 @@ class UserTest < ActiveSupport::TestCase
     pam[:refresh_token] = "some_refresh_token"
     pam.save
     # Change the refresh_token to empty
-    google_response["refresh_token"] = ""
+    google_response[:credentials][:refresh_token] = ""
     pam.refresh_tokens google_response
     assert_equal "some_refresh_token", pam.reload.refresh_token
   end
@@ -149,7 +149,7 @@ class UserTest < ActiveSupport::TestCase
     pam[:refresh_token] = "some_refresh_token"
     pam.save
     # Change the refresh_token to empty
-    google_response["refresh_token"] = nil
+    google_response[:credentials]["refresh_token"] = nil
     pam.refresh_tokens google_response
     assert_equal "some_refresh_token", pam.reload.refresh_token
   end
@@ -169,12 +169,12 @@ class UserTest < ActiveSupport::TestCase
     google_response = pam.to_request
 
     # Change the tokens
-    google_response["token"] = "newtoken"
+    google_response[:credentials][:token] = "newtoken"
     pam.refresh_tokens google_response
 
     assert_equal "newtoken", pam.reload.token
 
-    google_response["refresh_token"] = "newrefreshtoken"
+    google_response[:credentials][:refresh_token] = "newrefreshtoken"
     pam.refresh_tokens google_response
 
     assert_equal "newrefreshtoken", pam.reload.refresh_token

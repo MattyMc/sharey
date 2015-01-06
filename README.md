@@ -30,9 +30,11 @@ A little passion project. Please go away :)
 	- This should get recreated/stored upon each user login
 	- This should *not* get destroyed when a user logs out, as we don't want to force users to login on each new share
 
-###Secrets - Figaro
+###Secrets, Privacy - Figaro
 
-Using figaro to keep track of all secrets in **config/application.yml**. Secrets can be stored in here as key, value pairs and will be automatically available as environment variables. For example:
+I'm using figaro to keep track of all secrets in **config/application.yml**. In particular, the **config/application.yml** file is ignored by git, and the **config/secrets.yml** file references the environment variables setup by Figaro.
+
+Secrets can be stored in here as key, value pairs and will be automatically available as environment variables. For example:
 
     GMAIL_USERNAME: username
 
@@ -46,5 +48,5 @@ In tests, these can be accessed as:
 
 ###Deploying
 
-    rake figaro:heroku
+    $ figaro heroku:set -e production
     git push heroku master
