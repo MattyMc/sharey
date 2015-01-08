@@ -49,4 +49,14 @@ In tests, these can be accessed as:
 ###Deploying
 
     $ figaro heroku:set -e production
-    git push heroku master
+    $ git push heroku master
+
+###Reset the database
+
+    $ heroku pg:reset DATABASE_URL
+    $ heroku run rake db:create db:migrate
+    $ heroku restart
+
+## Object Structure
+
+![app/assets/images/ObjectMap.jpg](app/assets/images/ObjectMap.jpg)
