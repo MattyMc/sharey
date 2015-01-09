@@ -5,7 +5,8 @@ require 'user_tests'
 class User < ActiveRecord::Base
   include UserTests
 
-  # has_many :items
+  has_many :items
+  has_many :shared_items, class_name:"Item", foreign_key: "originator_id"
 
   validates :uid, :name, :first_name, :last_name, :email, :token, :expires_at, :image, presence: true
   validates :email, :uid, uniqueness: { case_sensitive: false }
