@@ -5,7 +5,8 @@ class CreateItems < ActiveRecord::Migration
       t.belongs_to :user, index: true, null: false
       t.integer :from_user_id, index: true, default: nil
       t.belongs_to :category, index: true, default: nil
-      t.string :description
+      t.string :description, null: false
+      t.string :original_request, null: false
 
       t.timestamps null: false
     end

@@ -1,15 +1,22 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-# one:
-#   item_id: 
-#   viewed: false
-#   deleted: false
-#   click_count: 1
-#   shared: false
+matts_item_data:
+  item: matts_item
+  viewed: false
+  deleted: false
+  click_count: 0
+  shared: false
 
-# two:
-#   item_id: 
-#   viewed: false
-#   deleted: false
-#   click_count: 1
-#   shared: false
+to_matt_from_pam_item_data:
+  item: to_matt_from_pam
+  viewed: true
+  deleted: false
+  click_count: 1
+  shared: false
+
+to_jay_from_pam_item_data:
+  item: to_jay_from_pam
+  viewed: false
+  deleted: false
+  click_count: 0
+  shared: false

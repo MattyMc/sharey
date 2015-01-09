@@ -11,4 +11,12 @@ class ItemTest < ActiveSupport::TestCase
   should validate_presence_of :user_id
   should validate_presence_of :category_id
   should validate_presence_of :description
+  should validate_presence_of :original_request
+
+  # test "should create a new item" do
+  #   pam = users(:pam)
+  #   item_count = Item.count
+
+  #   category = Category.create! name:"New Cat"
+  # end
 end

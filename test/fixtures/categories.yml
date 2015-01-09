@@ -1,9 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  low_case_name: MyString
+videos:
+  name: Videos
+  downcase_name: videos
+  user: matt
 
-two:
-  name: MyString
-  low_case_name: MyString
+funny:
+  name: Funny
+  downcase_name: funny
+  user: pam

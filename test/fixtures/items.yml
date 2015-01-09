@@ -1,15 +1,35 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-# video:
-#   document_id: diving_video
-#   user_id: matt
-#   from_user_id: 1
-#   category_id: 
-#   description: MyString
+# A simple item for matt
+matts_item:
+  document: some_video
+  user: matt
+  from_user: nil
+  category: videos
+  description: this is some item that matt shared
+  original_request: this is some item that matt shared
 
-# two:
-#   document_id: 
-#   user_id: 
-#   from_user_id: 1
-#   category_id: 
-#   description: MyString
+# Pam made an item, shared it with matt and jay
+pams_shared_item:
+  document: insightful_story
+  user: pam
+  from_user: nil
+  category: funny
+  description: you guys should read this
+  original_request: you guys should read this @matt @jay
+
+to_matt_from_pam:
+  document: insightful_story
+  user: matt
+  from_user: pam
+  category: nil
+  description: you guys should read this
+  original_request: nil
+
+to_jay_from_pam:
+  document: insightful_story
+  user: jay
+  from_user: pam
+  category: nil
+  description: you guys should read this
+  original_request: nil

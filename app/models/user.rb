@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
 
   has_many :items
   has_many :shared_items, class_name:"Item", foreign_key: "originator_id"
+  has_many :categories
 
   validates :uid, :name, :first_name, :last_name, :email, :token, :expires_at, :image, presence: true
   validates :email, :uid, uniqueness: { case_sensitive: false }

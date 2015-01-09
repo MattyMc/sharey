@@ -5,5 +5,5 @@ class Item < ActiveRecord::Base
   has_one :usage_datum
   belongs_to :from_user, class_name: "User", foreign_key: "from_user_id"
 
-  validates :document_id, :user_id, :category_id, :description, presence: true
+  validates :document_id, :user_id, :category_id, :description, :original_request, presence: true
 end

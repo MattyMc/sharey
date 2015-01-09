@@ -1,11 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-# diving_video:
-#   url: www.youtube.com/watch?v=K2ZBubuxqVA
-#   title: Funniest Video In The World Ever
-#   originator_id: 1
+some_video:
+  url: www.youtube.com/watch?v=K2ZBubuxqVA
+  title: Funniest Video In The World Ever
+  originator: matt
 
-# two:
-#   url: MyString
-#   title: MyString
-#   originator_id: 1
+insightful_story:
+  url: www.somestory.com/omg
+  title: My favourite underpants
+  originator: pam

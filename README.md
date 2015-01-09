@@ -59,4 +59,57 @@ In tests, these can be accessed as:
 
 ## Object Structure
 
-![app/assets/images/ObjectMap.jpg](app/assets/images/ObjectMap.jpg)
+![app/assets/images/object_map.jpg](app/assets/images/object_map.jpg)
+
+## Models and Attributes
+
+####User
+
+  * uid                     : string
+  * name                    : string
+  * first\_name             : string
+  * last\_name              : string
+  * email                   : string
+  * image                   : string
+  * token                   : string
+  * refresh\_token          : string
+  * sharey\_session\_cookie : string
+  * expires\_at             : datetime
+
+####Item
+
+  * document\_id : integer
+  * user\_id : integer
+  * from_user\_id : integer
+  * category\_id : integer
+  * description : string
+  * original\_request : string
+
+####Category
+
+  * title : string
+  * downcase\_title : string
+  * user\_id : integer
+
+####UsageDatum 
+
+  * item\_id : integer
+  * viewed : boolean
+  * deleted : boolean
+  * click\_count : integer
+  * shared : boolean
+
+####Document 
+
+  * url : string
+  * title : string
+  * originator\_id : integer
+
+### TODOs
+
+  1. Create an object for failed requests. Any request that is submitted that has unrecognized tags, or fails for any reason will have a record created that contains the original request, user, reason it failed, etc.
+  2. When a new item is shared with other users, it's category should be wiped (or, figure out what to do with the category)
+
+###Useful
+
+Callbacks (in order) in a Rails application: [Callbacks : StackOverflow](http://stackoverflow.com/questions/6249475/ruby-on-rails-callback-what-is-difference-between-before-save-and-before-crea)

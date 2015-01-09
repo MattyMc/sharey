@@ -17,9 +17,13 @@ ActiveRecord::Schema.define(version: 20150109021844) do
   enable_extension "plpgsql"
 
   create_table "categories", force: :cascade do |t|
-    t.string "name",          null: false
-    t.string "low_case_name", null: false
+    t.string  "name",          null: false
+    t.string  "downcase_name", null: false
+    t.integer "user_id",       null: false
   end
+
+  add_index "categories", ["user_id", "downcase_name"], name: "index_categories_on_user_id_and_downcase_name", unique: true, using: :btree
+  add_index "categories", ["user_id"], name: "index_categories_on_user_id", using: :btree
 
   create_table "documents", force: :cascade do |t|
     t.string   "url",           null: false
@@ -30,13 +34,14 @@ ActiveRecord::Schema.define(version: 20150109021844) do
   end
 
   create_table "items", force: :cascade do |t|
-    t.integer  "document_id",  null: false
-    t.integer  "user_id",      null: false
+    t.integer  "document_id",      null: false
+    t.integer  "user_id",          null: false
     t.integer  "from_user_id"
     t.integer  "category_id"
-    t.string   "description"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.string   "description",      null: false
+    t.string   "original_request", null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
   end
 
   add_index "items", ["category_id"], name: "index_items_on_category_id", using: :btree
@@ -74,6 +79,7 @@ ActiveRecord::Schema.define(version: 20150109021844) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["uid"], name: "index_users_on_uid", unique: true, using: :btree
 
+  add_foreign_key "categories", "users"
   add_foreign_key "items", "categories"
   add_foreign_key "items", "documents"
   add_foreign_key "items", "users"
