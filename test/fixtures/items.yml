@@ -1,8 +1,8 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-# one:
-#   document_id: 
-#   user_id: 
+# video:
+#   document_id: diving_video
+#   user_id: matt
 #   from_user_id: 1
 #   category_id: 
 #   description: MyString

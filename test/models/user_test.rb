@@ -1,6 +1,9 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
+  should have_many :items
+  should have_many(:shared_items).class_name('Item').with_foreign_key('originator_id') 
+
   should validate_presence_of :uid
   should validate_presence_of :name
   should validate_presence_of :first_name

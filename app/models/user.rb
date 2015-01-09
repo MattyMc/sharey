@@ -5,6 +5,8 @@ require 'user_tests'
 class User < ActiveRecord::Base
   include UserTests
 
+  # has_many :items
+
   validates :uid, :name, :first_name, :last_name, :email, :token, :expires_at, :image, presence: true
   validates :email, :uid, uniqueness: { case_sensitive: false }
 

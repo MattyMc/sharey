@@ -1,9 +1,21 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+matt:
+  name: Matt Fake
+  first_name: Matt
+  last_name: Fake
+  email: matt@email.com
+  image: http://www.something.com/matt.jpg
+  uid: 930428394820397
+  token: ahfjk4hjfkh4898fhjksdf
+  refresh_token: asdfhkj33382372398749
+  sharey_session_cookie: jashdfljkh3h2j34234jlkjhlkj
+  expires_at: 2014-12-22 14:47:49
+
 pam:
   name: Pam Fake
   first_name: Pamela
-  last_name: McInnis
+  last_name: Fakester
   email: pam@email.com
   image: http://www.something.com/pam.jpg
   uid: 930428394820394
@@ -12,14 +24,26 @@ pam:
   sharey_session_cookie: sfhjk32i3hj243h4j2kl
   expires_at: 2014-12-22 14:47:49
 
-matt:
-  name: Matt McInnis
-  first_name: Matt
-  last_name: McInnis
-  email: matt@email.com
-  image: http://www.something.com/matt.jpg
-  uid: 930428394820397
-  token: ahfjk4hjfkh4898fhjksdf
-  refresh_token: asdfhkj33382372398749
-  sharey_session_cookie: jashdfljkh3h2j34234jlkjhlkj
+jay:
+  name: Jay Fakey
+  first_name: Jay
+  last_name: Fajita
+  email: jay@email.com
+  image: http://www.something.com/jay.jpg
+  uid: 3583927458374589
+  token: ahfjlkhr3453h45ljhk43
+  refresh_token: 5345h34j5h3j54hjhf
+  sharey_session_cookie: afsjdhklh34h534kj5h
+  expires_at: 2014-12-22 14:47:49
+
+mau:
+  name: Mau Boom
+  first_name: Mau
+  last_name: Boom
+  email: mau@email.com
+  image: http://www.something.com/mau.jpg
+  uid: 23487293487293324
+  token: jkj45k3klj345345jk
+  refresh_token: j34k5hkj3hjkh3kj4h5444
+  sharey_session_cookie: aggagadg3242342342342323
   expires_at: 2014-12-22 14:47:49
