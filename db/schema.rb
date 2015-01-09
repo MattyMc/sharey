@@ -11,10 +11,50 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141222194749) do
+ActiveRecord::Schema.define(version: 20150109021844) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name",          null: false
+    t.string "low_case_name", null: false
+  end
+
+  create_table "documents", force: :cascade do |t|
+    t.string   "url",           null: false
+    t.string   "title"
+    t.integer  "originator_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  create_table "items", force: :cascade do |t|
+    t.integer  "document_id",  null: false
+    t.integer  "user_id",      null: false
+    t.integer  "from_user_id"
+    t.integer  "category_id"
+    t.string   "description"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "items", ["category_id"], name: "index_items_on_category_id", using: :btree
+  add_index "items", ["document_id"], name: "index_items_on_document_id", using: :btree
+  add_index "items", ["from_user_id"], name: "index_items_on_from_user_id", using: :btree
+  add_index "items", ["user_id"], name: "index_items_on_user_id", using: :btree
+
+  create_table "usage_data", force: :cascade do |t|
+    t.integer  "item_id",                     null: false
+    t.boolean  "viewed",      default: false
+    t.boolean  "deleted",     default: false
+    t.integer  "click_count", default: 0
+    t.boolean  "shared",      default: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
+  add_index "usage_data", ["item_id"], name: "index_usage_data_on_item_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "uid"
@@ -34,4 +74,8 @@ ActiveRecord::Schema.define(version: 20141222194749) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["uid"], name: "index_users_on_uid", unique: true, using: :btree
 
+  add_foreign_key "items", "categories"
+  add_foreign_key "items", "documents"
+  add_foreign_key "items", "users"
+  add_foreign_key "usage_data", "items"
 end
