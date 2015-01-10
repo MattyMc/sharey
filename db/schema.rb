@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(version: 20150109021844) do
 
   create_table "usage_data", force: :cascade do |t|
     t.integer  "item_id",                     null: false
-    t.boolean  "viewed",      default: false
+    t.boolean  "viewed",      default: true
     t.boolean  "deleted",     default: false
     t.integer  "click_count", default: 0
     t.boolean  "shared",      default: false

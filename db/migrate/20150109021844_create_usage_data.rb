@@ -2,7 +2,7 @@ class CreateUsageData < ActiveRecord::Migration
   def change
     create_table :usage_data do |t|
       t.belongs_to :item, index: true, null: false
-      t.boolean :viewed, default: false
+      t.boolean :viewed, default: true
       t.boolean :deleted, default: false
       t.integer :click_count, default: 0
       t.boolean :shared, default: false
