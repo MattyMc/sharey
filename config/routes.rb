@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
   
+  get 'items/create_or_update'
+
+  post 'items/create_or_update'
+
   root 'sessions#index'
   get '/sign_out' => 'sessions#destroy', :as => :sign_out
   get "/auth/:provider/callback" => 'sessions#create'

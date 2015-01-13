@@ -5,17 +5,24 @@ require 'user_tests'
 class User < ActiveRecord::Base
   include UserTests
 
+  # Relationships -----------------------------------------------------------------------------
   has_many :items
   has_many :shared_items, class_name:"Item", foreign_key: "originator_id"
   has_many :categories
 
+  # Validations -------------------------------------------------------------------------------
   validates :uid, :name, :first_name, :last_name, :email, :token, :expires_at, :image, presence: true
   validates :email, :uid, uniqueness: { case_sensitive: false }
 
+  # Filters -----------------------------------------------------------------------------------
   # Ensures a new sharey_session_cookie is generated whenever the user's attributes are updated
   before_validation :generate_session_cookie
 
-  # Class methods
+
+  # -------------------------------------------------------------------------------------------
+  # Class methods -----------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------  
+
   def self.find_or_create_from_google_callback google_response
     # Check if a User exists
     user = User.find_by uid:google_response[:uid]
@@ -38,29 +45,9 @@ class User < ActiveRecord::Base
   end
 
 
-  # def self.find_or_create_from_google_callback omniauth_callback
-  #   auth_cred = omniauth_callback['credentials']
-  #   auth_info = omniauth_callback['info']
-
-  #   auth = {
-  #     first_name: auth_info['first_name'],
-  #     last_name: auth_info['last_name'],
-  #     email: auth_info['email'],
-  #     uid: omniauth_callback['uid'].to_s,
-  #     image_url: auth_info['image'],
-  #     access_token: auth_cred['token'],
-  #     refresh_token: auth_cred['refresh_token'],
-  #     expires_at: Time.at(auth_cred['expires_at']).to_datetime
-  #   }
-
-     
-  #   if (user = User.find_by_uid auth[:uid])
-  #     user.update_attributes auth
-  #     user
-  #   else
-  #     User.create! auth
-  #   end
-  # end
+  # -------------------------------------------------------------------------------------------
+  # Helper methods ----------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------  
 
   def refresh_tokens google_response
     new_attributes = google_response[:credentials].slice(:token, :refresh_token).select do |key,val|
@@ -74,9 +61,10 @@ class User < ActiveRecord::Base
     self.sharey_session_cookie = ((0...20).map { (65 + rand(40)).chr }.join + "pam"*5).split("").shuffle.join
   end
 
-# --------------------------------
-# UNUSED AND UNTESTED METHODS
-# --------------------------------
+
+  # -------------------------------------------------------------------------------------------
+  # Unused/Untested methods -------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------  
 
   def to_params
     {
