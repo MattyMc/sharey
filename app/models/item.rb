@@ -1,5 +1,7 @@
 class Item < ActiveRecord::Base
-  
+  # Attributes -------------------------------------------------------------------------------- 
+  attr_accessor :messages
+
   # Relationships -----------------------------------------------------------------------------
   belongs_to :user
   belongs_to :document
@@ -12,6 +14,9 @@ class Item < ActiveRecord::Base
 
   # Filters -----------------------------------------------------------------------------------
   after_create :create_usage_datum  # Item will automatically create and manage its data
+  after_initialize :set_defaults
+
+  def set_defaults; self.messages = []; end
 
   # Errors ------------------------------------------------------------------------------------
   class UserNotFound < StandardError; end
@@ -62,8 +67,8 @@ class Item < ActiveRecord::Base
     # Validations:
     # User must be defined (ie must have a valid sharey_session_cookie)
     # url and description attributes must be defined
-    raise InvalidItemParams if item_params["url"].nil? or item_params["description"].nil?
-    raise InvalidItemParams unless item_params["url"].present? and item_params["description"].present?
+    raise InvalidItemParams, "Please enter a description!" if item_params["url"].nil? or item_params["description"].nil?
+    raise InvalidItemParams, "Please enter a description!"  unless item_params["url"].present? and item_params["description"].present?
 
     item_params.values.map(&:strip!)
     [item_params["url"], item_params["title"], item_params["description"], item_params["category"]]

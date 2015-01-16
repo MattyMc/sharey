@@ -12,15 +12,14 @@ class ItemTest < ActiveSupport::TestCase
   should validate_presence_of :description
   should validate_presence_of :original_request
 
-  # test "should create a new item" do
-  #   pam = users(:pam)
-  #   item_count = Item.count
-
-  #   category = Category.create! name:"New Cat"
-  # end
-
-  # Tests for Item.create_or_update_from_item_params_and_user
-
+  # -------------------------------------------------------------------------------------------
+  # Attributes --------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------
+  test "should have attribute messages" do
+    item = Item.new
+    assert_equal [], item.messages
+    assert_equal Array, item.messages.class
+  end
 
   # -------------------------------------------------------------------------------------------
   # validate_item_params ----------------------------------------------------------------------

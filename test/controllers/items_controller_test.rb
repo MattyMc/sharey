@@ -1,28 +1,137 @@
 require 'test_helper'
 
 class ItemsControllerTest < ActionController::TestCase
-
+  # Easily test response parameters using json_response['result']
+  def json_response
+    ActiveSupport::JSON.decode @response.body
+  end
 
   # -------------------------------------------------------------------------------------------
   # post :create_or_update --------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------
   # General form of post helper: post(action_name, params_hash = {}, session_hash = {})
 
+  test "should respond with a properly formatted JSON reply on failure" do
+    post :create_or_update, {}
+    assert_response :bad_request 
 
+    # Make sure deprecated responses are gone
+    refute json_response["result"]  
+    refute json_response["headline"]  
+    refute json_response["messages"]  
 
-  # --------------- these tests are mostly covered in unit tests now --------------------------
-  test "should raise an exception if user cannot be found by their sharey_session_cookie" do
-    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie + "thjakgdha"
-    assert_raises(ItemsController::UserNotFound) {
-      post :create_or_update, {
-      item: {
-        url: "http://www.something.com",
-        category: "some category",
-        description: "here's something I'd like to save",
-        title: "some website title"
-        }
+    # Test response object
+    assert json_response["modal"]["headline"]  
+    assert json_response["modal"]["messages"]  
+    assert_equal Array, json_response["modal"]["messages"].class
+    assert_equal "Who are you, again?", json_response["modal"]["messages"][0]
+  end
+
+  test "should respond with a properly formatted JSON reply on success" do
+    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
+    post :create_or_update, {
+    item: {
+      url: "http://www.something.com",
+      category: "some category",
+      description: "here's something I'd like to save",
+      title: "some website title"
       }
     }
+    assert_response :success 
+
+    # Test response object
+    assert json_response["modal"]["headline"]  
+    assert json_response["modal"]["messages"]  
+    assert_equal Array, json_response["modal"]["messages"].class
+    assert_equal "Saved!", json_response["modal"]["headline"]
+  end
+
+  test "should respond with an error if url is not defined" do
+    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
+    
+    post :create_or_update, {
+    item: {
+      url: "",
+      category: "some category",
+      description: "here's something I'd like to save",
+      title: "some website title"
+      }
+    }
+    # Test response object
+    assert_response :bad_request
+    assert json_response["modal"]["headline"]  
+    assert json_response["modal"]["messages"]  
+    assert_equal Array, json_response["modal"]["messages"].class
+    assert_equal "Please enter a description!", json_response["modal"]["messages"][0]
+  end
+
+  test "should respond with an error if description is not defined" do
+    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
+    
+    post :create_or_update, {
+    item: {
+      url: "http://www.something.com",
+      category: "some category",
+      description: "",
+      title: "some website title"
+      }
+    }
+    # Test response object
+    assert_response :bad_request
+    assert json_response["modal"]["headline"]  
+    assert json_response["modal"]["messages"]  
+    assert_equal Array, json_response["modal"]["messages"].class
+    assert_equal "Please enter a description!", json_response["modal"]["messages"][0]
+  end
+
+  test "should respond with an error if neither the description or url is not defined" do
+    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
+    
+    post :create_or_update, {
+    item: {
+      url: "",
+      category: "some category",
+      description: "",
+      title: "some website title"
+      }
+    }
+    # Test response object
+    assert_response :bad_request
+    assert json_response["modal"]["headline"]  
+    assert json_response["modal"]["messages"]  
+    assert_equal Array, json_response["modal"]["messages"].class
+    assert_equal "Please enter a description!", json_response["modal"]["messages"][0]
+  end
+
+  # --------------- these tests are  covered in unit tests now --------------------------------
+  test "should raise an exception if user cannot be found by their sharey_session_cookie" do
+    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie + "thjakgdha"
+    
+    post :create_or_update, {
+    item: {
+      url: "http://www.something.com",
+      category: "some category",
+      description: "here's something I'd like to save",
+      title: "some website title"
+      }
+    }
+    
+    assert_response :bad_request
+  end
+
+  test "should not raise an exception if user can be found by their sharey_session_cookie" do
+    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
+    
+    post :create_or_update, {
+    item: {
+      url: "http://www.somethingunique.com",
+      category: "some category",
+      description: "here's something I'd like to save",
+      title: "some website title"
+      }
+    }
+    
+    assert_response :success
   end
 
   test "should create an Item, Document, Category and UsageData" do

@@ -2,6 +2,35 @@
 
 A little passion project. Please go away :)
 
+##API
+
+All responses should be of the form:
+
+####Modals (popups)
+
+    { modal: {headline: "", messages: ["error message 1", "error message 2, ..."] } }
+with a :bad_request status (400 or 401) or :success status (200)
+
+*or*
+
+####Listing Items
+    { items: 
+      { 
+        videos:
+        {
+          description: "",
+          url: "",
+          TODO: ADD MORE,
+        },
+        programming:
+        {
+          description: "",
+          url: "",
+          TODO: ADD MORE,
+        }
+      }
+    }
+with a :success status (200)
 
 ## Setup steps 
 
@@ -57,11 +86,13 @@ In tests, these can be accessed as:
     $ heroku run rake db:create db:migrate
     $ heroku restart
 
-## Object Structure
+## Object Relationships
 
 ![app/assets/images/object_map.jpg](app/assets/images/object_map.jpg)
 
 ## Models and Attributes
+
+*Note: More updated versions of these can be found in schema.rb*
 
 ####User
 
@@ -106,6 +137,8 @@ In tests, these can be accessed as:
   * originator\_id : integer
 
 ### TODOs
+
+*TODOs for specific models or controllers can be found by searching the project (CMD-shift-f) for 'TODO'*
 
   1. Create an object for failed requests. Any request that is submitted that has unrecognized tags, or fails for any reason will have a record created that contains the original request, user, reason it failed, etc.
   2. When a new item is shared with other users, it's category should be wiped (or, figure out what to do with the category)
