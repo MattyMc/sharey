@@ -1,0 +1,71 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# Friends:
+# 	Matt -> Mau, Jay & Pam
+# 	Mau  -> Matt, Jay
+# 	Jay  -> Matt, Mau
+# 	Pam -> Matt
+
+matt_jay:
+  user: matt
+  receiving_user: jay
+  downcase_tag: "@jay"
+  tag: "@Jay"
+  confirmed: true
+  group_id: nil
+
+jay_matt:
+  user: jay
+  receiving_user: matt
+  downcase_tag: "@matt"
+  tag: "@Matt"
+  confirmed: true
+  group_id: nil
+
+matt_mau:
+  user: matt
+  receiving_user: mau
+  downcase_tag: "@mau"
+  tag: "@Mau"
+  confirmed: true
+  group_id: nil
+
+mau_matt:
+  user: mau
+  receiving_user: matt
+  downcase_tag: "@matt"
+  tag: "@Matt"
+  confirmed: true
+  group_id: nil
+
+jay_mau:
+  user: jay
+  receiving_user: mau
+  downcase_tag: "@mau"
+  tag: "@Mau"
+  confirmed: true
+  group_id: nil
+
+mau_jay:
+  user: mau
+  receiving_user: jay
+  downcase_tag: "@jay"
+  tag: "@jay"
+  confirmed: true
+  group_id: nil
+
+matt_pam:
+  user: matt
+  receiving_user: pam
+  downcase_tag: "@pam"
+  tag: "@pam"
+  confirmed: true
+  group_id: nil
+
+pam_matt:
+  user: pam
+  receiving_user: matt
+  downcase_tag: "@matt"
+  tag: "@Matt"
+  confirmed: true
+  group_id: nil

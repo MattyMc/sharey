@@ -30,14 +30,15 @@ class Item < ActiveRecord::Base
 
   def self.create_or_update_from_item_params_and_user item_params, user
     raise UserNotFound if user.nil?
-    doc_url, doc_title, item_description, cat_name = validate_item_params item_params
+    url, title, description, cat_name = validate_item_params item_params
 
+    description, tag_array = Friend.parse_tag_array description
     # Logic: 
     # If the Document is a new record, Item is for sure new
     # If Document is not new, then:
     # The Item could still be new for this particular User
     # The Item could exist for this user. In this case, update the Category and Description
-    document = Document.first_or_initialize_with_url_title_and_originator(doc_url, doc_title, user)
+    document = Document.first_or_initialize_with_url_title_and_originator(url, title, user)
     category = Category.first_or_initialize_with_name_and_user cat_name, user
 
     item = Item.where(
@@ -46,8 +47,8 @@ class Item < ActiveRecord::Base
     # TODO: Make sure User and Document are unique
     # TODO: Don't allow other users to overwrite a description that already exists
     # TODO: Set a default value of null for from_user_id
-    item.description = item_description
-    item.original_request = item_description
+    item.description = description
+    item.original_request = description
     item.category = category
     item.from_user = nil if item.new_record?
 
