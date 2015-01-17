@@ -17,6 +17,19 @@ class Friend < ActiveRecord::Base
   # -------------------------------------------------------------------------------------------
   # Class methods -----------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------  
+  def self.find_valid_friends_for_user user, tag_array
+    return nil if user.nil? or tag_array.nil? or tag_array.empty?
+    
+    tag_array.map!(&:downcase).map!(&:strip)
+    friends = Friend.where(user: user, downcase_tag:tag_array)
+
+    if friends.count < tag_array.count # find the tag taht was missing
+      friend_tags = friends.pluck :downcase_tag
+      missing_tags = format_error_message(tag_array - friend_tags)
+    end
+
+    return friends.map{|u| u.receiving_user_id}, missing_tags
+  end
 
   # Sorts the string into @tag_array and @description
   def self.parse_tag_array input_string
@@ -58,4 +71,14 @@ class Friend < ActiveRecord::Base
     # parseTagArray "@flying billy bishop @goes@to@war mofo!"
   end
 
+  private
+
+  def self.format_error_message tag_array
+    message_prefix = "Sharey couldn't find any tags named "
+    tag_array_count = tag_array.count
+
+    return message_prefix + tag_array[0] if tag_array_count == 1
+    return message_prefix + tag_array.join(" or ") if tag_array_count == 2
+    return message_prefix + tag_array[0..-2].join(", ") + ", or " + tag_array.last if tag_array_count > 2
+  end
 end

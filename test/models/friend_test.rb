@@ -88,6 +88,61 @@ class FriendTest < ActiveSupport::TestCase
   end
 
   # -------------------------------------------------------------------------------------------
+  # find_valid_friends_for_user ---------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------  
+  test "should return nil" do 
+    assert Friend.find_valid_friends_for_user(users(:matt), []).nil?
+  end
+
+  test "should return one result with no errors" do 
+    tags = ["@mau"]
+    share_with_user_ids, tag_errors = Friend.find_valid_friends_for_user(users(:matt), tags)
+
+    assert_equal [users(:mau).id], share_with_user_ids
+    assert_equal nil, tag_errors
+  end
+
+  test "should return two results with no errors" do 
+    tags = ["@jay", "@mau"]
+    share_with_user_ids, tag_errors = Friend.find_valid_friends_for_user(users(:matt), tags)
+
+    assert_equal [users(:jay).id, users(:mau).id], share_with_user_ids
+    assert_equal nil, tag_errors
+  end
+
+  test "should return an error message if it can't find a tag" do 
+    tags = ["@jay", "@frank_the_tank"]
+    share_with_user_ids, tag_errors = Friend.find_valid_friends_for_user(users(:matt), tags)
+
+    assert_equal [users(:jay).id], share_with_user_ids
+    assert_equal "Sharey couldn't find any tags named @frank_the_tank", tag_errors
+  end
+
+  test "should return an error message if it can't find a two tags" do 
+    tags = ["@jay", "@mau", "@frank_the_tank", "@mancho_man"]
+    share_with_user_ids, tag_errors = Friend.find_valid_friends_for_user(users(:matt), tags)
+
+    assert_equal [users(:jay).id, users(:mau).id], share_with_user_ids
+    assert_equal "Sharey couldn't find any tags named @frank_the_tank or @mancho_man", tag_errors
+  end
+
+  test "should return an error message if it can't find a three tags" do 
+    tags = ["@jay", "@frank_the_tank", "@mancho_man", "@dick"]
+    share_with_user_ids, tag_errors = Friend.find_valid_friends_for_user(users(:matt), tags)
+
+    assert_equal [users(:jay).id], share_with_user_ids
+    assert_equal "Sharey couldn't find any tags named @frank_the_tank, @mancho_man, or @dick", tag_errors
+  end
+
+  test "should return an error message if it can't find a five tags" do 
+    tags = ["@jay", "@frank", "@tank", "@fart", "@mancho_man", "@dick"]
+    share_with_user_ids, tag_errors = Friend.find_valid_friends_for_user(users(:matt), tags)
+
+    assert_equal [users(:jay).id], share_with_user_ids
+    assert_equal "Sharey couldn't find any tags named @frank, @tank, @fart, @mancho_man, or @dick", tag_errors
+  end
+
+  # -------------------------------------------------------------------------------------------
   # parse_tag_array ---------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------  
 

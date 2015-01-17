@@ -33,6 +33,8 @@ class Item < ActiveRecord::Base
     url, title, description, cat_name = validate_item_params item_params
 
     description, tag_array = Friend.parse_tag_array description
+    # share_with_user_ids, tag_errors = Friend.find_valid_friends_for_user user, tag_array unless tag_array.empty?
+
     # Logic: 
     # If the Document is a new record, Item is for sure new
     # If Document is not new, then:
