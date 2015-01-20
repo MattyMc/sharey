@@ -1,4 +1,5 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# TODO: Check that all items have a UD record
 
 matts_item_data:
   item: matts_item

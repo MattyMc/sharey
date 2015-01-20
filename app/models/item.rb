@@ -1,6 +1,11 @@
+require 'item_messages'
+
 class Item < ActiveRecord::Base
+  # Modules ----------------------------------------------------------------------------------- 
+  include ItemMessages 
+  
   # Attributes -------------------------------------------------------------------------------- 
-  attr_accessor :messages
+  attr_accessor :notes
 
   # Relationships -----------------------------------------------------------------------------
   belongs_to :user
@@ -11,12 +16,20 @@ class Item < ActiveRecord::Base
   
   # Validations -------------------------------------------------------------------------------
   validates :document_id, :user_id, :description, :original_request, presence: true
+  validates :user_id, uniqueness: { scope: :document_id }
 
   # Filters -----------------------------------------------------------------------------------
   after_create :create_usage_datum  # Item will automatically create and manage its data
   after_initialize :set_defaults
 
-  def set_defaults; self.messages = []; end
+  def set_defaults 
+    self.notes = {
+      "tagged_users" => [], 
+      "missing_tags" => [], 
+      "already_saved" => [],
+      "already_shared_with" => [], 
+      "new_item" => false}
+  end
 
   # Errors ------------------------------------------------------------------------------------
   class UserNotFound < StandardError; end
@@ -30,32 +43,57 @@ class Item < ActiveRecord::Base
 
   def self.create_or_update_from_item_params_and_user item_params, user
     raise UserNotFound if user.nil?
-    url, title, description, cat_name = validate_item_params item_params
+    url, title, original_request, cat_name = validate_item_params item_params
 
-    description, tag_array = Friend.parse_tag_array description
-    # share_with_user_ids, tag_errors = Friend.find_valid_friends_for_user user, tag_array unless tag_array.empty?
+    description, tag_array = Friend.parse_tag_array original_request
+    share_with_users, missing_tags = Friend.find_valid_friends_for_user user, tag_array unless tag_array.empty?
+    # mising_tags will return an array of the tags that are not defined for that user (ie not friends)
+    # share_with_users is a hash: {"@matt" => matt_id, "@jay" => jay_id, ...}
 
     # Logic: 
     # If the Document is a new record, Item is for sure new
     # If Document is not new, then:
     # The Item could still be new for this particular User
     # The Item could exist for this user. In this case, update the Category and Description
+    # TODO: rename the methods below to first_or_create_with... ?
     document = Document.first_or_initialize_with_url_title_and_originator(url, title, user)
     category = Category.first_or_initialize_with_name_and_user cat_name, user
 
     item = Item.where(
       document: document,
       user: user).first_or_initialize
+
+    item.notes["new_item"]  = true if item.new_record?
+    item.notes["missing_tags"] = missing_tags unless missing_tags.nil?
+
     # TODO: Make sure User and Document are unique
     # TODO: Don't allow other users to overwrite a description that already exists
     # TODO: Set a default value of null for from_user_id
     item.description = description
-    item.original_request = description
-    item.category = category
+    item.original_request = original_request
+    item.category = category unless category.nil?
     item.from_user = nil if item.new_record?
-
     item.save!
-    item
+
+    # Share with tagged users
+    # TODO: Do this hitting the db less
+    if !share_with_users.nil? and !share_with_users.empty?
+      
+      share_with_users.each do |tag, u_id|
+        shared_item = Item.where(document:document, user_id:u_id).first_or_initialize
+        if shared_item.new_record?
+          shared_item.from_user = user
+          shared_item.description = description
+          shared_item.original_request = original_request
+          item.notes["tagged_users"] << tag if shared_item.save!
+        else
+          shared_item.from_user_id == user.id ? item.notes["already_shared_with"] << tag : item.notes["already_saved"] << tag
+        end
+      end
+
+    end
+
+    return item
   end
 
 

@@ -103,6 +103,94 @@ class ItemsControllerTest < ActionController::TestCase
     assert_equal "Please enter a description!", json_response["modal"]["messages"][0]
   end
 
+  # --------------- testing response values  -------------------------------------------------  
+  # Three possibilities when saving an item: 
+  # 1. error
+  # 2. create a new item
+  # 3. update an existing item
+  # 
+  # Three possibilities with sharing an item with one user:
+  # 1. Successfully share items with user
+  # 2. That user already has that item saved (ie do nothing, return message)
+  # 3. Could not find that user (return message)
+  # 
+  # These possibilities and their interactions are test in item_test.rb
+  # Here, I'm only testing (for now) that in each case we receive some sort of response
+  # (NOTE: The error outcome is tested above)
+
+  test "should respond with proper headline and messages when creating an item for one user" do
+    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
+    post :create_or_update, {
+    item: {
+      url: "http://www.something.com",
+      category: "some category",
+      description: "here's something I'd like to save",
+      title: "some website title"
+      }
+    }
+    assert_response :success 
+
+    # Test response object
+    refute json_response["modal"]["headline"].blank?, json_response["modal"]["headline"]
+    refute json_response["modal"]["messages"].empty?, json_response["modal"]["messages"]
+    assert_equal Array, json_response["modal"]["messages"].class
+  end
+
+  test "should respond with proper headline and messages when creating an item for one user with tags" do
+    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
+    post :create_or_update, {
+    item: {
+      url: "http://www.something.com",
+      category: "some category",
+      description: "here's something I'd like to save @matt @jay @mau",
+      title: "some website title"
+      }
+    }
+    assert_response :success 
+
+    # Test response object
+    refute json_response["modal"]["headline"].blank?
+    refute json_response["modal"]["messages"].empty?
+    assert_equal Array, json_response["modal"]["messages"].class
+  end
+
+  # TODO: Find a way to test that the responses are coming in properly, ie with a proper format
+  test "should respond with proper headline and messages when updating an item for one user" do
+    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
+    post :create_or_update, {
+    item: {
+      url: documents(:insightful_story).url, # pam has this already saved
+      category: "some category",
+      description: "here's something I'd like to save",
+      title: "some website title"
+      }
+    }
+    assert_response :success 
+
+    # Test response object
+    refute json_response["modal"]["headline"].blank?
+    refute json_response["modal"]["messages"].empty?
+    assert_equal Array, json_response["modal"]["messages"].class
+  end
+
+  test "should respond with proper headline and messages when updating an item for one user with tags" do
+    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
+    post :create_or_update, {
+    item: {
+      url: documents(:insightful_story).url, # pam has this already saved
+      category: "some category",
+      description: "here's something I'd like to save @pam @jay @mau @shaggy",
+      title: "some website title"
+      }
+    }
+    assert_response :success 
+
+    # Test response object
+    refute json_response["modal"]["headline"].blank?
+    refute json_response["modal"]["messages"].empty?
+    assert_equal Array, json_response["modal"]["messages"].class
+  end
+
   # --------------- these tests are  covered in unit tests now --------------------------------
   test "should raise an exception if user cannot be found by their sharey_session_cookie" do
     cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie + "thjakgdha"

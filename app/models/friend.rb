@@ -8,27 +8,39 @@ class Friend < ActiveRecord::Base
   def check_user_and_receiving_user
     errors.add(:user, "can't be the same as receiving_user") if user_id == receiving_user_id
   end
+  def check_first_character
+    return errors.add(:tag, "must not be nil") unless !tag.nil? and !downcase_tag.nil?
+    errors.add(:tag, "must begin with an @ symbol") unless tag.start_with?("@") and downcase_tag.start_with?("@")
+  end
   validates :downcase_tag, :tag, :confirmed, presence: true
   validates :downcase_tag, :tag, format:{ without: /\s/ }
+  validates :downcase_tag, :tag, format:{ without: /\./ }
+  validates :downcase_tag, :tag, format:{ without: /\,/ }
   validates :user_id, uniqueness: { scope: :receiving_user_id }
   validate  :check_user_and_receiving_user
-
+  validate  :check_first_character
 
   # -------------------------------------------------------------------------------------------
   # Class methods -----------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------  
   def self.find_valid_friends_for_user user, tag_array
-    return nil if user.nil? or tag_array.nil? or tag_array.empty?
+    return {},[] if user.nil? or tag_array.nil? or tag_array.empty?
     
     tag_array.map!(&:downcase).map!(&:strip)
     friends = Friend.where(user: user, downcase_tag:tag_array)
 
+    missing_tags = []
     if friends.count < tag_array.count # find the tag taht was missing
       friend_tags = friends.pluck :downcase_tag
-      missing_tags = format_error_message(tag_array - friend_tags)
+      missing_tags = tag_array - friend_tags
     end
 
-    return friends.map{|u| u.receiving_user_id}, missing_tags
+    # Structure our return value as: {"@tag" => user, "@tag2" => user2, ...}
+     
+    tag_hash = {}
+    friends.each {|f| tag_hash[f.tag] = f.receiving_user_id} unless friends.empty?
+      
+    return tag_hash, missing_tags
   end
 
   # Sorts the string into @tag_array and @description
@@ -37,6 +49,7 @@ class Friend < ActiveRecord::Base
     word_array = []
     tag_array = []
     # Account for multiple tags with no spacing
+    # If there's more than one '@' in a word, split the word
     (0..ss.length-1).each do |i|
 
       if ss[i].count("@") > 1
@@ -56,6 +69,7 @@ class Friend < ActiveRecord::Base
     ss = ss.join(" ").split(" ")
     ss.each do |temp|
       if (temp.index("@"))
+        temp[-1] = "" if temp[-1] == ","
         tag_array += [temp]
       else
         word_array += [temp]
@@ -71,14 +85,5 @@ class Friend < ActiveRecord::Base
     # parseTagArray "@flying billy bishop @goes@to@war mofo!"
   end
 
-  private
 
-  def self.format_error_message tag_array
-    message_prefix = "Sharey couldn't find any tags named "
-    tag_array_count = tag_array.count
-
-    return message_prefix + tag_array[0] if tag_array_count == 1
-    return message_prefix + tag_array.join(" or ") if tag_array_count == 2
-    return message_prefix + tag_array[0..-2].join(", ") + ", or " + tag_array.last if tag_array_count > 2
-  end
 end

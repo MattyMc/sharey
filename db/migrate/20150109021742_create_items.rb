@@ -14,5 +14,6 @@ class CreateItems < ActiveRecord::Migration
     add_foreign_key :items, :documents
     add_foreign_key :items, :users
     add_foreign_key :items, :categories
+    add_index :items, [:user_id, :document_id], unique: true
   end
 end

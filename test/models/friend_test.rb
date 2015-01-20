@@ -31,7 +31,6 @@ class FriendTest < ActiveSupport::TestCase
         group_id: nil) }
   end
 
-
   test "should raise an exception if tag contains space at front or end" do
     assert_raises(ActiveRecord::RecordInvalid){
       Friend.create!(
@@ -39,6 +38,28 @@ class FriendTest < ActiveSupport::TestCase
         receiving_user: users(:jay),
         downcase_tag: "@jay",
         tag: " @jay",
+        confirmed: true,
+        group_id: nil) }
+  end
+
+  test "should raise an exception if tag does not begin with at-sign" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: users(:jay),
+        downcase_tag: "@jay",
+        tag: "jay",
+        confirmed: true,
+        group_id: nil) }
+  end
+
+  test "should raise an exception if downcase_tag does not begin with at-sign" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: users(:jay),
+        downcase_tag: "jay",
+        tag: "@jay",
         confirmed: true,
         group_id: nil) }
   end
@@ -54,6 +75,137 @@ class FriendTest < ActiveSupport::TestCase
         group_id: nil) }
   end
 
+  test "should raise an exception if tag contains a comma in the middle" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: users(:jay),
+        downcase_tag: "@jay",
+        tag: "@j,ay",
+        confirmed: true,
+        group_id: nil) }
+  end
+
+  test "should raise an exception if tag contains a comma in front" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: users(:jay),
+        downcase_tag: "@jay",
+        tag: "@,jay",
+        confirmed: true,
+        group_id: nil) }
+  end
+
+  test "should raise an exception if tag contains a comma at the end" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: users(:jay),
+        downcase_tag: "@jay",
+        tag: "@jay,",
+        confirmed: true,
+        group_id: nil) }
+  end
+
+  test "should raise an exception if tag contains a period in the middle" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: users(:jay),
+        downcase_tag: "@jay",
+        tag: "@j.ay",
+        confirmed: true,
+        group_id: nil) }
+  end
+
+  test "should raise an exception if tag contains a period in front" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: users(:jay),
+        downcase_tag: "@jay",
+        tag: "@.jay",
+        confirmed: true,
+        group_id: nil) }
+  end
+
+  test "should raise an exception if tag contains a period at the end" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: users(:jay),
+        downcase_tag: "@jay",
+        tag: "@jay.",
+        confirmed: true,
+        group_id: nil) }
+  end
+
+  test "should raise an exception if downcase_tag contains a comma in the middle" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: users(:jay),
+        downcase_tag: "@ja,y",
+        tag: "@jay",
+        confirmed: true,
+        group_id: nil) }
+  end
+
+  test "should raise an exception if downcase_tag contains a comma in front" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: users(:jay),
+        downcase_tag: "@,jay",
+        tag: "@jay",
+        confirmed: true,
+        group_id: nil) }
+  end
+
+  test "should raise an exception if downcase_tag contains a comma at the end" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: users(:jay),
+        downcase_tag: "@jay,",
+        tag: "@jay",
+        confirmed: true,
+        group_id: nil) }
+  end
+
+  test "should raise an exception if downcase_tag contains a period in the middle" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: users(:jay),
+        downcase_tag: "@ja.y",
+        tag: "@jay",
+        confirmed: true,
+        group_id: nil) }
+  end
+
+  test "should raise an exception if downcase_tag contains a period in front" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: users(:jay),
+        downcase_tag: "@.jay",
+        tag: "@jay",
+        confirmed: true,
+        group_id: nil) }
+  end
+
+  test "should raise an exception if downcase_tag contains a period at the end" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: users(:jay),
+        downcase_tag: "@jay.",
+        tag: "@jay",
+        confirmed: true,
+        group_id: nil) }
+  end
 
   test "should raise an exception if downcase_tag contains space in middle" do
     assert_raises(ActiveRecord::RecordInvalid){
@@ -90,57 +242,65 @@ class FriendTest < ActiveSupport::TestCase
   # -------------------------------------------------------------------------------------------
   # find_valid_friends_for_user ---------------------------------------------------------------
   # -------------------------------------------------------------------------------------------  
-  test "should return nil" do 
-    assert Friend.find_valid_friends_for_user(users(:matt), []).nil?
+  test "should return an empty hash and an empty array" do 
+    assert_equal [{},[]], Friend.find_valid_friends_for_user(users(:matt), [])
   end
 
   test "should return one result with no errors" do 
     tags = ["@mau"]
-    share_with_user_ids, tag_errors = Friend.find_valid_friends_for_user(users(:matt), tags)
+    share_with_users, missing_tags = Friend.find_valid_friends_for_user(users(:matt), tags)
 
-    assert_equal [users(:mau).id], share_with_user_ids
-    assert_equal nil, tag_errors
+    assert_equal( {"@Mau" => users(:mau).id}, share_with_users)
+    assert_equal [], missing_tags
   end
 
   test "should return two results with no errors" do 
     tags = ["@jay", "@mau"]
-    share_with_user_ids, tag_errors = Friend.find_valid_friends_for_user(users(:matt), tags)
+    share_with_users, missing_tags = Friend.find_valid_friends_for_user(users(:matt), tags)
 
-    assert_equal [users(:jay).id, users(:mau).id], share_with_user_ids
-    assert_equal nil, tag_errors
+    assert_equal( {"@Jay" => users(:jay).id, "@Mau" => users(:mau).id}, share_with_users)
+    assert_equal [], missing_tags
   end
 
   test "should return an error message if it can't find a tag" do 
     tags = ["@jay", "@frank_the_tank"]
-    share_with_user_ids, tag_errors = Friend.find_valid_friends_for_user(users(:matt), tags)
+    share_with_users, missing_tags = Friend.find_valid_friends_for_user(users(:matt), tags)
 
-    assert_equal [users(:jay).id], share_with_user_ids
-    assert_equal "Sharey couldn't find any tags named @frank_the_tank", tag_errors
+    assert_equal( {"@Jay" => users(:jay).id}, share_with_users)
+    assert_equal ["@frank_the_tank"], missing_tags
   end
 
   test "should return an error message if it can't find a two tags" do 
     tags = ["@jay", "@mau", "@frank_the_tank", "@mancho_man"]
-    share_with_user_ids, tag_errors = Friend.find_valid_friends_for_user(users(:matt), tags)
+    share_with_users, missing_tags = Friend.find_valid_friends_for_user(users(:matt), tags)
 
-    assert_equal [users(:jay).id, users(:mau).id], share_with_user_ids
-    assert_equal "Sharey couldn't find any tags named @frank_the_tank or @mancho_man", tag_errors
+    assert_equal( {"@Jay" => users(:jay).id, "@Mau" => users(:mau).id}, share_with_users)
+    assert_equal ["@frank_the_tank", "@mancho_man"], missing_tags
   end
 
   test "should return an error message if it can't find a three tags" do 
     tags = ["@jay", "@frank_the_tank", "@mancho_man", "@dick"]
-    share_with_user_ids, tag_errors = Friend.find_valid_friends_for_user(users(:matt), tags)
+    share_with_users, missing_tags = Friend.find_valid_friends_for_user(users(:matt), tags)
 
-    assert_equal [users(:jay).id], share_with_user_ids
-    assert_equal "Sharey couldn't find any tags named @frank_the_tank, @mancho_man, or @dick", tag_errors
+    assert_equal( {"@Jay" => users(:jay).id}, share_with_users)
+    assert_equal ["@frank_the_tank", "@mancho_man", "@dick"], missing_tags
   end
 
   test "should return an error message if it can't find a five tags" do 
     tags = ["@jay", "@frank", "@tank", "@fart", "@mancho_man", "@dick"]
-    share_with_user_ids, tag_errors = Friend.find_valid_friends_for_user(users(:matt), tags)
+    share_with_users, missing_tags = Friend.find_valid_friends_for_user(users(:matt), tags)
 
-    assert_equal [users(:jay).id], share_with_user_ids
-    assert_equal "Sharey couldn't find any tags named @frank, @tank, @fart, @mancho_man, or @dick", tag_errors
+    assert_equal( {"@Jay" => users(:jay).id}, share_with_users)
+    assert_equal ["@frank", "@tank", "@fart", "@mancho_man", "@dick"], missing_tags
   end
+
+  test "should return proper friends and tags missing" do 
+    tags = ["@Jay", "@frank"]
+    share_with_users, missing_tags = Friend.find_valid_friends_for_user(users(:matt), tags)
+
+    assert_equal( {"@Jay" => users(:jay).id}, share_with_users)
+    assert_equal ["@frank"], missing_tags
+  end   
 
   # -------------------------------------------------------------------------------------------
   # parse_tag_array ---------------------------------------------------------------------------
@@ -158,7 +318,7 @@ class FriendTest < ActiveSupport::TestCase
     assert_equal ["@matt"], tag_array
   end
 
-  test "should return a single tag and the descriptionwhen tag is in the middle" do
+  test "should return a single tag and the description when tag is in the middle" do
     description, tag_array = Friend.parse_tag_array "This is a simple @matt description"
     assert_equal "This is a simple description", description
     assert_equal ["@matt"], tag_array
@@ -216,5 +376,11 @@ class FriendTest < ActiveSupport::TestCase
     description, tag_array = Friend.parse_tag_array "@flying billy bishop @goes@to@war mofo!"
     assert_equal "billy bishop mofo!", description
     assert_equal ["@flying", "@goes", "@to", "@war"], tag_array
+  end
+
+  test "should return tags and description from a complicated string with commas" do 
+    description, tag_array = Friend.parse_tag_array "This is a simple @matt, @pam description @john,@mau"
+    assert_equal "This is a simple description", description
+    assert_equal ["@matt", "@pam", "@john", "@mau"], tag_array
   end
 end

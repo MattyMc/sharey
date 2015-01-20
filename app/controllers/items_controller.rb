@@ -12,11 +12,13 @@ class ItemsController < ApplicationController
   # -------------------------------------------------------------------------------------------
   # Actions -----------------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------  
+  # TODO: Make sure if a user deletes an item and then resaves it, that it becomes "undeleted"
 
   def create_or_update
     item = Item.create_or_update_from_item_params_and_user item_params, user
-    render json:{modal: {headline: "Saved!", messages:item.messages } }, status: :ok
+    render json:item.modal_response, status: :ok
   rescue StandardError => e
+    # TODO: Help generate better error responses
     render json:{modal: {headline: "", messages:[e.message] } }, status: :bad_request
   end
 

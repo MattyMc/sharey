@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(version: 20150116202836) do
   add_index "items", ["category_id"], name: "index_items_on_category_id", using: :btree
   add_index "items", ["document_id"], name: "index_items_on_document_id", using: :btree
   add_index "items", ["from_user_id"], name: "index_items_on_from_user_id", using: :btree
+  add_index "items", ["user_id", "document_id"], name: "index_items_on_user_id_and_document_id", unique: true, using: :btree
   add_index "items", ["user_id"], name: "index_items_on_user_id", using: :btree
 
   create_table "usage_data", force: :cascade do |t|
