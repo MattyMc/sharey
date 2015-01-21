@@ -22,11 +22,11 @@ module ItemMessages
 
   def messages
     m = []
-    m << self.missing_tags_message unless self.notes["tagged_users"].empty?
+    m << self.success_message 
+    m << self.missing_tags_message unless self.notes["missing_tags"].empty?
     m << self.tagged_users_message unless self.notes["tagged_users"].empty?
     m << self.already_shared_with_message unless self.notes["already_shared_with"].empty?
     m << self.already_saved_message unless self.notes["already_saved"].empty?
-    m << self.success_message if m.length == 0
     return m
   end
 
@@ -34,6 +34,12 @@ module ItemMessages
   # Tag Messages ------------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------
   # TODO: Find a way to randomize these messages and make them hilarious
+
+  def success_message
+    new_item = self.notes["new_item"]
+    return "Our tiny elves are gently placing this website in a secure place for you." if new_item 
+    return "You already had this one saved, so we updated the category and description for you." unless new_item
+  end
 
   def missing_tags_message
     tags = self.notes["missing_tags"]
@@ -54,12 +60,6 @@ module ItemMessages
     tags = self.notes["already_saved"]
     temp = tags.count == 1 ? "has" : "have"
     format_list(tags,"and") + " already #{temp} this item saved!"
-  end
-
-  def success_message
-    new_item = self.notes["new_item"]
-    return "Our tiny elves are gently placing this website in a secure place for you." if new_item 
-    return "You already had this one saved, so we updated the category and description for you." unless new_item
   end
 
   # -------------------------------------------------------------------------------------------

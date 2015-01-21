@@ -58,7 +58,162 @@ class ItemTest < ActiveSupport::TestCase
     assert_equal String, modal["modal"]["headline"].class
     assert_equal Array, modal["modal"]["messages"].class
     assert_equal String, modal["modal"]["messages"][0].class
+  end   
+
+  test "should return at least one message if there are no tags and the item is new" do
+    item = Item.first
+    item.notes = {
+      "tagged_users" => [], 
+      "missing_tags" => [], 
+      "already_saved" => [],
+      "already_shared_with" => [], 
+      "new_item" => true}
+
+    modal = item.modal_response
+
+    refute modal["modal"].blank?
+    refute modal["modal"]["headline"].blank?
+    refute modal["modal"]["messages"].empty?
+    
+    assert_equal String, modal["modal"]["headline"].class
+    assert_equal Array, modal["modal"]["messages"].class
+    assert_equal String, modal["modal"]["messages"][0].class
+
+    assert_operator 1, :<=, modal["modal"]["messages"].length, "should have at least one message: #{modal["modal"]["messages"].inspect}"
+  end   
+
+  test "should return at least one message if there are no tags and the item exists" do
+    item = Item.first
+    item.notes = {
+      "tagged_users" => [], 
+      "missing_tags" => [], 
+      "already_saved" => [],
+      "already_shared_with" => [], 
+      "new_item" => false}
+
+    modal = item.modal_response
+
+    refute modal["modal"].blank?
+    refute modal["modal"]["headline"].blank?
+    refute modal["modal"]["messages"].empty?
+    
+    assert_equal String, modal["modal"]["headline"].class
+    assert_equal Array, modal["modal"]["messages"].class
+    assert_equal String, modal["modal"]["messages"][0].class
+
+    assert_operator 1, :<=, modal["modal"]["messages"].length, "should have at least one message: #{modal["modal"]["messages"].inspect}"
+  end   
+
+  test "should return at least one message for tagged_users" do
+    item = Item.first
+    item.notes = {
+      "tagged_users" => ["@one", "@two"], 
+      "missing_tags" => [], 
+      "already_saved" => [],
+      "already_shared_with" => [], 
+      "new_item" => true}
+
+    modal = item.modal_response
+
+    refute modal["modal"].blank?
+    refute modal["modal"]["headline"].blank?
+    refute modal["modal"]["messages"].empty?
+    
+    assert_equal String, modal["modal"]["headline"].class
+    assert_equal Array, modal["modal"]["messages"].class
+    assert_equal String, modal["modal"]["messages"][0].class
+
+    assert_operator 2, :<=, modal["modal"]["messages"].length, "should have at least one message: #{modal["modal"]["messages"].inspect}"
+  end   
+
+  test "should return at least one message for missing_tags" do
+    item = Item.first
+    item.notes = {
+      "tagged_users" => [], 
+      "missing_tags" => ["@three", "@four"], 
+      "already_saved" => [],
+      "already_shared_with" => [], 
+      "new_item" => false}
+
+    modal = item.modal_response
+
+    refute modal["modal"].blank?
+    refute modal["modal"]["headline"].blank?
+    refute modal["modal"]["messages"].empty?
+
+    assert_equal String, modal["modal"]["headline"].class
+    assert_equal Array, modal["modal"]["messages"].class
+    assert_equal String, modal["modal"]["messages"][0].class
+
+    assert_operator 2, :<=, modal["modal"]["messages"].length, "should have at least one message: #{modal["modal"]["messages"].inspect}"
+  end   
+
+  test "should return at least one message for already saved" do
+    item = Item.first
+    item.notes = {
+      "tagged_users" => [], 
+      "missing_tags" => [], 
+      "already_saved" => ["@three", "@four"],
+      "already_shared_with" => [], 
+      "new_item" => false}
+
+    modal = item.modal_response
+
+    refute modal["modal"].blank?
+    refute modal["modal"]["headline"].blank?
+    refute modal["modal"]["messages"].empty?
+
+    assert_equal String, modal["modal"]["headline"].class
+    assert_equal Array, modal["modal"]["messages"].class
+    assert_equal String, modal["modal"]["messages"][0].class
+
+    assert_operator 2, :<=, modal["modal"]["messages"].length, "should have at least one message: #{modal["modal"]["messages"].inspect}"
   end  
+
+  test "should return at least one message for already_shared_with" do
+    item = Item.first
+    item.notes = {
+      "tagged_users" => [], 
+      "missing_tags" => [], 
+      "already_saved" => [],
+      "already_shared_with" => ["@three", "@four"], 
+      "new_item" => true}
+
+    modal = item.modal_response
+
+    refute modal["modal"].blank?
+    refute modal["modal"]["headline"].blank?
+    refute modal["modal"]["messages"].empty?
+
+    assert_equal String, modal["modal"]["headline"].class
+    assert_equal Array, modal["modal"]["messages"].class
+    assert_equal String, modal["modal"]["messages"][0].class
+
+    assert_operator 2, :<=, modal["modal"]["messages"].length, "should have at least one message: #{modal["modal"]["messages"].inspect}"
+  end  
+
+  test "should return at least three message for already_shared_with, tagged_users and missing_tags" do
+    item = Item.first
+    item.notes = {
+      "tagged_users" => ["@one", "@two"], 
+      "missing_tags" => ["@three", "@four"], 
+      "already_saved" => [],
+      "already_shared_with" => ["@five", "@six"], 
+      "new_item" => true}
+
+    modal = item.modal_response
+
+    refute modal["modal"].blank?
+    refute modal["modal"]["headline"].blank?
+    refute modal["modal"]["messages"].empty?
+
+    assert_equal String, modal["modal"]["headline"].class
+    assert_equal Array, modal["modal"]["messages"].class
+    assert_equal String, modal["modal"]["messages"][0].class
+
+    assert_operator 4, :<=, modal["modal"]["messages"].length, "should have at least one message: #{modal["modal"]["messages"].inspect}"
+  end  
+
 
   # -------------------------------------------------------------------------------------------
   # validate_item_params ----------------------------------------------------------------------
