@@ -8,7 +8,13 @@ All responses should be of the form:
 
 ####Modals (popups)
 
-    { modal: {headline: "", messages: ["error message 1", "error message 2, ..."] } }
+    { modal: 
+      { 
+        heading: "", 
+        subheading: "", # OPTIONAL
+        messages: ["error message 1", "error message 2, ..."] 
+      }
+    }
 with a :bad_request status (400 or 401) or :success status (200)
 
 *or*
@@ -47,6 +53,7 @@ with a :success status (200)
 
 - Use ```$ thin start --ssl``` although I find the deafult rails server works fine.
 - Note: config.force_ssl has been set to true in both production.rb and development.rb
+- launch ngrok using: ```$ ./ngrok --subdomain=sharey 3000```
 
 ###Notes on sessions and user persistance
 

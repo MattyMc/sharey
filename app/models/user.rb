@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
   has_many :items
   has_many :shared_items, class_name:"Item", foreign_key: "originator_id"
   has_many :categories
+  has_many :usage_data
 
   # Validations -------------------------------------------------------------------------------
   validates :uid, :name, :first_name, :last_name, :email, :token, :expires_at, :image, presence: true
@@ -17,6 +18,14 @@ class User < ActiveRecord::Base
   # Filters -----------------------------------------------------------------------------------
   # Ensures a new sharey_session_cookie is generated whenever the user's attributes are updated
   before_validation :generate_session_cookie
+
+
+  # -------------------------------------------------------------------------------------------
+  # Instance methods --------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------
+  def get_number_of_unviewed_items
+    return UsageDatum.where(user:self, viewed: false).count
+  end
 
 
   # -------------------------------------------------------------------------------------------

@@ -3,6 +3,7 @@ require 'test_helper'
 class UserTest < ActiveSupport::TestCase
   should have_many :items
   should have_many :categories
+  should have_many :usage_data
 
   should have_many(:shared_items).class_name('Item').with_foreign_key('originator_id') 
 
@@ -16,6 +17,85 @@ class UserTest < ActiveSupport::TestCase
   should validate_presence_of :expires_at
   should validate_uniqueness_of :uid
   should validate_uniqueness_of :email
+
+  # -------------------------------------------------------------------------------------------
+  # get_number_of_unviewed_items  ---------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------
+  test "should return 0 if the user has no unread items" do
+    user = users(:mau)
+    assert_equal 0, user.get_number_of_unviewed_items
+  end
+
+  test "should return 1 if the user has one unread items" do
+    user = users(:mau)
+    assert_equal 0, user.get_number_of_unviewed_items
+
+    item_params = {
+      "url" => "www.blah.com", 
+      "title" => "Hamburgers!", 
+      "description" => "@mau Delicious treats!",
+      "category" => "Food"
+    }
+    Item.create_or_update_from_item_params_and_user item_params, users(:matt)
+    
+    assert_equal 1, user.get_number_of_unviewed_items
+  end
+
+  test "should return 2 if the user has two unread items" do
+    user = users(:mau)
+    assert_equal 0, user.get_number_of_unviewed_items
+
+    item_params = {
+      "url" => "www.blah.com", 
+      "title" => "Hamburgers!", 
+      "description" => "@mau Delicious treats!",
+      "category" => "Food"
+    }
+    Item.create_or_update_from_item_params_and_user item_params, users(:matt)
+    
+    item_params = {
+      "url" => "www.blahhhhhhh.com", 
+      "title" => "Hamburgers!", 
+      "description" => "@mau Delicious treats!",
+      "category" => "Food"
+    }
+    Item.create_or_update_from_item_params_and_user item_params, users(:matt)
+  
+    assert_equal 2, user.reload.get_number_of_unviewed_items
+  end
+
+  test "should return 2 if the user has two unread items and should not count a bad request" do
+    user = users(:mau)
+    assert_equal 0, user.get_number_of_unviewed_items
+
+    item_params = {
+      "url" => "www.blah.com", 
+      "title" => "Hamburgers!", 
+      "description" => "@mau Delicious treats!",
+      "category" => "Food"
+    }
+    Item.create_or_update_from_item_params_and_user item_params, users(:matt)
+    
+    item_params = {
+      "url" => "www.blahhhhhhh.com", 
+      "title" => "Hamburgers!", 
+      "description" => "@mau Delicious treats!",
+      "category" => "Food"
+    }
+    Item.create_or_update_from_item_params_and_user item_params, users(:matt)
+    
+    # This one shouldn't count, as it's the same as item#1 above
+    item_params = {
+      "url" => "www.blah.com", 
+      "title" => "Hamburgers!", 
+      "description" => "@mau Delicious treats!",
+      "category" => "Food"
+    }
+    Item.create_or_update_from_item_params_and_user item_params, users(:matt)
+  
+    assert_equal 2, user.reload.get_number_of_unviewed_items
+  end
+
 
   # Make sure the User class responds_to our new method
   test "User should respond to find_or_create_from_google_callback method" do

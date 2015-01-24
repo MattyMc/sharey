@@ -76,4 +76,11 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # TODO: Do I need to do the following like I did with dev and test enviornments?
+  #       The code below ensures my error responses (ie UserNotFound) link to the proper url
+  # Add URL host path for testing:
+  # config.after_initialize do 
+  #   Rails.application.routes.default_url_options[:host] = "https://sharey.ngrok.com"
+  # end
 end

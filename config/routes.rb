@@ -1,8 +1,9 @@
 Rails.application.routes.draw do
   
   get 'items/create_or_update'
+  get 'items/number_of_unviewed_items' => "items#number_of_unviewed_items"
+  post 'items' => "items#create_or_update"
 
-  post 'items/create_or_update'
 
   root 'sessions#index'
   get '/sign_out' => 'sessions#destroy', :as => :sign_out

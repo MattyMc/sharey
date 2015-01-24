@@ -52,10 +52,10 @@ class ItemTest < ActiveSupport::TestCase
     modal = item.modal_response
 
     refute modal["modal"].blank?
-    refute modal["modal"]["headline"].blank?
+    refute modal["modal"]["heading"].blank?
     refute modal["modal"]["messages"].empty?
     
-    assert_equal String, modal["modal"]["headline"].class
+    assert_equal String, modal["modal"]["heading"].class
     assert_equal Array, modal["modal"]["messages"].class
     assert_equal String, modal["modal"]["messages"][0].class
   end   
@@ -72,10 +72,10 @@ class ItemTest < ActiveSupport::TestCase
     modal = item.modal_response
 
     refute modal["modal"].blank?
-    refute modal["modal"]["headline"].blank?
+    refute modal["modal"]["heading"].blank?
     refute modal["modal"]["messages"].empty?
     
-    assert_equal String, modal["modal"]["headline"].class
+    assert_equal String, modal["modal"]["heading"].class
     assert_equal Array, modal["modal"]["messages"].class
     assert_equal String, modal["modal"]["messages"][0].class
 
@@ -94,10 +94,10 @@ class ItemTest < ActiveSupport::TestCase
     modal = item.modal_response
 
     refute modal["modal"].blank?
-    refute modal["modal"]["headline"].blank?
+    refute modal["modal"]["heading"].blank?
     refute modal["modal"]["messages"].empty?
     
-    assert_equal String, modal["modal"]["headline"].class
+    assert_equal String, modal["modal"]["heading"].class
     assert_equal Array, modal["modal"]["messages"].class
     assert_equal String, modal["modal"]["messages"][0].class
 
@@ -116,10 +116,10 @@ class ItemTest < ActiveSupport::TestCase
     modal = item.modal_response
 
     refute modal["modal"].blank?
-    refute modal["modal"]["headline"].blank?
+    refute modal["modal"]["heading"].blank?
     refute modal["modal"]["messages"].empty?
     
-    assert_equal String, modal["modal"]["headline"].class
+    assert_equal String, modal["modal"]["heading"].class
     assert_equal Array, modal["modal"]["messages"].class
     assert_equal String, modal["modal"]["messages"][0].class
 
@@ -138,10 +138,10 @@ class ItemTest < ActiveSupport::TestCase
     modal = item.modal_response
 
     refute modal["modal"].blank?
-    refute modal["modal"]["headline"].blank?
+    refute modal["modal"]["heading"].blank?
     refute modal["modal"]["messages"].empty?
 
-    assert_equal String, modal["modal"]["headline"].class
+    assert_equal String, modal["modal"]["heading"].class
     assert_equal Array, modal["modal"]["messages"].class
     assert_equal String, modal["modal"]["messages"][0].class
 
@@ -160,10 +160,10 @@ class ItemTest < ActiveSupport::TestCase
     modal = item.modal_response
 
     refute modal["modal"].blank?
-    refute modal["modal"]["headline"].blank?
+    refute modal["modal"]["heading"].blank?
     refute modal["modal"]["messages"].empty?
 
-    assert_equal String, modal["modal"]["headline"].class
+    assert_equal String, modal["modal"]["heading"].class
     assert_equal Array, modal["modal"]["messages"].class
     assert_equal String, modal["modal"]["messages"][0].class
 
@@ -182,10 +182,10 @@ class ItemTest < ActiveSupport::TestCase
     modal = item.modal_response
 
     refute modal["modal"].blank?
-    refute modal["modal"]["headline"].blank?
+    refute modal["modal"]["heading"].blank?
     refute modal["modal"]["messages"].empty?
 
-    assert_equal String, modal["modal"]["headline"].class
+    assert_equal String, modal["modal"]["heading"].class
     assert_equal Array, modal["modal"]["messages"].class
     assert_equal String, modal["modal"]["messages"][0].class
 
@@ -204,10 +204,10 @@ class ItemTest < ActiveSupport::TestCase
     modal = item.modal_response
 
     refute modal["modal"].blank?
-    refute modal["modal"]["headline"].blank?
+    refute modal["modal"]["heading"].blank?
     refute modal["modal"]["messages"].empty?
 
-    assert_equal String, modal["modal"]["headline"].class
+    assert_equal String, modal["modal"]["heading"].class
     assert_equal Array, modal["modal"]["messages"].class
     assert_equal String, modal["modal"]["messages"][0].class
 
@@ -659,6 +659,164 @@ class ItemTest < ActiveSupport::TestCase
     assert_equal data_usage_count, UsageDatum.count
   end
 
+  # The following tests ensure the folowing behaviour:
+  #   *an arrow means share 
+  # 
+  #   user1 -> user2   (later)  user3 -> user2       *assume all items shared 
+  #                                                     are the same
+  #   user1 -> user2 -> user3
+  # 
+  #   user1 -> user2 -> user3
+  #                  -> user4
+  # 
+
+  test "should not overwrite item properties if one user shares an item that the other user already has" do
+    item_params = {
+      "url" => "http://someurl.com",
+      "title" => "Hamburgers!", 
+      "description" => "Delicious treats! @matt",
+      "category" => "Food"
+    }    
+
+    doc_count = Document.count
+    data_usage_count = UsageDatum.count
+    matts_items = users(:matt).items.count
+    maus_items = users(:mau).items.count
+    pams_items = users(:pam).items.count
+
+    Item.create_or_update_from_item_params_and_user item_params, users(:mau)
+
+    item_params = {
+      "url" => "http://someurl.com", 
+      "title" => "Hamburgers!", 
+      "description" => "This should not show up! @matt",
+      "category" => "Doesnt matter"
+    }
+
+    Item.create_or_update_from_item_params_and_user item_params, users(:pam)
+    matts_item = users(:matt).items.last
+
+    assert_equal pams_items+1, users(:pam).items.count
+    assert_equal maus_items+1, users(:mau).items.count
+    assert_equal doc_count+1, Document.count
+    assert_equal data_usage_count+3, UsageDatum.count
+
+    assert_equal matts_item.description, "Delicious treats!"
+    assert_equal matts_item.category, nil
+    assert_equal matts_item.document.url, "http://someurl.com"
+    assert_equal matts_item.from_user_id, users(:mau).id
+    # TODO: Try to capture data that is lost if 5 people try to share an item but only one succeeds. 
+    #       We should be able to tell that the item was 'popular'
+  end
+
+  test "should overwrite item properties for matt if mau shares with matt, then matt shares with pam" do
+    item_params = {
+      "url" => "http://someurl.com",
+      "title" => "Hamburgers!", 
+      "description" => "Delicious treats! @matt",
+      "category" => "Food"
+    }    
+
+    doc_count = Document.count
+    data_usage_count = UsageDatum.count
+    matts_items = users(:matt).items.count
+    maus_items = users(:mau).items.count
+    pams_items = users(:pam).items.count
+
+    Item.create_or_update_from_item_params_and_user item_params, users(:mau)
+
+    item_params = {
+      "url" => "http://someurl.com", 
+      "title" => "Hamburgers!", 
+      "description" => "This should show up! @pam",
+      "category" => "matts category"
+    }
+
+    Item.create_or_update_from_item_params_and_user item_params, users(:matt)
+    matts_item = users(:matt).items.last
+    maus_item = users(:mau).items.last
+    pams_item = users(:pam).items.last
+
+    assert_equal pams_items+1, users(:pam).items.count
+    assert_equal matts_items+1, users(:matt).items.count
+    assert_equal maus_items+1, users(:mau).items.count
+    assert_equal doc_count+1, Document.count
+    assert_equal data_usage_count+3, UsageDatum.count
+
+    assert_equal maus_item.description, "Delicious treats!"
+    assert_equal maus_item.category.name, "Food"
+    assert_equal maus_item.document.url, "http://someurl.com"
+    assert_equal maus_item.from_user_id, nil
+
+    assert_equal matts_item.description, "This should show up!"
+    assert_equal matts_item.category.name, "matts category"
+    assert_equal matts_item.document.url, "http://someurl.com"
+    assert_equal matts_item.from_user_id, users(:mau).id
+
+    assert_equal pams_item.description, "This should show up!"
+    assert_equal pams_item.category, nil
+    assert_equal pams_item.document.url, "http://someurl.com"
+    assert_equal pams_item.from_user_id, users(:matt).id
+  end
+
+  test "should overwrite item properties for matt if mau shares with matt, then matt shares with pam and jay" do
+    item_params = {
+      "url" => "http://someurl.com",
+      "title" => "Hamburgers!", 
+      "description" => "Delicious treats! @matt",
+      "category" => "Food"
+    }    
+
+    doc_count = Document.count
+    data_usage_count = UsageDatum.count
+    matts_items = users(:matt).items.count
+    maus_items = users(:mau).items.count
+    pams_items = users(:pam).items.count
+    jays_items = users(:jay).items.count
+
+    Item.create_or_update_from_item_params_and_user item_params, users(:mau)
+
+    item_params = {
+      "url" => "http://someurl.com", 
+      "title" => "Hamburgers!", 
+      "description" => "This should show up! @pam @jay",
+      "category" => "matts category"
+    }
+
+    Item.create_or_update_from_item_params_and_user item_params, users(:matt)
+    matts_item = users(:matt).items.last
+    maus_item = users(:mau).items.last
+    pams_item = users(:pam).items.last
+    jays_item = users(:jay).items.last
+
+    assert_equal pams_items+1, users(:pam).items.count
+    assert_equal matts_items+1, users(:matt).items.count
+    assert_equal maus_items+1, users(:mau).items.count
+    assert_equal jays_items+1, users(:jay).items.count
+    assert_equal doc_count+1, Document.count
+    assert_equal data_usage_count+4, UsageDatum.count
+
+    assert_equal maus_item.description, "Delicious treats!"
+    assert_equal maus_item.category.name, "Food"
+    assert_equal maus_item.document.url, "http://someurl.com"
+    assert_equal maus_item.from_user_id, nil
+
+    assert_equal matts_item.description, "This should show up!"
+    assert_equal matts_item.category.name, "matts category"
+    assert_equal matts_item.document.url, "http://someurl.com"
+    assert_equal matts_item.from_user_id, users(:mau).id
+
+    assert_equal pams_item.description, "This should show up!"
+    assert_equal pams_item.category, nil
+    assert_equal pams_item.document.url, "http://someurl.com"
+    assert_equal pams_item.from_user_id, users(:matt).id
+
+    assert_equal jays_item.description, "This should show up!"
+    assert_equal jays_item.category, nil
+    assert_equal jays_item.document.url, "http://someurl.com"
+    assert_equal jays_item.from_user_id, users(:matt).id
+  end
+
   # Testing item.notes[] ----------------------------------------------------------------
 
   test "should create and share a new item with two users and add two users to notes['tagged_users']" do
@@ -673,7 +831,7 @@ class ItemTest < ActiveSupport::TestCase
 
     item = Item.create_or_update_from_item_params_and_user item_params, users(:matt)
 
-    # assert_equal "Saved and Shared!", item.headline
+    # assert_equal "Saved and Shared!", item.heading
     assert_equal ["@Mau", "@Jay"].sort, item.notes["tagged_users"].sort, "should add user(s) to notes['tagged_users']"
     assert_equal true, item.notes["new_item"]
     # assert("Sharey'd this with @Mau and @Jay!".in? item.messages)
@@ -691,7 +849,7 @@ class ItemTest < ActiveSupport::TestCase
 
     item = Item.create_or_update_from_item_params_and_user item_params, users(:matt)
 
-    # assert_equal "Saved and Shared!", item.headline
+    # assert_equal "Saved and Shared!", item.heading
     assert_equal ["@Jay"], item.notes["tagged_users"], "should add user(s) to notes['tagged_users']"
     # assert("Sharey'd this with @Jay!".in? item.messages)
     assert_equal ["@john"], item.notes["missing_tags"], "should add user(s) to notes['missing_tags']"
@@ -711,7 +869,7 @@ class ItemTest < ActiveSupport::TestCase
 
     item = Item.create_or_update_from_item_params_and_user item_params, users(:matt)
 
-    # assert_equal "Saved and Shared!", item.headline
+    # assert_equal "Saved and Shared!", item.heading
     assert_equal ["@Jay"], item.notes["tagged_users"], "should add user(s) to notes['tagged_users']"
     assert_equal ["@john", "@peter"].sort, item.notes["missing_tags"].sort, "should add user(s) to notes['missing_tags']"
     assert_equal true, item.notes["new_item"]
@@ -729,7 +887,7 @@ class ItemTest < ActiveSupport::TestCase
 
     item = Item.create_or_update_from_item_params_and_user item_params, users(:matt)
 
-    # assert_equal "Saved and Shared!", item.headline
+    # assert_equal "Saved and Shared!", item.heading
     assert_equal ["@Jay"], item.notes["tagged_users"], "should add user(s) to notes['tagged_users']"
     assert_equal ["@sam", "@john", "@peter"].sort, item.notes["missing_tags"].sort, "should add user(s) to notes['missing_tags']"
     assert_equal true, item.notes["new_item"]

@@ -41,4 +41,9 @@ Rails.application.configure do
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
+
+  # Add URL host path for testing:
+  config.after_initialize do 
+    Rails.application.routes.default_url_options[:host] = "https://sharey.ngrok.com"
+  end
 end

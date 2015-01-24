@@ -12,7 +12,7 @@ class Friend < ActiveRecord::Base
     return errors.add(:tag, "must not be nil") unless !tag.nil? and !downcase_tag.nil?
     errors.add(:tag, "must begin with an @ symbol") unless tag.start_with?("@") and downcase_tag.start_with?("@")
   end
-  validates :downcase_tag, :tag, :confirmed, presence: true
+  validates :downcase_tag, :tag, :confirmed, :user, :receiving_user, presence: true
   validates :downcase_tag, :tag, format:{ without: /\s/ }
   validates :downcase_tag, :tag, format:{ without: /\./ }
   validates :downcase_tag, :tag, format:{ without: /\,/ }

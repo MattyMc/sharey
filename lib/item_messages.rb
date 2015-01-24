@@ -2,7 +2,8 @@ module ItemMessages
   def modal_response
     {modal: 
       {
-        headline: self.headline,
+        heading: self.heading,
+        subheading: self.subheading,
         messages: self.messages
       }
     }.with_indifferent_access
@@ -14,10 +15,14 @@ module ItemMessages
   #   already_saved:       []
   #   already_shared_with: []
   #   new_item:            true | false
-  def headline
+  def heading
     response = self.notes["new_item"] ? "Saved" : "Updated"
     response += self.notes["tagged_users"].empty? ? "!" : " and Shared!"
     response
+  end
+
+  def subheading
+    self.messages.count == 1 ? "" : "A few things you should know..."
   end
 
   def messages

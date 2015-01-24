@@ -6,6 +6,52 @@ class ItemsControllerTest < ActionController::TestCase
     ActiveSupport::JSON.decode @response.body
   end
 
+
+  # -------------------------------------------------------------------------------------------
+  # get :number_of_unviewed_items -------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------
+  test "should return an error if no user is found" do
+    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie + "3rf3"
+    get :number_of_unviewed_items
+
+    assert_response :bad_request
+    assert @response.body.empty?
+  end
+
+  test "should return 0 if no new items" do
+    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
+    get :number_of_unviewed_items
+
+    assert_response :success
+    assert_equal 0, json_response
+  end
+
+  test "should return 1 if one new items" do
+    cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie
+    get :number_of_unviewed_items
+
+    assert_response :success
+    assert_equal 1, json_response
+  end
+
+  test "should return 2 if two new items" do
+    item_params = {
+      "url" => "www.somethingg.com",
+      "title" => "Hamburgers!", 
+      "description" => "Delicious treats! @matt",
+      "category" => "Food"
+    }
+    
+    user = users(:pam)
+    item = Item.create_or_update_from_item_params_and_user item_params, user
+
+    cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie
+    get :number_of_unviewed_items
+
+    assert_response :success
+    assert_equal 2, json_response
+  end
+
   # -------------------------------------------------------------------------------------------
   # post :create_or_update --------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------
@@ -17,14 +63,15 @@ class ItemsControllerTest < ActionController::TestCase
 
     # Make sure deprecated responses are gone
     refute json_response["result"]  
-    refute json_response["headline"]  
+    refute json_response["heading"]  
     refute json_response["messages"]  
 
     # Test response object
-    assert json_response["modal"]["headline"]  
+    assert json_response["modal"]["heading"]  
     assert json_response["modal"]["messages"]  
     assert_equal Array, json_response["modal"]["messages"].class
-    assert_equal "Who are you, again?", json_response["modal"]["messages"][0]
+    assert_operator 1, :<=, json_response["modal"]["messages"].count, "should have at least one message"
+    assert_equal String, json_response["modal"]["subheading"].class
   end
 
   test "should respond with a properly formatted JSON reply on success" do
@@ -40,10 +87,13 @@ class ItemsControllerTest < ActionController::TestCase
     assert_response :success 
 
     # Test response object
-    assert json_response["modal"]["headline"]  
+    assert json_response["modal"]["heading"]  
     assert json_response["modal"]["messages"]  
     assert_equal Array, json_response["modal"]["messages"].class
-    assert_equal "Saved!", json_response["modal"]["headline"]
+    assert_equal String, json_response["modal"]["heading"].class
+    refute json_response["modal"]["heading"].empty?
+    assert_operator 1, :<=, json_response["modal"]["messages"].count, "should have at least one message"
+    assert_equal String, json_response["modal"]["subheading"].class
   end
 
   test "should respond with an error if url is not defined" do
@@ -59,10 +109,13 @@ class ItemsControllerTest < ActionController::TestCase
     }
     # Test response object
     assert_response :bad_request
-    assert json_response["modal"]["headline"]  
+    assert json_response["modal"]["heading"]  
     assert json_response["modal"]["messages"]  
     assert_equal Array, json_response["modal"]["messages"].class
-    assert_equal "Please enter a description!", json_response["modal"]["messages"][0]
+    assert_operator 1, :<=, json_response["modal"]["messages"].count
+    refute json_response["modal"]["heading"].empty?  
+    refute json_response["modal"]["subheading"].empty? 
+
   end
 
   test "should respond with an error if description is not defined" do
@@ -78,10 +131,13 @@ class ItemsControllerTest < ActionController::TestCase
     }
     # Test response object
     assert_response :bad_request
-    assert json_response["modal"]["headline"]  
+    assert json_response["modal"]["heading"]  
     assert json_response["modal"]["messages"]  
     assert_equal Array, json_response["modal"]["messages"].class
-    assert_equal "Please enter a description!", json_response["modal"]["messages"][0]
+    assert_operator 1, :<=, json_response["modal"]["messages"].count
+    refute json_response["modal"]["heading"].empty?  
+    refute json_response["modal"]["subheading"].empty? 
+    assert_operator 1, :<=, json_response["modal"]["messages"].count
   end
 
   test "should respond with an error if neither the description or url is not defined" do
@@ -97,10 +153,35 @@ class ItemsControllerTest < ActionController::TestCase
     }
     # Test response object
     assert_response :bad_request
-    assert json_response["modal"]["headline"]  
+    assert json_response["modal"]["heading"]  
     assert json_response["modal"]["messages"]  
     assert_equal Array, json_response["modal"]["messages"].class
-    assert_equal "Please enter a description!", json_response["modal"]["messages"][0]
+    assert_operator 1, :<=, json_response["modal"]["messages"].count
+    refute json_response["modal"]["heading"].empty?  
+    refute json_response["modal"]["subheading"].empty? 
+    assert_operator 1, :<=, json_response["modal"]["messages"].count
+  end
+
+  test "should respond with an error if cannot locate user" do
+    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie + "jskfd"
+    
+    post :create_or_update, {
+    item: {
+      url: "",
+      category: "some category",
+      description: "",
+      title: "some website title"
+      }
+    }
+    # Test response object
+    assert_response :bad_request
+    assert json_response["modal"]["heading"]  
+    assert json_response["modal"]["messages"]  
+    assert_equal Array, json_response["modal"]["messages"].class
+    assert_operator 1, :<=, json_response["modal"]["messages"].count
+    refute json_response["modal"]["heading"].empty?  
+    refute json_response["modal"]["subheading"].empty? 
+    assert_operator 1, :<=, json_response["modal"]["messages"].count
   end
 
   # --------------- testing response values  -------------------------------------------------  
@@ -118,7 +199,7 @@ class ItemsControllerTest < ActionController::TestCase
   # Here, I'm only testing (for now) that in each case we receive some sort of response
   # (NOTE: The error outcome is tested above)
 
-  test "should respond with proper headline and messages when creating an item for one user" do
+  test "should respond with proper heading and messages when creating an item for one user" do
     cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
     post :create_or_update, {
     item: {
@@ -131,12 +212,13 @@ class ItemsControllerTest < ActionController::TestCase
     assert_response :success 
 
     # Test response object
-    refute json_response["modal"]["headline"].blank?, json_response["modal"]["headline"]
+    refute json_response["modal"]["heading"].blank?, json_response["modal"]["heading"]
     refute json_response["modal"]["messages"].empty?, json_response["modal"]["messages"]
     assert_equal Array, json_response["modal"]["messages"].class
+    assert_equal String, json_response["modal"]["subheading"].class
   end
 
-  test "should respond with proper headline and messages when creating an item for one user with tags" do
+  test "should respond with proper heading and messages when creating an item for one user with tags" do
     cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
     post :create_or_update, {
     item: {
@@ -149,13 +231,14 @@ class ItemsControllerTest < ActionController::TestCase
     assert_response :success 
 
     # Test response object
-    refute json_response["modal"]["headline"].blank?
+    refute json_response["modal"]["heading"].blank?
     refute json_response["modal"]["messages"].empty?
     assert_equal Array, json_response["modal"]["messages"].class
+    assert_equal String, json_response["modal"]["subheading"].class
   end
 
   # TODO: Find a way to test that the responses are coming in properly, ie with a proper format
-  test "should respond with proper headline and messages when updating an item for one user" do
+  test "should respond with proper heading and messages when updating an item for one user" do
     cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
     post :create_or_update, {
     item: {
@@ -168,12 +251,13 @@ class ItemsControllerTest < ActionController::TestCase
     assert_response :success 
 
     # Test response object
-    refute json_response["modal"]["headline"].blank?
+    refute json_response["modal"]["heading"].blank?
     refute json_response["modal"]["messages"].empty?
     assert_equal Array, json_response["modal"]["messages"].class
+    assert_equal String, json_response["modal"]["subheading"].class
   end
 
-  test "should respond with proper headline and messages when updating an item for one user with tags" do
+  test "should respond with proper heading and messages when updating an item for one user with tags" do
     cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
     post :create_or_update, {
     item: {
@@ -186,9 +270,10 @@ class ItemsControllerTest < ActionController::TestCase
     assert_response :success 
 
     # Test response object
-    refute json_response["modal"]["headline"].blank?
+    refute json_response["modal"]["heading"].blank?
     refute json_response["modal"]["messages"].empty?
     assert_equal Array, json_response["modal"]["messages"].class
+    assert_equal String, json_response["modal"]["subheading"].class
   end
 
   # --------------- these tests are  covered in unit tests now --------------------------------

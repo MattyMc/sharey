@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(version: 20150116202836) do
 
   create_table "usage_data", force: :cascade do |t|
     t.integer  "item_id",                     null: false
+    t.integer  "user_id",                     null: false
     t.boolean  "viewed",      default: true
     t.boolean  "deleted",     default: false
     t.integer  "click_count", default: 0
@@ -75,6 +76,7 @@ ActiveRecord::Schema.define(version: 20150116202836) do
   end
 
   add_index "usage_data", ["item_id"], name: "index_usage_data_on_item_id", using: :btree
+  add_index "usage_data", ["user_id"], name: "index_usage_data_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "uid"
@@ -100,4 +102,5 @@ ActiveRecord::Schema.define(version: 20150116202836) do
   add_foreign_key "items", "documents"
   add_foreign_key "items", "users"
   add_foreign_key "usage_data", "items"
+  add_foreign_key "usage_data", "users"
 end

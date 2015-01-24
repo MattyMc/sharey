@@ -25,11 +25,3 @@ to_matt_from_pam:
   category: nil
   description: you guys should read this
   original_request: nil
-
-to_jay_from_pam:
-  document: insightful_story
-  user: jay
-  from_user: pam
-  category: nil
-  description: you guys should read this
-  original_request: nil

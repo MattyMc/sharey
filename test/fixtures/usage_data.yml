@@ -3,21 +3,24 @@
 
 matts_item_data:
   item: matts_item
-  viewed: false
+  user: matt
+  viewed: true
   deleted: false
   click_count: 0
   shared: false
+
+pams_item_data:
+  item: pams_shared_item
+  user: pam
+  viewed: true
+  deleted: false
+  click_count: 0
+  shared: true
 
 to_matt_from_pam_item_data:
   item: to_matt_from_pam
-  viewed: true
-  deleted: false
-  click_count: 1
-  shared: false
-
-to_jay_from_pam_item_data:
-  item: to_jay_from_pam
+  user: matt
   viewed: false
   deleted: false
-  click_count: 0
+  click_count: 1
   shared: false

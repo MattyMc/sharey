@@ -4,6 +4,8 @@ class FriendTest < ActiveSupport::TestCase
   should belong_to :user
   should belong_to(:receiving_user).class_name('User').with_foreign_key('receiving_user_id')
 
+  should validate_presence_of :user
+  should validate_presence_of :receiving_user
   should validate_presence_of :downcase_tag
   should validate_presence_of :tag
   should validate_presence_of :confirmed

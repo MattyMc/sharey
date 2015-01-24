@@ -1,8 +1,10 @@
 require 'item_messages'
+require 'custom_errors'
 
 class Item < ActiveRecord::Base
   # Modules ----------------------------------------------------------------------------------- 
   include ItemMessages 
+  include CustomErrors
   
   # Attributes -------------------------------------------------------------------------------- 
   attr_accessor :notes
@@ -23,6 +25,7 @@ class Item < ActiveRecord::Base
   after_initialize :set_defaults
 
   def set_defaults 
+    # These are used by the module ItemMessages
     self.notes = {
       "tagged_users" => [], 
       "missing_tags" => [], 
@@ -32,8 +35,7 @@ class Item < ActiveRecord::Base
   end
 
   # Errors ------------------------------------------------------------------------------------
-  class UserNotFound < StandardError; end
-  class InvalidItemParams < StandardError; end
+  # ------- now located in custom_errors module -----------------------------------------------
   
 
 
@@ -108,15 +110,15 @@ class Item < ActiveRecord::Base
     # Validations:
     # User must be defined (ie must have a valid sharey_session_cookie)
     # url and description attributes must be defined
-    raise InvalidItemParams, "Please enter a description!" if item_params["url"].nil? or item_params["description"].nil?
-    raise InvalidItemParams, "Please enter a description!"  unless item_params["url"].present? and item_params["description"].present?
+    raise InvalidItemParams if item_params["url"].nil? or item_params["description"].nil?
+    raise InvalidItemParams unless item_params["url"].present? and item_params["description"].present?
 
     item_params.values.map(&:strip!)
     [item_params["url"], item_params["title"], item_params["description"], item_params["category"]]
   end
 
   def create_usage_datum
-    usage_datum = UsageDatum.where(item: self).first_or_initialize
+    usage_datum = UsageDatum.where(item: self, user: self.user).first_or_initialize
     # If item is being created for a different user, set the below default values
     if self.from_user_id
       usage_datum.viewed = false 
