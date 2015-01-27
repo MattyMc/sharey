@@ -1,9 +1,11 @@
 require 'net/http'
 require 'json'
 require 'user_tests'
+require 'custom_errors'
 
 class User < ActiveRecord::Base
   include UserTests
+  include CustomErrors
 
   # Relationships -----------------------------------------------------------------------------
   has_many :items
@@ -25,6 +27,50 @@ class User < ActiveRecord::Base
   # -------------------------------------------------------------------------------------------
   def get_number_of_unviewed_items
     return UsageDatum.where(user:self, viewed: false).count
+  end
+
+  def last_n_items n
+    raise NoItemsFound if self.items.count == 0
+
+    # Item.joins(:usage_datum).where(user:u, usage_data: {viewed:true}).limit(1).includes(:category)
+    unviewed_items = Item.joins(:usage_datum).where(user: self, usage_data: {viewed: false}).limit(n).includes(:category, :document, :usage_datum)
+
+    if !unviewed_items.nil? and unviewed_items.count == n
+      return_items = unviewed_items
+    else
+      viewed_items = Item.joins(:usage_datum).includes(:category, :document, :usage_datum).where(user: self, usage_data: {viewed: true}).last(n-unviewed_items.count)
+      return_items = unviewed_items + viewed_items
+    end
+
+    # Get the tags, flatten them
+    tags = Friend.where(user: self).pluck("receiving_user_id", "tag").flatten
+
+    # Get the attributes we want
+    return_items = return_items.map {|i| 
+      { 
+        "description" => i.description, 
+        "url" => i.document.url, 
+        "viewed" => i.usage_datum.viewed,  
+        "from_user_tag" => i.from_user_id.nil? ? nil : tags[tags.index(i.from_user_id)+1], 
+        "destroy_url" => "items/#{i.id}",
+        "category_name" => i.category.nil? ? nil : i.category.name,
+        "updated_at" => i.updated_at
+      }
+    }
+
+    # structure the data by category
+    return_items = return_items.group_by { |i| i["category_name"]}
+
+    # Sort items in each category by updated_at; newest items first, exculde unwanted attributes
+    return_items.each do |key, value| 
+      value = value.sort! { |a,b| 
+        b["updated_at"] <=> a["updated_at"] 
+      }
+      value.each { |i| i.except! "category_name", "updated_at" }
+    end
+
+    # TODO: Return "from_user" as categories?
+    return_items
   end
 
 

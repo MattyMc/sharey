@@ -4,16 +4,38 @@
 matts_item:
   document: some_video
   user: matt
-  from_user: nil
+  from_user: 
   category: videos
   description: this is some item that matt shared
   original_request: this is some item that matt shared
+  updated_at: <%= Time.now - 10.days %>
+  created_at: <%= Time.now - 10.days %>
+
+matts_item_1:
+  document: some_site_1
+  user: matt
+  from_user: 
+  category: videos
+  description: this is some item1 that matt shared
+  original_request: this is some item1 that matt shared
+  updated_at: <%= Time.now - 5.days %>
+  created_at: <%= Time.now - 5.days %>
+
+matts_item_2:
+  document: some_site_2
+  user: matt
+  from_user: 
+  category: 
+  description: this is some item2 that matt shared
+  original_request: this is some item that matt shared
+  updated_at: <%= Time.now - 7.days %>
+  created_at: <%= Time.now - 7.days %>
 
 # Pam made an item, shared it with matt and jay
 pams_shared_item:
   document: insightful_story
   user: pam
-  from_user: nil
+  from_user: 
   category: funny
   description: you guys should read this
   original_request: you guys should read this @matt @jay
@@ -22,6 +44,27 @@ to_matt_from_pam:
   document: insightful_story
   user: matt
   from_user: pam
-  category: nil
+  category: 
   description: you guys should read this
-  original_request: nil
+  original_request: you guys should read this
+  updated_at: <%= Time.now - 8.days %>
+  created_at: <%= Time.now - 8.days %>
+
+# Jay made an item, shared it with Matt
+jays_item_1:
+  document: some_site_3
+  user: jay
+  from_user: 
+  category: 
+  description: this is some item2 that jay shared
+  original_request: this is some item that jay shared
+
+to_matt_from_jay:
+  document: some_site_3
+  user: matt
+  from_user: jay
+  category: 
+  description: this is some item2 that jay shared
+  original_request: this is some item that jay shared
+  updated_at: <%= Time.now - 5.days %>
+  created_at: <%= Time.now - 5.days %>

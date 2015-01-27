@@ -20,20 +20,21 @@ with a :bad_request status (400 or 401) or :success status (200)
 *or*
 
 ####Listing Items
-    { items: 
+    { categories: 
       { 
-        videos:
-        {
-          description: "",
-          url: "",
-          TODO: ADD MORE,
-        },
-        programming:
-        {
-          description: "",
-          url: "",
-          TODO: ADD MORE,
-        }
+        nil:   #ie no category
+          [ 
+          {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" },       
+          {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" },       
+          {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" }      
+          ]
+      },
+      { 
+        "videos": 
+          [ 
+          {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" },       
+          {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" }      
+          ]
       }
     }
 with a :success status (200)

@@ -41,4 +41,23 @@ module CustomErrors
     end
   end
 
+  class NoItemsFound < StandardError
+    # TODO: Make the response to this a flash message
+    include Rails.application.routes.url_helpers
+
+    def initialize
+      @message = {}
+      @message["messages"] = []
+
+      @message["heading"] = "Ummm..."
+      @message["subheading"] = "You haven't saved anything yet"
+      @message["messages"] << "Maybe you were expecting something from a friend?"
+      @message["messages"] << "Sharey'ing is caring"
+    end
+
+    def modal_response
+      { "modal" => @message }
+    end
+  end
+
 end

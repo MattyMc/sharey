@@ -19,6 +19,255 @@ class UserTest < ActiveSupport::TestCase
   should validate_uniqueness_of :email
 
   # -------------------------------------------------------------------------------------------
+  # last_n_items n  ---------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------
+  # { categories: 
+  #   { 
+  #     category_name: "videos",
+  #     items: 
+  #       [ 
+  #       {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" },       
+  #       {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" },       
+  #       {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" }      
+  #       ]
+  #   },
+  #   { 
+  #     category_name: "articles",
+  #     items: 
+  #       [ 
+  #       {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" },       
+  #       {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" }      
+  #       ]
+  #   }
+  # }
+  test "should have last_n_items defined" do 
+    assert users(:mau).respond_to?(:last_n_items), "should respond to method call"
+  end
+
+  test "should raise an exception and return a flash error if the user has no items saved" do
+    user = users(:mau)
+    assert_raises(CustomErrors::NoItemsFound) { user.last_n_items 10 }
+  end
+
+  test "should return one object with for a user who has one object saved" do
+    user = users(:pam)
+
+    count = 0 
+    results = user.last_n_items(10)
+    results.keys.each { |key| count += results[key].count}
+
+    assert_equal 1, count
+  end
+
+  test "should return five objects with for a user who has two objects saved" do
+    user = users(:matt)
+
+    count = 0 
+    results = user.last_n_items(10)
+    results.keys.each { |key| count += results[key].count}
+
+    assert_equal 5, count, results.inspect
+  end
+
+  test "should return exactly 2 items" do
+    user = users(:matt)
+
+    count = 0 
+    results = user.last_n_items(2)
+    results.keys.each { |key| count += results[key].count}
+
+    assert_equal 2, count
+  end
+
+  test "should return exactly 4 items" do
+    user = users(:matt)
+
+    count = 0 
+    results = user.last_n_items(4)
+    results.keys.each { |key| count += results[key].count}
+
+    assert_equal 4, count
+  end
+
+  test "should return exactly 5 items if n is equal to the number of items" do
+    user = users(:matt)
+
+    count = 0 
+    results = user.last_n_items(5)
+    results.keys.each { |key| count += results[key].count}
+
+    assert_equal 5, count, results.inspect
+  end
+
+  test "should return exactly 5 items if n is greater than the number of items the user has" do
+    # Assuming that exactly 5 items are create in items.yml
+    user = users(:matt)
+
+    count = 0 
+    results = user.last_n_items(10)
+    results.keys.each { |key| count += results[key].count}
+
+    assert_equal 5, count
+  end
+
+  test "should return shared items first" do
+    user = users(:matt)
+    is = user.last_n_items(10)
+
+    assert_equal nil, is.keys[0]
+  end
+
+  test "should order items from newest to oldest by updated_at" do
+    user = users(:matt)
+    is = user.last_n_items 10
+
+    # Newest items first in 'videos' category
+    assert_equal items(:matts_item_1).description, is["Videos"][0]["description"]
+    assert_equal items(:matts_item).description, is["Videos"][1]["description"]
+
+    # Newest items first in 'nil'["category"]
+    assert_equal items(:to_matt_from_jay).description, is[nil][0]["description"]
+    assert_equal items(:matts_item_2).description, is[nil][1]["description"]
+    assert_equal items(:to_matt_from_pam).description, is[nil][2]["description"]
+  end
+
+  test "should include all defined categories" do
+    user = users(:matt)
+    is = user.last_n_items 10
+
+    assert_equal [nil, "Videos"], is.keys
+  end
+
+  test "should return a properly structured object" do
+    user = users(:matt)
+    items = user.last_n_items 5
+
+    assert_equal Hash, items.class
+    assert_equal [nil, "Videos"], items.keys
+    assert_equal Array, items[nil].class
+    assert_equal Array, items["Videos"].class
+    assert_equal 2, items["Videos"].count
+    assert_equal 3, items[nil].count
+  end
+
+  test "should contain description attribute in each return object" do
+    user = users(:matt)
+    items = user.last_n_items 5
+
+    items[nil].each do |item|
+      assert_equal Hash, item.class
+      refute item["description"].empty?
+      assert String, item["description"].class
+    end
+    
+    items["Videos"].each do |item|
+      assert_equal Hash, item.class
+      refute item["description"].empty?
+      assert String, item["description"].class
+    end
+  end
+
+  test "should contain url attribute in each return object" do
+    user = users(:matt)
+    items = user.last_n_items 5
+
+    items[nil].each do |item|
+      assert_equal Hash, item.class
+      refute item["url"].empty?
+      assert_equal String, item["url"].class
+    end
+
+    items["Videos"].each do |item|
+      assert_equal Hash, item.class
+      refute item["url"].empty?
+      assert_equal String, item["url"].class
+    end
+  end
+
+  test "should contain viewed attribute in each return object" do
+    user = users(:matt)
+    items = user.last_n_items 5
+
+    items[nil].each do |item|
+      refute item["viewed"].nil?
+    end
+
+    items["Videos"].each do |item|
+      refute item["viewed"].nil?
+    end
+  end
+
+  test "should contain destroy_url attribute in each return object" do
+    user = users(:matt)
+    items = user.last_n_items 5
+
+    items[nil].each do |item|
+      refute item["destroy_url"].nil?
+      assert_equal String, item["destroy_url"].class
+    end
+
+    items["Videos"].each do |item|
+      refute item["destroy_url"].nil?
+      assert_equal String, item["destroy_url"].class
+    end
+  end
+
+  test "should not contain attributes in each item other than description, url, viewed, from_user_tag, destroy_url" do
+    user = users(:matt)
+    items = user.last_n_items 5
+
+    items[nil].each do |item|
+      assert_equal Hash, item.class
+      assert_equal ["description", "url", "viewed", "from_user_tag", "destroy_url"].sort, item.keys.sort
+    end  
+
+    items["Videos"].each do |item|
+      assert_equal Hash, item.class
+      assert_equal ["description", "url", "viewed", "from_user_tag", "destroy_url"].sort, item.keys.sort
+    end  
+  end
+
+  test "should properly set attribute viewed" do
+    user = users(:matt)
+    is = user.last_n_items 10
+
+    is[nil].each do |item|
+      assert_equal Item.find_by(description: item["description"], user:user).usage_datum.viewed, item["viewed"]
+    end
+
+    is["Videos"].each do |item|
+      assert_equal Item.find_by(description: item["description"], user:user).usage_datum.viewed, item["viewed"]
+    end
+  end
+
+  test "should properly set attribute destroy_url" do
+    user = users(:matt)
+    is = user.last_n_items 10
+
+    is[nil].each do |item|
+      attr_test = "items/" + Item.find_by(description: item["description"], user:user).id.to_s
+      assert_equal attr_test, item["destroy_url"]
+    end
+
+    is["Videos"].each do |item|
+      attr_test = "items/" + Item.find_by(description: item["description"], user:user).id.to_s
+      assert_equal attr_test, item["destroy_url"]
+    end
+  end
+
+  test "should properly set attribute from_user_tag" do
+    user = users(:matt)
+    is = user.last_n_items 10
+
+    assert_equal "@Jay", is[nil][0]["from_user_tag"]
+    assert_equal nil, is[nil][1]["from_user_tag"]
+    assert_equal "@pam", is[nil][2]["from_user_tag"]
+    
+    assert_equal nil, is["Videos"][0]["from_user_tag"]
+    assert_equal nil, is["Videos"][1]["from_user_tag"]
+  end
+
+  # -------------------------------------------------------------------------------------------
   # get_number_of_unviewed_items  ---------------------------------------------------------------
   # -------------------------------------------------------------------------------------------
   test "should return 0 if the user has no unread items" do

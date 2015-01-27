@@ -12,7 +12,7 @@ matt_jay:
   downcase_tag: "@jay"
   tag: "@Jay"
   confirmed: true
-  group_id: nil
+  group_id: 
 
 jay_matt:
   user: jay
@@ -20,7 +20,7 @@ jay_matt:
   downcase_tag: "@matt"
   tag: "@Matt"
   confirmed: true
-  group_id: nil
+  group_id: 
 
 matt_mau:
   user: matt
@@ -28,7 +28,7 @@ matt_mau:
   downcase_tag: "@mau"
   tag: "@Mau"
   confirmed: true
-  group_id: nil
+  group_id: 
 
 mau_matt:
   user: mau
@@ -36,7 +36,7 @@ mau_matt:
   downcase_tag: "@matt"
   tag: "@Matt"
   confirmed: true
-  group_id: nil
+  group_id: 
 
 jay_mau:
   user: jay
@@ -44,7 +44,7 @@ jay_mau:
   downcase_tag: "@mau"
   tag: "@Mau"
   confirmed: true
-  group_id: nil
+  group_id: 
 
 mau_jay:
   user: mau
@@ -52,7 +52,7 @@ mau_jay:
   downcase_tag: "@jay"
   tag: "@jay"
   confirmed: true
-  group_id: nil
+  group_id: 
 
 matt_pam:
   user: matt
@@ -60,7 +60,7 @@ matt_pam:
   downcase_tag: "@pam"
   tag: "@pam"
   confirmed: true
-  group_id: nil
+  group_id: 
 
 pam_matt:
   user: pam
@@ -68,4 +68,4 @@ pam_matt:
   downcase_tag: "@matt"
   tag: "@Matt"
   confirmed: true
-  group_id: nil
+  group_id: 

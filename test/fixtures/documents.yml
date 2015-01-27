@@ -9,3 +9,24 @@ insightful_story:
   url: www.somestory.com/omg
   title: My favourite underpants
   originator: pam
+
+some_site_1:
+  url: www.somesite1.com/
+  title: My favourite underpants1
+  originator: matt
+
+some_site_2:
+  url: www.somesite2.com/
+  title: My favourite underpants2
+  originator: matt
+
+some_site_3:
+  url: www.somesite3.com/
+  title: My favourite underpants
+  originator: pam
+
+# Not yet used
+# some_site_4:
+#   url: www.somesite4.com/
+#   title: My favourite underpants4
+#   originator: jay

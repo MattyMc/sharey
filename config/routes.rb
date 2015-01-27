@@ -1,10 +1,12 @@
 Rails.application.routes.draw do
   
+  # API - ItemsController ------------------------------------------------
   get 'items/create_or_update'
-  get 'items/number_of_unviewed_items' => "items#number_of_unviewed_items"
+  get 'items/number_of_unviewed_items'
+  get 'items' => "items#index"
   post 'items' => "items#create_or_update"
 
-
+  # Users - SessionsController -------------------------------------------
   root 'sessions#index'
   get '/sign_out' => 'sessions#destroy', :as => :sign_out
   get "/auth/:provider/callback" => 'sessions#create'

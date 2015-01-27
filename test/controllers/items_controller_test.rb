@@ -6,6 +6,38 @@ class ItemsControllerTest < ActionController::TestCase
     ActiveSupport::JSON.decode @response.body
   end
 
+  # -------------------------------------------------------------------------------------------
+  # get :index --------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------
+  test "should get index" do
+    cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie 
+
+    get :index
+    assert_response :success
+  end
+
+  test "should respond with a modal if user has nothing saved" do
+    cookies[:sharey_session_cookie] = users(:mau).sharey_session_cookie 
+
+    get :index
+    assert_response :bad_request
+
+    assert json_response["modal"]["heading"]
+    assert json_response["modal"]["messages"]  
+    assert_equal Array, json_response["modal"]["messages"].class
+    assert_operator 1, :<=, json_response["modal"]["messages"].count, "should have at least one message"
+  end
+
+  test "should respond with a non-empty Hash of saved items" do
+    cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie 
+
+    get :index
+    assert_response :success
+
+    assert_equal Hash, json_response.class
+    refute json_response.empty?, "response Hash should not be empty"
+  end
+
 
   # -------------------------------------------------------------------------------------------
   # get :number_of_unviewed_items -------------------------------------------------------------
@@ -31,7 +63,7 @@ class ItemsControllerTest < ActionController::TestCase
     get :number_of_unviewed_items
 
     assert_response :success
-    assert_equal 1, json_response
+    assert_equal 2, json_response
   end
 
   test "should return 2 if two new items" do
@@ -49,7 +81,7 @@ class ItemsControllerTest < ActionController::TestCase
     get :number_of_unviewed_items
 
     assert_response :success
-    assert_equal 2, json_response
+    assert_equal 3, json_response
   end
 
   # -------------------------------------------------------------------------------------------
@@ -348,7 +380,6 @@ class ItemsControllerTest < ActionController::TestCase
         }
       }
 
-    assert_equal documents(:some_video).url, Document.last.url
     assert_equal item_count+1, Item.count
     assert_equal document_count, Document.count
     assert_equal category_count+1, Category.count
