@@ -3,8 +3,10 @@ Rails.application.routes.draw do
   # API - ItemsController ------------------------------------------------
   get 'items/create_or_update'
   get 'items/number_of_unviewed_items'
-  get 'items' => "items#index"
-  post 'items' => "items#create_or_update"
+  get 'items' => 'items#index'
+  post 'items' => 'items#create_or_update'
+  delete 'items/:id' => 'items#destroy'
+  get 'items/:id' => 'items#show'
 
   # Users - SessionsController -------------------------------------------
   root 'sessions#index'

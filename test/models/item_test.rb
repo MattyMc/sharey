@@ -38,6 +38,32 @@ class ItemTest < ActiveSupport::TestCase
 
 
   # -------------------------------------------------------------------------------------------
+  # clicked  ----------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------
+  test "should respond to clicked" do
+    item = Item.first
+    assert item.respond_to?(:clicked)
+  end
+
+  test "should update viewed when clicked method is called" do 
+    item = Item.joins(:usage_datum).where(usage_data: {viewed: false}).first    
+    click_count = item.usage_datum.click_count
+
+    item.clicked
+
+    assert_equal true, item.reload.usage_datum.viewed
+  end
+
+  test "should update click_count when clicked method is called" do 
+    item = Item.joins(:usage_datum).where(usage_data: {viewed: false}).first    
+    click_count = item.usage_datum.click_count
+
+    item.clicked
+
+    assert_equal click_count+1, item.reload.usage_datum.click_count
+  end
+
+  # -------------------------------------------------------------------------------------------
   # modal  ------------------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------
   test "should return a properly formatted object" do

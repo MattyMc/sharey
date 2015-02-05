@@ -19,6 +19,47 @@ class UserTest < ActiveSupport::TestCase
   should validate_uniqueness_of :email
 
   # -------------------------------------------------------------------------------------------
+  # destroy_item  -----------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------
+  test "should respond to destroy item method" do
+    user = users(:matt)
+    assert user.respond_to?(:destroy_item), "user should respond_to :destroy_item"
+  end
+
+  test "should set the deleted property of the item to true" do
+    user = users(:matt)
+    item = items(:matts_item)
+    deleted_items = Item.joins(:usage_datum).where(user: user, usage_data: {deleted: true}).count
+
+    user.destroy_item item.id
+
+    assert_equal deleted_items+1, Item.joins(:usage_datum).where(user: user, usage_data: {deleted: true}).count
+    assert item.reload.usage_datum.deleted
+  end
+
+  test "should raise an exception if the item being deleted does not belong to the user" do
+    user = users(:pam)
+    item = items(:matts_item)
+    deleted_items = Item.joins(:usage_datum).where(user: user, usage_data: {deleted: true}).count
+
+    assert_raises(Item::ItemNotFoundForUser) { user.destroy_item item.id }
+
+    assert_equal deleted_items, Item.joins(:usage_datum).where(user: user, usage_data: {deleted: true}).count
+    refute item.reload.usage_datum.deleted
+  end
+
+  test "should raise an exception if the item id does not exist at all" do
+    user = users(:pam)
+    deleted_items = Item.joins(:usage_datum).where(user: user, usage_data: {deleted: true}).count
+
+    assert_raises(Item::ItemNotFoundForUser) { user.destroy_item 2342302 }
+
+    assert_equal deleted_items, Item.joins(:usage_datum).where(user: user, usage_data: {deleted: true}).count
+  end
+
+
+
+  # -------------------------------------------------------------------------------------------
   # last_n_items n  ---------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------
   # { categories: 
@@ -26,17 +67,17 @@ class UserTest < ActiveSupport::TestCase
   #     category_name: "videos",
   #     items: 
   #       [ 
-  #       {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" },       
-  #       {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" },       
-  #       {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" }      
+  #       {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" },       
+  #       {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" },       
+  #       {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" }      
   #       ]
   #   },
   #   { 
   #     category_name: "articles",
   #     items: 
   #       [ 
-  #       {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" },       
-  #       {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" }      
+  #       {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" },       
+  #       {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" }      
   #       ]
   #   }
   # }
@@ -97,6 +138,29 @@ class UserTest < ActiveSupport::TestCase
     results.keys.each { |key| count += results[key].count}
 
     assert_equal 5, count, results.inspect
+  end
+
+  test "should return exactly 4 items if n is equal to the number of items but one has been deleted" do
+    user = users(:matt)
+    user.destroy_item user.items.first.id 
+
+    count = 0 
+    results = user.last_n_items(5)
+    results.keys.each { |key| count += results[key].count}
+
+    assert_equal 4, count
+  end
+
+  test "should return exactly 3 items if n is equal to the number of items but two have been deleted" do
+    user = users(:matt)
+    user.destroy_item user.items.first.id 
+    user.destroy_item user.items.second.id 
+
+    count = 0 
+    results = user.last_n_items(5)
+    results.keys.each { |key| count += results[key].count}
+
+    assert_equal 3, count
   end
 
   test "should return exactly 5 items if n is greater than the number of items the user has" do
@@ -197,33 +261,33 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test "should contain destroy_url attribute in each return object" do
+  test "should contain path attribute in each return object" do
     user = users(:matt)
     items = user.last_n_items 5
 
     items[nil].each do |item|
-      refute item["destroy_url"].nil?
-      assert_equal String, item["destroy_url"].class
+      refute item["path"].nil?
+      assert_equal String, item["path"].class
     end
 
     items["Videos"].each do |item|
-      refute item["destroy_url"].nil?
-      assert_equal String, item["destroy_url"].class
+      refute item["path"].nil?
+      assert_equal String, item["path"].class
     end
   end
 
-  test "should not contain attributes in each item other than description, url, viewed, from_user_tag, destroy_url" do
+  test "should not contain attributes in each item other than description, url, viewed, from_user_tag, path" do
     user = users(:matt)
     items = user.last_n_items 5
 
     items[nil].each do |item|
       assert_equal Hash, item.class
-      assert_equal ["description", "url", "viewed", "from_user_tag", "destroy_url"].sort, item.keys.sort
+      assert_equal ["description", "url", "viewed", "from_user_tag", "path"].sort, item.keys.sort
     end  
 
     items["Videos"].each do |item|
       assert_equal Hash, item.class
-      assert_equal ["description", "url", "viewed", "from_user_tag", "destroy_url"].sort, item.keys.sort
+      assert_equal ["description", "url", "viewed", "from_user_tag", "path"].sort, item.keys.sort
     end  
   end
 
@@ -240,18 +304,18 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test "should properly set attribute destroy_url" do
+  test "should properly set attribute path" do
     user = users(:matt)
     is = user.last_n_items 10
 
     is[nil].each do |item|
       attr_test = "items/" + Item.find_by(description: item["description"], user:user).id.to_s
-      assert_equal attr_test, item["destroy_url"]
+      assert_equal attr_test, item["path"]
     end
 
     is["Videos"].each do |item|
       attr_test = "items/" + Item.find_by(description: item["description"], user:user).id.to_s
-      assert_equal attr_test, item["destroy_url"]
+      assert_equal attr_test, item["path"]
     end
   end
 
@@ -265,6 +329,28 @@ class UserTest < ActiveSupport::TestCase
     
     assert_equal nil, is["Videos"][0]["from_user_tag"]
     assert_equal nil, is["Videos"][1]["from_user_tag"]
+  end
+
+  test "should not contain items where usage_datum.deleted is true" do
+    user = users(:matt)
+
+    first_item = user.items.first
+    second_item = user.items.second
+
+    user.destroy_item first_item.id
+    user.destroy_item second_item.id
+
+    items = user.last_n_items 10
+
+    items[nil].each do |item|
+      refute_equal first_item.description, item["description"], "this item should not be returned"
+      refute_equal second_item.description, item["description"], "this item should not be returned"
+    end  
+
+    items["Videos"].each do |item|
+      refute_equal first_item.description, item["description"], "this item should not be returned"
+      refute_equal second_item.description, item["description"], "this item should not be returned"
+    end  
   end
 
   # -------------------------------------------------------------------------------------------

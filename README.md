@@ -24,16 +24,16 @@ with a :bad_request status (400 or 401) or :success status (200)
       { 
         nil:   #ie no category
           [ 
-          {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" },       
-          {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" },       
-          {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" }      
+          {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" },       
+          {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" },       
+          {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" }      
           ]
       },
       { 
         "videos": 
           [ 
-          {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" },       
-          {description: "", url: "", viewed: boolean, from_user_tag: "", destroy_url: "" }      
+          {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" },       
+          {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" }      
           ]
       }
     }

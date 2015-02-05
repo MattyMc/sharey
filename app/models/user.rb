@@ -25,6 +25,14 @@ class User < ActiveRecord::Base
   # -------------------------------------------------------------------------------------------
   # Instance methods --------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------
+  def destroy_item id
+    item = self.items.includes("usage_datum").where(id: id).first # Not using find since it raises an exception
+    raise ItemNotFoundForUser if item.nil?
+    item.usage_datum.deleted = true
+
+    item.usage_datum.save!
+  end
+
   def get_number_of_unviewed_items
     return UsageDatum.where(user:self, viewed: false).count
   end
@@ -33,12 +41,12 @@ class User < ActiveRecord::Base
     raise NoItemsFound if self.items.count == 0
 
     # Item.joins(:usage_datum).where(user:u, usage_data: {viewed:true}).limit(1).includes(:category)
-    unviewed_items = Item.joins(:usage_datum).where(user: self, usage_data: {viewed: false}).limit(n).includes(:category, :document, :usage_datum)
+    unviewed_items = Item.joins(:usage_datum).where(user: self, usage_data: {viewed: false, deleted: false}).limit(n).includes(:category, :document, :usage_datum)
 
     if !unviewed_items.nil? and unviewed_items.count == n
       return_items = unviewed_items
     else
-      viewed_items = Item.joins(:usage_datum).includes(:category, :document, :usage_datum).where(user: self, usage_data: {viewed: true}).last(n-unviewed_items.count)
+      viewed_items = Item.joins(:usage_datum).includes(:category, :document, :usage_datum).where(user: self, usage_data: {viewed: true, deleted: false}).last(n-unviewed_items.count)
       return_items = unviewed_items + viewed_items
     end
 
@@ -52,7 +60,7 @@ class User < ActiveRecord::Base
         "url" => i.document.url, 
         "viewed" => i.usage_datum.viewed,  
         "from_user_tag" => i.from_user_id.nil? ? nil : tags[tags.index(i.from_user_id)+1], 
-        "destroy_url" => "items/#{i.id}",
+        "path" => "items/#{i.id}",
         "category_name" => i.category.nil? ? nil : i.category.name,
         "updated_at" => i.updated_at
       }

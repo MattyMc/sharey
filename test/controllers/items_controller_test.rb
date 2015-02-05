@@ -7,6 +7,104 @@ class ItemsControllerTest < ActionController::TestCase
   end
 
   # -------------------------------------------------------------------------------------------
+  # get item/:id (:show) ----------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------
+  test "should get show action" do
+    user = users(:matt)
+    cookies[:sharey_session_cookie] = user.sharey_session_cookie
+    
+    get :show, { id: user.items.first.id }
+    assert_response :success
+  end
+
+  test "should return an error if item does not belong to user" do
+    user = users(:matt)
+    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
+    
+    get :show, { id: user.items.first.id }
+    assert_response :bad_request
+  end
+
+  test "should return an error if user is not defined" do
+    user = users(:matt) 
+    cookies[:sharey_session_cookie] = user.sharey_session_cookie + "fjdklsf"
+    
+    get :show, { id: user.items.first.id }
+    assert_response :bad_request
+  end
+
+  test "should return an error if item id does not exist" do
+    user = users(:matt)
+    cookies[:sharey_session_cookie] = user.sharey_session_cookie
+    
+    get :show, { id: 1236784 }
+    assert_response :bad_request
+  end
+
+  test "should modify viewed and click_count attributes of item" do
+    user = users(:matt)
+    cookies[:sharey_session_cookie] = user.sharey_session_cookie
+    item = user.items.joins(:usage_datum).where(usage_data: {viewed: false}).first
+    click_count = item.usage_datum.click_count
+
+    get :show, { id: item.id }
+
+    assert_response :success
+    assert item.reload.usage_datum.viewed?
+    assert_equal click_count+1, item.reload.usage_datum.click_count
+  end
+
+
+
+  # -------------------------------------------------------------------------------------------
+  # delete item/:id (:destroy) ----------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------
+  test "should get destroy action" do
+    cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie
+
+    delete :destroy, {'id' => 4523723}
+    assert_response :bad_request
+  end  
+
+  test "should return a modal if no user is found" do
+    cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie + "sjfksl3"
+
+    delete :destroy, {'id' => Item.first.id}
+    assert_response :bad_request
+    
+    # Test response object
+    assert_response :bad_request
+    assert json_response["modal"]["heading"]  
+    assert json_response["modal"]["messages"]  
+    assert_equal Array, json_response["modal"]["messages"].class
+    assert_operator 1, :<=, json_response["modal"]["messages"].count
+    refute json_response["modal"]["heading"].empty?  
+  end
+
+  test "should return 'deleted' on success" do
+    cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie
+
+    delete :destroy, {'id' => users(:matt).items.first.id}
+    assert_response :success
+    
+    assert_equal({"deleted" => true}, json_response)
+  end
+
+  test "should return a modal if item does not belong to user" do
+    cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie
+
+    delete :destroy, {'id' => users(:pam).items.first.id}
+    assert_response :bad_request
+    
+    assert json_response["modal"]["heading"]  
+    assert json_response["modal"]["messages"]  
+    assert_equal Array, json_response["modal"]["messages"].class
+    assert_operator 1, :<=, json_response["modal"]["messages"].count
+    refute json_response["modal"]["heading"].empty?  
+  end
+  
+
+  # -------------------------------------------------------------------------------------------
   # get :index --------------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------
   test "should get index" do

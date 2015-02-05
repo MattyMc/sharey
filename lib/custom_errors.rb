@@ -5,6 +5,14 @@ module CustomErrors
   #         a link to the login URL will be contained somewhere in 
   #         one of the response messages.
   # TODO: Define a login URL that's different from root_url in UserNotFound
+
+  # BIG TODO: Create a standard format for errors, so that each error has a type attribute that is:
+  #             1. modal  (where a modal appears, with desired attributes)
+  #             2. flash  (where a flash message appears, with attributes)
+  #             3. inline (where the item will be replaced, such as the deleted action)
+  #     Afterwards, re-write the front-end application to parse messages apppropriately with
+  #        a standardized AJAX response function
+  #     BONUS: Write a helper module for testing
   class UserNotFound < StandardError
     include Rails.application.routes.url_helpers
 
@@ -53,6 +61,26 @@ module CustomErrors
       @message["subheading"] = "You haven't saved anything yet"
       @message["messages"] << "Maybe you were expecting something from a friend?"
       @message["messages"] << "Sharey'ing is caring"
+    end
+
+    def modal_response
+      { "modal" => @message }
+    end
+  end
+
+  # Gets thrown when user tries to delete an item with :id that does not belong to him/her
+  class ItemNotFoundForUser < StandardError
+    include Rails.application.routes.url_helpers
+
+    def initialize
+      @message = {}
+      @message["messages"] = []
+
+      @message["heading"] = "You can't delete that!"
+      @message["subheading"] = "There are a few possible reasons why:"
+      @message["messages"] << "You need to login again."
+      @message["messages"] << "You're a hacker trying to delete someone else's shit... you bastard."
+      @message["messages"] << "Our server broke... which wouldn't be surprising, since we got <a href='http://glennobrien.com/wp-content/uploads/2011/12/Monkeys-typing.jpg'>these guys</a> to code Sharey."
     end
 
     def modal_response

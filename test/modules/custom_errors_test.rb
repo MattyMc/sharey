@@ -73,4 +73,27 @@ class CustomErrorTest < ActiveSupport::TestCase
     assert_operator 1, :<=, e.modal_response["modal"]["messages"].count, "should be at least one error message"
   end
 
+
+  # -------------------------------------------------------------------------------------------
+  # Tests for NoItemsFound --------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------
+
+  test "should raise ItemNotFoundForUser" do
+    assert_raises(ItemNotFoundForUser) {
+      raise ItemNotFoundForUser
+    }
+  end
+
+  test "should raise ItemNotFoundForUser and respond with properly structured response" do
+    e = assert_raises(ItemNotFoundForUser) {
+      raise ItemNotFoundForUser
+    }
+
+    assert_equal Hash,   e.modal_response["modal"].class
+    assert_equal String, e.modal_response["modal"]["heading"].class
+    assert_equal String, e.modal_response["modal"]["subheading"].class
+    assert_equal Array,  e.modal_response["modal"]["messages"].class
+    assert_operator 1, :<=, e.modal_response["modal"]["messages"].count, "should be at least one error message"
+  end
+
 end
