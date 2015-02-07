@@ -74,7 +74,7 @@ class Item < ActiveRecord::Base
     document = Document.first_or_initialize_with_url_title_and_originator(url, title, user)
     category = Category.first_or_initialize_with_name_and_user cat_name, user
 
-    item = Item.where(
+    item = Item.includes("usage_datum").where(
       document: document,
       user: user).first_or_initialize
 
@@ -88,6 +88,10 @@ class Item < ActiveRecord::Base
     item.original_request = original_request
     item.category = category unless category.nil?
     item.from_user = nil if item.new_record?
+
+    # Is a deleted item being re-saved?
+    item.usage_datum.update(deleted: false) if !item.new_record? and item.usage_datum.deleted
+    
     item.save!
 
     # Share with tagged users

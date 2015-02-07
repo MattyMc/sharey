@@ -20,11 +20,11 @@ class CustomErrorTest < ActiveSupport::TestCase
       raise UserNotFound
     }
 
-    assert_equal Hash,   e.modal_response["modal"].class, e.modal_response.inspect
-    assert_equal String, e.modal_response["modal"]["heading"].class
-    assert_equal String, e.modal_response["modal"]["subheading"].class
-    assert_equal Array,  e.modal_response["modal"]["messages"].class
-    assert_operator 1, :<=, e.modal_response["modal"]["messages"].count, "should be at least one error message"
+    assert_equal Hash,   e.modal_response["data"].class, e.modal_response.inspect
+    assert_equal String, e.modal_response["data"]["heading"].class
+    assert_equal String, e.modal_response["data"]["subheading"].class
+    assert_equal Array,  e.modal_response["data"]["messages"].class
+    assert_operator 1, :<=, e.modal_response["data"]["messages"].count, "should be at least one error message"
   end
 
 
@@ -43,11 +43,12 @@ class CustomErrorTest < ActiveSupport::TestCase
       raise InvalidItemParams
     }
 
-    assert_equal Hash,   e.modal_response["modal"].class
-    assert_equal String, e.modal_response["modal"]["heading"].class
-    assert_equal String, e.modal_response["modal"]["subheading"].class
-    assert_equal Array,  e.modal_response["modal"]["messages"].class
-    assert_operator 1, :<=, e.modal_response["modal"]["messages"].count, "should be at least one error message"
+    assert_equal "modal", e.modal_response["type"]
+    assert_equal Hash,   e.modal_response["data"].class
+    assert_equal String, e.modal_response["data"]["heading"].class
+    assert_equal String, e.modal_response["data"]["subheading"].class
+    assert_equal Array,  e.modal_response["data"]["messages"].class
+    assert_operator 1, :<=, e.modal_response["data"]["messages"].count, "should be at least one error message"
   end
 
 
@@ -66,11 +67,12 @@ class CustomErrorTest < ActiveSupport::TestCase
       raise NoItemsFound
     }
 
-    assert_equal Hash,   e.modal_response["modal"].class
-    assert_equal String, e.modal_response["modal"]["heading"].class
-    assert_equal String, e.modal_response["modal"]["subheading"].class
-    assert_equal Array,  e.modal_response["modal"]["messages"].class
-    assert_operator 1, :<=, e.modal_response["modal"]["messages"].count, "should be at least one error message"
+    assert_equal "modal", e.modal_response["type"]
+    assert_equal Hash,   e.modal_response["data"].class
+    assert_equal String, e.modal_response["data"]["heading"].class
+    assert_equal String, e.modal_response["data"]["subheading"].class
+    assert_equal Array,  e.modal_response["data"]["messages"].class
+    assert_operator 1, :<=, e.modal_response["data"]["messages"].count, "should be at least one error message"
   end
 
 
@@ -89,11 +91,12 @@ class CustomErrorTest < ActiveSupport::TestCase
       raise ItemNotFoundForUser
     }
 
-    assert_equal Hash,   e.modal_response["modal"].class
-    assert_equal String, e.modal_response["modal"]["heading"].class
-    assert_equal String, e.modal_response["modal"]["subheading"].class
-    assert_equal Array,  e.modal_response["modal"]["messages"].class
-    assert_operator 1, :<=, e.modal_response["modal"]["messages"].count, "should be at least one error message"
+    assert_equal "modal", e.modal_response["type"]
+    assert_equal Hash,   e.modal_response["data"].class
+    assert_equal String, e.modal_response["data"]["heading"].class
+    assert_equal String, e.modal_response["data"]["subheading"].class
+    assert_equal Array,  e.modal_response["data"]["messages"].class
+    assert_operator 1, :<=, e.modal_response["data"]["messages"].count, "should be at least one error message"
   end
 
 end

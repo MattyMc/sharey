@@ -4,40 +4,57 @@ A little passion project. Please go away :)
 
 ##API
 
-All responses should be of the form:
+All responses should be "none", or of the form:
 
-####Modals (popups)
-
-    { modal: 
-      { 
-        heading: "", 
-        subheading: "", # OPTIONAL
-        messages: ["error message 1", "error message 2, ..."] 
+    { 
+      type: "modal" | "flash" | "inline" | "items",
+      data: {
+        # structure is determined depending on type, described below  
       }
     }
-with a :bad_request status (400 or 401) or :success status (200)
 
-*or*
+###Data Structures
 
-####Listing Items
-    { categories: 
-      { 
-        nil:   #ie no category
-          [ 
-          {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" },       
-          {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" },       
-          {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" }      
-          ]
-      },
-      { 
-        "videos": 
-          [ 
-          {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" },       
-          {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" }      
-          ]
+#### Modals (popups)
+    {
+      type: "modal",
+      data: 
+        {  
+          heading: "", 
+          subheading: "", # OPTIONAL
+          messages: ["error message 1", "error message 2, ..."] 
+        }
+    }
+*Note: Modal's can contain error messages, determined by the status of response*
+
+
+#### Items
+    {
+      type: "items",
+      data: 
+        {
+          nil:   #ie no category
+            [ 
+              {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" },       
+              {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" },       
+              {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" }      
+            ],
+          "videos": 
+            [ 
+              {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" },       
+              {description: "", url: "", viewed: boolean, from_user_tag: "", path: "" }      
+            ]
+        }
+    }
+
+#### Flash
+    {
+      type: "flash",
+      data: {
+        message: "some message"
       }
     }
-with a :success status (200)
+
 
 ## Setup steps 
 
@@ -100,49 +117,7 @@ In tests, these can be accessed as:
 
 ## Models and Attributes
 
-*Note: More updated versions of these can be found in schema.rb*
-
-####User
-
-  * uid                     : string
-  * name                    : string
-  * first\_name             : string
-  * last\_name              : string
-  * email                   : string
-  * image                   : string
-  * token                   : string
-  * refresh\_token          : string
-  * sharey\_session\_cookie : string
-  * expires\_at             : datetime
-
-####Item
-
-  * document\_id : integer
-  * user\_id : integer
-  * from_user\_id : integer
-  * category\_id : integer
-  * description : string
-  * original\_request : string
-
-####Category
-
-  * title : string
-  * downcase\_title : string
-  * user\_id : integer
-
-####UsageDatum 
-
-  * item\_id : integer
-  * viewed : boolean
-  * deleted : boolean
-  * click\_count : integer
-  * shared : boolean
-
-####Document 
-
-  * url : string
-  * title : string
-  * originator\_id : integer
+**See schema.rb**
 
 ### TODOs
 

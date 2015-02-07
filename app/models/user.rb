@@ -31,6 +31,7 @@ class User < ActiveRecord::Base
     item.usage_datum.deleted = true
 
     item.usage_datum.save!
+    {"type" => "flash", "data" => {"message" => "Item Deleted"}}
   end
 
   def get_number_of_unviewed_items
@@ -78,7 +79,7 @@ class User < ActiveRecord::Base
     end
 
     # TODO: Return "from_user" as categories?
-    return_items
+    { "type" => "items", "data" => return_items }
   end
 
 

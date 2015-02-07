@@ -77,13 +77,15 @@ class ItemTest < ActiveSupport::TestCase
 
     modal = item.modal_response
 
-    refute modal["modal"].blank?
-    refute modal["modal"]["heading"].blank?
-    refute modal["modal"]["messages"].empty?
+    refute modal["data"].blank?
+    refute modal["data"]["heading"].blank?
+    refute modal["data"]["messages"].empty?
     
-    assert_equal String, modal["modal"]["heading"].class
-    assert_equal Array, modal["modal"]["messages"].class
-    assert_equal String, modal["modal"]["messages"][0].class
+
+    assert_equal "modal", modal["type"]
+    assert_equal String, modal["data"]["heading"].class
+    assert_equal Array, modal["data"]["messages"].class
+    assert_equal String, modal["data"]["messages"][0].class
   end   
 
   test "should return at least one message if there are no tags and the item is new" do
@@ -97,15 +99,16 @@ class ItemTest < ActiveSupport::TestCase
 
     modal = item.modal_response
 
-    refute modal["modal"].blank?
-    refute modal["modal"]["heading"].blank?
-    refute modal["modal"]["messages"].empty?
-    
-    assert_equal String, modal["modal"]["heading"].class
-    assert_equal Array, modal["modal"]["messages"].class
-    assert_equal String, modal["modal"]["messages"][0].class
+    refute modal["data"].blank?
+    refute modal["data"]["heading"].blank?
+    refute modal["data"]["messages"].empty?
+        
+        assert_equal "modal", modal["type"]
+    assert_equal String, modal["data"]["heading"].class
+    assert_equal Array, modal["data"]["messages"].class
+    assert_equal String, modal["data"]["messages"][0].class
 
-    assert_operator 1, :<=, modal["modal"]["messages"].length, "should have at least one message: #{modal["modal"]["messages"].inspect}"
+    assert_operator 1, :<=, modal["data"]["messages"].length, "should have at least one message: #{modal["data"]["messages"].inspect}"
   end   
 
   test "should return at least one message if there are no tags and the item exists" do
@@ -119,15 +122,16 @@ class ItemTest < ActiveSupport::TestCase
 
     modal = item.modal_response
 
-    refute modal["modal"].blank?
-    refute modal["modal"]["heading"].blank?
-    refute modal["modal"]["messages"].empty?
-    
-    assert_equal String, modal["modal"]["heading"].class
-    assert_equal Array, modal["modal"]["messages"].class
-    assert_equal String, modal["modal"]["messages"][0].class
+    refute modal["data"].blank?
+    refute modal["data"]["heading"].blank?
+    refute modal["data"]["messages"].empty?
+        
+        assert_equal "modal", modal["type"]
+    assert_equal String, modal["data"]["heading"].class
+    assert_equal Array, modal["data"]["messages"].class
+    assert_equal String, modal["data"]["messages"][0].class
 
-    assert_operator 1, :<=, modal["modal"]["messages"].length, "should have at least one message: #{modal["modal"]["messages"].inspect}"
+    assert_operator 1, :<=, modal["data"]["messages"].length, "should have at least one message: #{modal["data"]["messages"].inspect}"
   end   
 
   test "should return at least one message for tagged_users" do
@@ -141,15 +145,16 @@ class ItemTest < ActiveSupport::TestCase
 
     modal = item.modal_response
 
-    refute modal["modal"].blank?
-    refute modal["modal"]["heading"].blank?
-    refute modal["modal"]["messages"].empty?
-    
-    assert_equal String, modal["modal"]["heading"].class
-    assert_equal Array, modal["modal"]["messages"].class
-    assert_equal String, modal["modal"]["messages"][0].class
+    refute modal["data"].blank?
+    refute modal["data"]["heading"].blank?
+    refute modal["data"]["messages"].empty?
+        
+        assert_equal "modal", modal["type"]
+    assert_equal String, modal["data"]["heading"].class
+    assert_equal Array, modal["data"]["messages"].class
+    assert_equal String, modal["data"]["messages"][0].class
 
-    assert_operator 2, :<=, modal["modal"]["messages"].length, "should have at least one message: #{modal["modal"]["messages"].inspect}"
+    assert_operator 2, :<=, modal["data"]["messages"].length, "should have at least one message: #{modal["data"]["messages"].inspect}"
   end   
 
   test "should return at least one message for missing_tags" do
@@ -163,15 +168,16 @@ class ItemTest < ActiveSupport::TestCase
 
     modal = item.modal_response
 
-    refute modal["modal"].blank?
-    refute modal["modal"]["heading"].blank?
-    refute modal["modal"]["messages"].empty?
+    refute modal["data"].blank?
+    refute modal["data"]["heading"].blank?
+    refute modal["data"]["messages"].empty?
+    
+    assert_equal "modal", modal["type"]
+    assert_equal String, modal["data"]["heading"].class
+    assert_equal Array, modal["data"]["messages"].class
+    assert_equal String, modal["data"]["messages"][0].class
 
-    assert_equal String, modal["modal"]["heading"].class
-    assert_equal Array, modal["modal"]["messages"].class
-    assert_equal String, modal["modal"]["messages"][0].class
-
-    assert_operator 2, :<=, modal["modal"]["messages"].length, "should have at least one message: #{modal["modal"]["messages"].inspect}"
+    assert_operator 2, :<=, modal["data"]["messages"].length, "should have at least one message: #{modal["data"]["messages"].inspect}"
   end   
 
   test "should return at least one message for already saved" do
@@ -185,15 +191,16 @@ class ItemTest < ActiveSupport::TestCase
 
     modal = item.modal_response
 
-    refute modal["modal"].blank?
-    refute modal["modal"]["heading"].blank?
-    refute modal["modal"]["messages"].empty?
+    refute modal["data"].blank?
+    refute modal["data"]["heading"].blank?
+    refute modal["data"]["messages"].empty?
+    
+    assert_equal "modal", modal["type"]
+    assert_equal String, modal["data"]["heading"].class
+    assert_equal Array, modal["data"]["messages"].class
+    assert_equal String, modal["data"]["messages"][0].class
 
-    assert_equal String, modal["modal"]["heading"].class
-    assert_equal Array, modal["modal"]["messages"].class
-    assert_equal String, modal["modal"]["messages"][0].class
-
-    assert_operator 2, :<=, modal["modal"]["messages"].length, "should have at least one message: #{modal["modal"]["messages"].inspect}"
+    assert_operator 2, :<=, modal["data"]["messages"].length, "should have at least one message: #{modal["data"]["messages"].inspect}"
   end  
 
   test "should return at least one message for already_shared_with" do
@@ -207,15 +214,16 @@ class ItemTest < ActiveSupport::TestCase
 
     modal = item.modal_response
 
-    refute modal["modal"].blank?
-    refute modal["modal"]["heading"].blank?
-    refute modal["modal"]["messages"].empty?
+    refute modal["data"].blank?
+    refute modal["data"]["heading"].blank?
+    refute modal["data"]["messages"].empty?
+    
+    assert_equal "modal", modal["type"]
+    assert_equal String, modal["data"]["heading"].class
+    assert_equal Array, modal["data"]["messages"].class
+    assert_equal String, modal["data"]["messages"][0].class
 
-    assert_equal String, modal["modal"]["heading"].class
-    assert_equal Array, modal["modal"]["messages"].class
-    assert_equal String, modal["modal"]["messages"][0].class
-
-    assert_operator 2, :<=, modal["modal"]["messages"].length, "should have at least one message: #{modal["modal"]["messages"].inspect}"
+    assert_operator 2, :<=, modal["data"]["messages"].length, "should have at least one message: #{modal["data"]["messages"].inspect}"
   end  
 
   test "should return at least three message for already_shared_with, tagged_users and missing_tags" do
@@ -229,15 +237,16 @@ class ItemTest < ActiveSupport::TestCase
 
     modal = item.modal_response
 
-    refute modal["modal"].blank?
-    refute modal["modal"]["heading"].blank?
-    refute modal["modal"]["messages"].empty?
+    refute modal["data"].blank?
+    refute modal["data"]["heading"].blank?
+    refute modal["data"]["messages"].empty?
+    
+    assert_equal "modal", modal["type"]
+    assert_equal String, modal["data"]["heading"].class
+    assert_equal Array, modal["data"]["messages"].class
+    assert_equal String, modal["data"]["messages"][0].class
 
-    assert_equal String, modal["modal"]["heading"].class
-    assert_equal Array, modal["modal"]["messages"].class
-    assert_equal String, modal["modal"]["messages"][0].class
-
-    assert_operator 4, :<=, modal["modal"]["messages"].length, "should have at least one message: #{modal["modal"]["messages"].inspect}"
+    assert_operator 4, :<=, modal["data"]["messages"].length, "should have at least one message: #{modal["data"]["messages"].inspect}"
   end  
 
 
@@ -1081,6 +1090,50 @@ class ItemTest < ActiveSupport::TestCase
     assert_equal [], item.notes["tagged_users"], "should add user(s) to notes['tagged_users']"
     assert_equal ["@rob", "@peter"].sort, item.notes["missing_tags"].sort
     assert_equal true, item.notes["new_item"]
+  end
+
+  test "should undelete an item that was deleted but is being resaved" do
+    user = users(:matt)
+    deleted_items = Item.joins(:usage_datum).where(user: user, usage_data: {deleted: true}).count
+
+    # Destroy the item
+    item = items(:matts_item)
+    user.destroy_item item.id
+    assert_equal deleted_items+1, Item.joins(:usage_datum).where(user: user, usage_data: {deleted: true}).count
+
+    item_params = {
+      "url" => documents(:some_video).url, # same as matts_item
+      "title" => "Hamburgers!", 
+      "description" => "Delicious treats!",
+      "category" => "Food"
+    }
+
+    item = Item.create_or_update_from_item_params_and_user item_params, user
+    assert_equal deleted_items, Item.joins(:usage_datum).where(user: user, usage_data: {deleted: true}).count
+  end
+
+  test "should share a deleted item that is being resaved resaved" do
+    user = users(:matt)
+    deleted_items = Item.joins(:usage_datum).where(usage_data: {deleted: true}).count
+    item_count = Item.count
+
+    # Destroy the item
+    item = items(:matts_item)
+    user.destroy_item item.id
+    assert_equal deleted_items+1, Item.joins(:usage_datum).where(user: user, usage_data: {deleted: true}).count
+
+    item_params = {
+      "url" => documents(:some_video).url, # same as matts_item
+      "title" => "Hamburgers!", 
+      "description" => "Delicious treats! @pam @jay",
+      "category" => "Food"
+    }
+
+    item = Item.create_or_update_from_item_params_and_user item_params, user
+    assert_equal deleted_items, Item.joins(:usage_datum).where(user: user, usage_data: {deleted: true}).count
+
+    assert_equal item_count+2, Item.count, "should create a new item for Pam and Jay"
+    assert_equal deleted_items, Item.joins(:usage_datum).where(usage_data: {deleted: true}).count, "no new deleted items"
   end
 
   # -------------------------------------------------------------------------------------------

@@ -1,6 +1,8 @@
 module ItemMessages
   def modal_response
-    {modal: 
+    {
+      type: "modal",
+      data: 
       {
         heading: self.heading,
         subheading: self.subheading,

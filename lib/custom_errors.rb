@@ -10,6 +10,7 @@ module CustomErrors
   #             1. modal  (where a modal appears, with desired attributes)
   #             2. flash  (where a flash message appears, with attributes)
   #             3. inline (where the item will be replaced, such as the deleted action)
+  #             3. items  (where the items are returned as JSON)
   #     Afterwards, re-write the front-end application to parse messages apppropriately with
   #        a standardized AJAX response function
   #     BONUS: Write a helper module for testing
@@ -26,7 +27,7 @@ module CustomErrors
     end
 
     def modal_response
-      { "modal" => @message }
+      { "type" => "modal", "data" => @message }
     end
   end
   
@@ -45,7 +46,7 @@ module CustomErrors
     end
 
     def modal_response
-      { "modal" => @message }
+      { "type" => "modal", "data" => @message }
     end
   end
 
@@ -64,7 +65,7 @@ module CustomErrors
     end
 
     def modal_response
-      { "modal" => @message }
+      { "type" => "modal", "data" => @message }
     end
   end
 
@@ -84,7 +85,7 @@ module CustomErrors
     end
 
     def modal_response
-      { "modal" => @message }
+      { "type" => "modal", "data" => @message }
     end
   end
 

@@ -48,15 +48,16 @@ class UserTest < ActiveSupport::TestCase
     refute item.reload.usage_datum.deleted
   end
 
-  test "should raise an exception if the item id does not exist at all" do
-    user = users(:pam)
-    deleted_items = Item.joins(:usage_datum).where(user: user, usage_data: {deleted: true}).count
+  test "should return a properly structured flash object with message" do
+    user = users(:matt)
+    item = items(:matts_item)
 
-    assert_raises(Item::ItemNotFoundForUser) { user.destroy_item 2342302 }
-
-    assert_equal deleted_items, Item.joins(:usage_datum).where(user: user, usage_data: {deleted: true}).count
+    response = user.destroy_item item.id
+    assert_equal Hash, response.class
+    refute response.empty?
+    assert_equal "flash", response["type"]
+    refute response["data"]["message"].empty?
   end
-
 
 
   # -------------------------------------------------------------------------------------------
@@ -94,7 +95,7 @@ class UserTest < ActiveSupport::TestCase
     user = users(:pam)
 
     count = 0 
-    results = user.last_n_items(10)
+    results = user.last_n_items(10)["data"]
     results.keys.each { |key| count += results[key].count}
 
     assert_equal 1, count
@@ -104,17 +105,23 @@ class UserTest < ActiveSupport::TestCase
     user = users(:matt)
 
     count = 0 
-    results = user.last_n_items(10)
+    results = user.last_n_items(10)["data"]
     results.keys.each { |key| count += results[key].count}
 
     assert_equal 5, count, results.inspect
+  end
+
+  test "should return a type attribute of 'modal'" do
+    user = users(:matt)
+    results = user.last_n_items(10)
+    assert_equal "items", results["type"]
   end
 
   test "should return exactly 2 items" do
     user = users(:matt)
 
     count = 0 
-    results = user.last_n_items(2)
+    results = user.last_n_items(2)["data"]
     results.keys.each { |key| count += results[key].count}
 
     assert_equal 2, count
@@ -124,7 +131,7 @@ class UserTest < ActiveSupport::TestCase
     user = users(:matt)
 
     count = 0 
-    results = user.last_n_items(4)
+    results = user.last_n_items(4)["data"]
     results.keys.each { |key| count += results[key].count}
 
     assert_equal 4, count
@@ -134,7 +141,7 @@ class UserTest < ActiveSupport::TestCase
     user = users(:matt)
 
     count = 0 
-    results = user.last_n_items(5)
+    results = user.last_n_items(5)["data"]
     results.keys.each { |key| count += results[key].count}
 
     assert_equal 5, count, results.inspect
@@ -145,7 +152,7 @@ class UserTest < ActiveSupport::TestCase
     user.destroy_item user.items.first.id 
 
     count = 0 
-    results = user.last_n_items(5)
+    results = user.last_n_items(5)["data"]
     results.keys.each { |key| count += results[key].count}
 
     assert_equal 4, count
@@ -157,7 +164,7 @@ class UserTest < ActiveSupport::TestCase
     user.destroy_item user.items.second.id 
 
     count = 0 
-    results = user.last_n_items(5)
+    results = user.last_n_items(5)["data"]
     results.keys.each { |key| count += results[key].count}
 
     assert_equal 3, count
@@ -168,7 +175,7 @@ class UserTest < ActiveSupport::TestCase
     user = users(:matt)
 
     count = 0 
-    results = user.last_n_items(10)
+    results = user.last_n_items(10)["data"]
     results.keys.each { |key| count += results[key].count}
 
     assert_equal 5, count
@@ -176,14 +183,14 @@ class UserTest < ActiveSupport::TestCase
 
   test "should return shared items first" do
     user = users(:matt)
-    is = user.last_n_items(10)
+    is = user.last_n_items(10)["data"]
 
     assert_equal nil, is.keys[0]
   end
 
   test "should order items from newest to oldest by updated_at" do
     user = users(:matt)
-    is = user.last_n_items 10
+    is = user.last_n_items(10)["data"]
 
     # Newest items first in 'videos' category
     assert_equal items(:matts_item_1).description, is["Videos"][0]["description"]
@@ -197,14 +204,14 @@ class UserTest < ActiveSupport::TestCase
 
   test "should include all defined categories" do
     user = users(:matt)
-    is = user.last_n_items 10
+    is = user.last_n_items(10)["data"]
 
     assert_equal [nil, "Videos"], is.keys
   end
 
   test "should return a properly structured object" do
     user = users(:matt)
-    items = user.last_n_items 5
+    items = user.last_n_items(5)["data"]
 
     assert_equal Hash, items.class
     assert_equal [nil, "Videos"], items.keys
@@ -216,7 +223,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "should contain description attribute in each return object" do
     user = users(:matt)
-    items = user.last_n_items 5
+    items = user.last_n_items(5)["data"]
 
     items[nil].each do |item|
       assert_equal Hash, item.class
@@ -233,7 +240,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "should contain url attribute in each return object" do
     user = users(:matt)
-    items = user.last_n_items 5
+    items = user.last_n_items(5)["data"]
 
     items[nil].each do |item|
       assert_equal Hash, item.class
@@ -250,7 +257,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "should contain viewed attribute in each return object" do
     user = users(:matt)
-    items = user.last_n_items 5
+    items = user.last_n_items(5)["data"]
 
     items[nil].each do |item|
       refute item["viewed"].nil?
@@ -263,7 +270,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "should contain path attribute in each return object" do
     user = users(:matt)
-    items = user.last_n_items 5
+    items = user.last_n_items(5)["data"]
 
     items[nil].each do |item|
       refute item["path"].nil?
@@ -278,7 +285,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "should not contain attributes in each item other than description, url, viewed, from_user_tag, path" do
     user = users(:matt)
-    items = user.last_n_items 5
+    items = user.last_n_items(5)["data"]
 
     items[nil].each do |item|
       assert_equal Hash, item.class
@@ -293,7 +300,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "should properly set attribute viewed" do
     user = users(:matt)
-    is = user.last_n_items 10
+    is = user.last_n_items(10)["data"]
 
     is[nil].each do |item|
       assert_equal Item.find_by(description: item["description"], user:user).usage_datum.viewed, item["viewed"]
@@ -306,7 +313,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "should properly set attribute path" do
     user = users(:matt)
-    is = user.last_n_items 10
+    is = user.last_n_items(10)["data"]
 
     is[nil].each do |item|
       attr_test = "items/" + Item.find_by(description: item["description"], user:user).id.to_s
@@ -321,7 +328,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "should properly set attribute from_user_tag" do
     user = users(:matt)
-    is = user.last_n_items 10
+    is = user.last_n_items(10)["data"]
 
     assert_equal "@Jay", is[nil][0]["from_user_tag"]
     assert_equal nil, is[nil][1]["from_user_tag"]
@@ -340,7 +347,7 @@ class UserTest < ActiveSupport::TestCase
     user.destroy_item first_item.id
     user.destroy_item second_item.id
 
-    items = user.last_n_items 10
+    items = user.last_n_items(10)["data"]
 
     items[nil].each do |item|
       refute_equal first_item.description, item["description"], "this item should not be returned"

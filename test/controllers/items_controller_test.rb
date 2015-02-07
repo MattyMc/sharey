@@ -74,20 +74,22 @@ class ItemsControllerTest < ActionController::TestCase
     
     # Test response object
     assert_response :bad_request
-    assert json_response["modal"]["heading"]  
-    assert json_response["modal"]["messages"]  
-    assert_equal Array, json_response["modal"]["messages"].class
-    assert_operator 1, :<=, json_response["modal"]["messages"].count
-    refute json_response["modal"]["heading"].empty?  
+    assert json_response["data"]["heading"]  
+    assert json_response["data"]["messages"]  
+    assert_equal Array, json_response["data"]["messages"].class
+    assert_operator 1, :<=, json_response["data"]["messages"].count
+    refute json_response["data"]["heading"].empty?  
   end
 
-  test "should return 'deleted' on success" do
+  test "should return a flash object on success" do
     cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie
 
     delete :destroy, {'id' => users(:matt).items.first.id}
     assert_response :success
     
-    assert_equal({"deleted" => true}, json_response)
+    assert_equal "flash", json_response["type"]
+    refute json_response["data"].empty?
+    refute json_response["data"]["message"].empty?
   end
 
   test "should return a modal if item does not belong to user" do
@@ -96,11 +98,11 @@ class ItemsControllerTest < ActionController::TestCase
     delete :destroy, {'id' => users(:pam).items.first.id}
     assert_response :bad_request
     
-    assert json_response["modal"]["heading"]  
-    assert json_response["modal"]["messages"]  
-    assert_equal Array, json_response["modal"]["messages"].class
-    assert_operator 1, :<=, json_response["modal"]["messages"].count
-    refute json_response["modal"]["heading"].empty?  
+    assert json_response["data"]["heading"]  
+    assert json_response["data"]["messages"]  
+    assert_equal Array, json_response["data"]["messages"].class
+    assert_operator 1, :<=, json_response["data"]["messages"].count
+    refute json_response["data"]["heading"].empty?  
   end
   
 
@@ -120,10 +122,10 @@ class ItemsControllerTest < ActionController::TestCase
     get :index
     assert_response :bad_request
 
-    assert json_response["modal"]["heading"]
-    assert json_response["modal"]["messages"]  
-    assert_equal Array, json_response["modal"]["messages"].class
-    assert_operator 1, :<=, json_response["modal"]["messages"].count, "should have at least one message"
+    assert json_response["data"]["heading"]
+    assert json_response["data"]["messages"]  
+    assert_equal Array, json_response["data"]["messages"].class
+    assert_operator 1, :<=, json_response["data"]["messages"].count, "should have at least one message"
   end
 
   test "should respond with a non-empty Hash of saved items" do
@@ -197,11 +199,11 @@ class ItemsControllerTest < ActionController::TestCase
     refute json_response["messages"]  
 
     # Test response object
-    assert json_response["modal"]["heading"]  
-    assert json_response["modal"]["messages"]  
-    assert_equal Array, json_response["modal"]["messages"].class
-    assert_operator 1, :<=, json_response["modal"]["messages"].count, "should have at least one message"
-    assert_equal String, json_response["modal"]["subheading"].class
+    assert json_response["data"]["heading"]  
+    assert json_response["data"]["messages"]  
+    assert_equal Array, json_response["data"]["messages"].class
+    assert_operator 1, :<=, json_response["data"]["messages"].count, "should have at least one message"
+    assert_equal String, json_response["data"]["subheading"].class
   end
 
   test "should respond with a properly formatted JSON reply on success" do
@@ -217,13 +219,13 @@ class ItemsControllerTest < ActionController::TestCase
     assert_response :success 
 
     # Test response object
-    assert json_response["modal"]["heading"]  
-    assert json_response["modal"]["messages"]  
-    assert_equal Array, json_response["modal"]["messages"].class
-    assert_equal String, json_response["modal"]["heading"].class
-    refute json_response["modal"]["heading"].empty?
-    assert_operator 1, :<=, json_response["modal"]["messages"].count, "should have at least one message"
-    assert_equal String, json_response["modal"]["subheading"].class
+    assert json_response["data"]["heading"]  
+    assert json_response["data"]["messages"]  
+    assert_equal Array, json_response["data"]["messages"].class
+    assert_equal String, json_response["data"]["heading"].class
+    refute json_response["data"]["heading"].empty?
+    assert_operator 1, :<=, json_response["data"]["messages"].count, "should have at least one message"
+    assert_equal String, json_response["data"]["subheading"].class
   end
 
   test "should respond with an error if url is not defined" do
@@ -239,12 +241,12 @@ class ItemsControllerTest < ActionController::TestCase
     }
     # Test response object
     assert_response :bad_request
-    assert json_response["modal"]["heading"]  
-    assert json_response["modal"]["messages"]  
-    assert_equal Array, json_response["modal"]["messages"].class
-    assert_operator 1, :<=, json_response["modal"]["messages"].count
-    refute json_response["modal"]["heading"].empty?  
-    refute json_response["modal"]["subheading"].empty? 
+    assert json_response["data"]["heading"]  
+    assert json_response["data"]["messages"]  
+    assert_equal Array, json_response["data"]["messages"].class
+    assert_operator 1, :<=, json_response["data"]["messages"].count
+    refute json_response["data"]["heading"].empty?  
+    refute json_response["data"]["subheading"].empty? 
 
   end
 
@@ -261,13 +263,13 @@ class ItemsControllerTest < ActionController::TestCase
     }
     # Test response object
     assert_response :bad_request
-    assert json_response["modal"]["heading"]  
-    assert json_response["modal"]["messages"]  
-    assert_equal Array, json_response["modal"]["messages"].class
-    assert_operator 1, :<=, json_response["modal"]["messages"].count
-    refute json_response["modal"]["heading"].empty?  
-    refute json_response["modal"]["subheading"].empty? 
-    assert_operator 1, :<=, json_response["modal"]["messages"].count
+    assert json_response["data"]["heading"]  
+    assert json_response["data"]["messages"]  
+    assert_equal Array, json_response["data"]["messages"].class
+    assert_operator 1, :<=, json_response["data"]["messages"].count
+    refute json_response["data"]["heading"].empty?  
+    refute json_response["data"]["subheading"].empty? 
+    assert_operator 1, :<=, json_response["data"]["messages"].count
   end
 
   test "should respond with an error if neither the description or url is not defined" do
@@ -283,13 +285,13 @@ class ItemsControllerTest < ActionController::TestCase
     }
     # Test response object
     assert_response :bad_request
-    assert json_response["modal"]["heading"]  
-    assert json_response["modal"]["messages"]  
-    assert_equal Array, json_response["modal"]["messages"].class
-    assert_operator 1, :<=, json_response["modal"]["messages"].count
-    refute json_response["modal"]["heading"].empty?  
-    refute json_response["modal"]["subheading"].empty? 
-    assert_operator 1, :<=, json_response["modal"]["messages"].count
+    assert json_response["data"]["heading"]  
+    assert json_response["data"]["messages"]  
+    assert_equal Array, json_response["data"]["messages"].class
+    assert_operator 1, :<=, json_response["data"]["messages"].count
+    refute json_response["data"]["heading"].empty?  
+    refute json_response["data"]["subheading"].empty? 
+    assert_operator 1, :<=, json_response["data"]["messages"].count
   end
 
   test "should respond with an error if cannot locate user" do
@@ -305,13 +307,13 @@ class ItemsControllerTest < ActionController::TestCase
     }
     # Test response object
     assert_response :bad_request
-    assert json_response["modal"]["heading"]  
-    assert json_response["modal"]["messages"]  
-    assert_equal Array, json_response["modal"]["messages"].class
-    assert_operator 1, :<=, json_response["modal"]["messages"].count
-    refute json_response["modal"]["heading"].empty?  
-    refute json_response["modal"]["subheading"].empty? 
-    assert_operator 1, :<=, json_response["modal"]["messages"].count
+    assert json_response["data"]["heading"]  
+    assert json_response["data"]["messages"]  
+    assert_equal Array, json_response["data"]["messages"].class
+    assert_operator 1, :<=, json_response["data"]["messages"].count
+    refute json_response["data"]["heading"].empty?  
+    refute json_response["data"]["subheading"].empty? 
+    assert_operator 1, :<=, json_response["data"]["messages"].count
   end
 
   # --------------- testing response values  -------------------------------------------------  
@@ -342,10 +344,10 @@ class ItemsControllerTest < ActionController::TestCase
     assert_response :success 
 
     # Test response object
-    refute json_response["modal"]["heading"].blank?, json_response["modal"]["heading"]
-    refute json_response["modal"]["messages"].empty?, json_response["modal"]["messages"]
-    assert_equal Array, json_response["modal"]["messages"].class
-    assert_equal String, json_response["modal"]["subheading"].class
+    refute json_response["data"]["heading"].blank?, json_response["data"]["heading"]
+    refute json_response["data"]["messages"].empty?, json_response["data"]["messages"]
+    assert_equal Array, json_response["data"]["messages"].class
+    assert_equal String, json_response["data"]["subheading"].class
   end
 
   test "should respond with proper heading and messages when creating an item for one user with tags" do
@@ -361,10 +363,10 @@ class ItemsControllerTest < ActionController::TestCase
     assert_response :success 
 
     # Test response object
-    refute json_response["modal"]["heading"].blank?
-    refute json_response["modal"]["messages"].empty?
-    assert_equal Array, json_response["modal"]["messages"].class
-    assert_equal String, json_response["modal"]["subheading"].class
+    refute json_response["data"]["heading"].blank?
+    refute json_response["data"]["messages"].empty?
+    assert_equal Array, json_response["data"]["messages"].class
+    assert_equal String, json_response["data"]["subheading"].class
   end
 
   # TODO: Find a way to test that the responses are coming in properly, ie with a proper format
@@ -381,10 +383,10 @@ class ItemsControllerTest < ActionController::TestCase
     assert_response :success 
 
     # Test response object
-    refute json_response["modal"]["heading"].blank?
-    refute json_response["modal"]["messages"].empty?
-    assert_equal Array, json_response["modal"]["messages"].class
-    assert_equal String, json_response["modal"]["subheading"].class
+    refute json_response["data"]["heading"].blank?
+    refute json_response["data"]["messages"].empty?
+    assert_equal Array, json_response["data"]["messages"].class
+    assert_equal String, json_response["data"]["subheading"].class
   end
 
   test "should respond with proper heading and messages when updating an item for one user with tags" do
@@ -400,10 +402,10 @@ class ItemsControllerTest < ActionController::TestCase
     assert_response :success 
 
     # Test response object
-    refute json_response["modal"]["heading"].blank?
-    refute json_response["modal"]["messages"].empty?
-    assert_equal Array, json_response["modal"]["messages"].class
-    assert_equal String, json_response["modal"]["subheading"].class
+    refute json_response["data"]["heading"].blank?
+    refute json_response["data"]["messages"].empty?
+    assert_equal Array, json_response["data"]["messages"].class
+    assert_equal String, json_response["data"]["subheading"].class
   end
 
   # --------------- these tests are  covered in unit tests now --------------------------------

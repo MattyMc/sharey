@@ -33,9 +33,9 @@ class ItemsController < ApplicationController
   end
 
   def destroy
-    user.destroy_item params[:id]
+    flash_response = user.destroy_item params[:id]
 
-    render json:{"deleted" => true}, status: :ok
+    render json:flash_response, status: :ok
   rescue StandardError => e
     render json:e.modal_response, status: :bad_request
   end
