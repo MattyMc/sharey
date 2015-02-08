@@ -34,6 +34,10 @@ class User < ActiveRecord::Base
     {"type" => "flash", "data" => {"message" => "Item Deleted"}}
   end
 
+  def name_as_hash
+    {"type" => "inline", "data" => {"message" => self.name, "action" => "username"}}
+  end
+
   def get_number_of_unviewed_items
     return UsageDatum.where(user:self, viewed: false).count
   end

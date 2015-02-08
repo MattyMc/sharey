@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   post 'items' => 'items#create_or_update'
   delete 'items/:id' => 'items#destroy'
   get 'items/:id' => 'items#show'
+  get 'username' => 'items#username'
+
 
   # Users - SessionsController -------------------------------------------
   root 'sessions#index'

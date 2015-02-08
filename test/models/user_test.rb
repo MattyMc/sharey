@@ -19,6 +19,25 @@ class UserTest < ActiveSupport::TestCase
   should validate_uniqueness_of :email
 
   # -------------------------------------------------------------------------------------------
+  # name_as_hash  -----------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------
+  test "should respond_to name_as_hash method" do
+    user = users(:matt)
+    assert user.respond_to?(:name_as_hash)
+  end
+
+  test "should return an inline object with username set" do
+    user = users(:matt)
+    result = user.name_as_hash
+
+    assert_equal Hash, result.class
+    assert_equal "inline", result["type"]
+    assert_equal user.name, result["data"]["message"]
+    assert_equal "username", result["data"]["action"]
+  end
+
+
+  # -------------------------------------------------------------------------------------------
   # destroy_item  -----------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------
   test "should respond to destroy item method" do

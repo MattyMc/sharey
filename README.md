@@ -55,6 +55,15 @@ All responses should be "none", or of the form:
       }
     }
 
+#### Inline
+    {
+      type: "inline",
+      data: {
+        message: "some message",
+        action: "name_as_hash"      # Or other
+      }
+    }
+
 
 ## Setup steps 
 

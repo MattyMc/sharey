@@ -7,7 +7,26 @@ class ItemsControllerTest < ActionController::TestCase
   end
 
   # -------------------------------------------------------------------------------------------
-  # get item/:id (:show) ----------------------------------------------------------------------
+  # get items/username ------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------  
+  test "should get username of user" do 
+    cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie
+    get :username
+    assert_response :success
+  end
+
+  test "should reply with username of user" do 
+    cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie
+    get :username
+
+    assert_equal users(:matt).name, json_response["data"]["message"]
+    assert_equal "username", json_response["data"]["action"]
+    assert_equal "inline", json_response["type"]
+  end
+
+
+  # -------------------------------------------------------------------------------------------
+  # get items/:id (:show) ----------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------
   test "should get show action" do
     user = users(:matt)

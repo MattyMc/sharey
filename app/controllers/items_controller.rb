@@ -57,6 +57,12 @@ class ItemsController < ApplicationController
     render nothing: true, status: :bad_request
   end
 
+  def username 
+    render json:user.name_as_hash, status: :ok
+  rescue StandardError => e
+    render e.modal_response, status: :bad_request
+  end
+
   private
 
   # -------------------------------------------------------------------------------------------
