@@ -71,8 +71,11 @@ class User < ActiveRecord::Base
       }
     }
 
-    # structure the data by category
-    return_items = return_items.group_by { |i| i["category_name"]}
+    # sort the items so that the categories are created in the order of newest first
+    return_items.sort! { |x,y| y["updated_at"] <=> x["updated_at"]}
+
+    # structure the data by category. If no category, use the from_user_tag
+    return_items = return_items.group_by { |i| i["category_name"] || i["from_user_tag"]}
 
     # Sort items in each category by updated_at; newest items first, exculde unwanted attributes
     return_items.each do |key, value| 

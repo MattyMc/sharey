@@ -1,4 +1,7 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# 
+# *** If adding new items here, make them older than 10 days ago other wise it may screw up some
+#         tests!
 
 # A simple item for matt
 matts_item:
@@ -66,5 +69,5 @@ to_matt_from_jay:
   category: 
   description: this is some item2 that jay shared
   original_request: this is some item that jay shared
-  updated_at: <%= Time.now - 5.days %>
-  created_at: <%= Time.now - 5.days %>
+  updated_at: <%= Time.now - 4.days %>
+  created_at: <%= Time.now - 4.days %>

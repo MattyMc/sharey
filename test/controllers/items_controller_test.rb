@@ -15,6 +15,9 @@ class ItemsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  # TODO: Write tests to ensure that ALL modal responses are in json format. For example,
+  #         if you remove 'json:' part of 'json:e.modal_response' do the tests still pass?
+
   test "should reply with username of user" do 
     cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie
     get :username

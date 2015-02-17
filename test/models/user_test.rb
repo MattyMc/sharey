@@ -200,11 +200,11 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 5, count
   end
 
-  test "should return shared items first" do
+  test "should return category with newest items first" do
     user = users(:matt)
     is = user.last_n_items(10)["data"]
 
-    assert_equal nil, is.keys[0]
+    assert_equal "@Jay", is.keys[0]
   end
 
   test "should order items from newest to oldest by updated_at" do
@@ -216,16 +216,16 @@ class UserTest < ActiveSupport::TestCase
     assert_equal items(:matts_item).description, is["Videos"][1]["description"]
 
     # Newest items first in 'nil'["category"]
-    assert_equal items(:to_matt_from_jay).description, is[nil][0]["description"]
-    assert_equal items(:matts_item_2).description, is[nil][1]["description"]
-    assert_equal items(:to_matt_from_pam).description, is[nil][2]["description"]
+    # assert_equal items(:to_matt_from_jay).description, is[nil][0]["description"]
+    # assert_equal items(:matts_item_2).description, is[nil][1]["description"]
+    # assert_equal items(:to_matt_from_pam).description, is[nil][2]["description"]
   end
 
   test "should include all defined categories" do
     user = users(:matt)
     is = user.last_n_items(10)["data"]
 
-    assert_equal [nil, "Videos"], is.keys
+    assert_equal ["@Jay", "Videos", nil, "@pam"], is.keys
   end
 
   test "should return a properly structured object" do
@@ -233,11 +233,11 @@ class UserTest < ActiveSupport::TestCase
     items = user.last_n_items(5)["data"]
 
     assert_equal Hash, items.class
-    assert_equal [nil, "Videos"], items.keys
+    assert_equal ["@Jay", "Videos", nil, "@pam"], items.keys
     assert_equal Array, items[nil].class
     assert_equal Array, items["Videos"].class
     assert_equal 2, items["Videos"].count
-    assert_equal 3, items[nil].count
+    assert_equal 1, items[nil].count
   end
 
   test "should contain description attribute in each return object" do
@@ -349,9 +349,9 @@ class UserTest < ActiveSupport::TestCase
     user = users(:matt)
     is = user.last_n_items(10)["data"]
 
-    assert_equal "@Jay", is[nil][0]["from_user_tag"]
-    assert_equal nil, is[nil][1]["from_user_tag"]
-    assert_equal "@pam", is[nil][2]["from_user_tag"]
+    assert_equal "@Jay", is["@Jay"][0]["from_user_tag"]
+    assert_equal nil, is[nil][0]["from_user_tag"]
+    assert_equal "@pam", is["@pam"][0]["from_user_tag"]
     
     assert_equal nil, is["Videos"][0]["from_user_tag"]
     assert_equal nil, is["Videos"][1]["from_user_tag"]

@@ -51,7 +51,10 @@ class ItemsController < ApplicationController
   end
 
   def number_of_unviewed_items
-    unviewed_item_count = user.get_number_of_unviewed_items
+    # logger.warn "\nsharey_session_cookie: #{cookies['sharey_session_cookie']}\n"
+    # logger.warn "\n#{User.last.first_name}.session_cookie: #{User.last.sharey_session_cookie}\n"
+    # logger.warn "\n#{cookies.inspect}\n"
+    unviewed_item_count = user.get_number_of_unviewed_items    
     render json:unviewed_item_count
   rescue StandardError => e
     render nothing: true, status: :bad_request
@@ -60,7 +63,7 @@ class ItemsController < ApplicationController
   def username 
     render json:user.name_as_hash, status: :ok
   rescue StandardError => e
-    render e.modal_response, status: :bad_request
+    render json:e.modal_response, status: :bad_request
   end
 
   private
