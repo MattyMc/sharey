@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   delete 'items/:id' => 'items#destroy'
   get 'items/:id' => 'items#show'
   get 'username' => 'items#username'
+  get 'check_login' => 'items#check_login'
 
 
   # Users - SessionsController -------------------------------------------

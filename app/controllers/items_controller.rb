@@ -66,6 +66,13 @@ class ItemsController < ApplicationController
     render json:e.modal_response, status: :bad_request
   end
 
+  def check_login 
+    user
+    render nothing: true, status: :ok
+  rescue StandardError => e
+    render json:e.modal_response, status: :bad_request
+  end
+
   private
 
   # -------------------------------------------------------------------------------------------

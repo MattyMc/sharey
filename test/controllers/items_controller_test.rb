@@ -7,6 +7,21 @@ class ItemsControllerTest < ActionController::TestCase
   end
 
   # -------------------------------------------------------------------------------------------
+  # get check_login ---------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------  
+  test "should return nothing if provided a users valid cookie" do 
+    cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie
+    get :check_login
+    assert_response :success
+  end  
+
+  test "should return a modal if users cookie does not exist" do 
+    cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie + "blah"
+    get :check_login
+    assert_response :bad_request
+  end
+
+  # -------------------------------------------------------------------------------------------
   # get items/username ------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------  
   test "should get username of user" do 
