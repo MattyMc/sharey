@@ -10,7 +10,6 @@ Rails.application.routes.draw do
   get 'username' => 'items#username'
   get 'check_login' => 'items#check_login'
 
-
   # Users - SessionsController -------------------------------------------
   root 'sessions#index'
   get '/sign_out' => 'sessions#destroy', :as => :sign_out
