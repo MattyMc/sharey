@@ -67,12 +67,9 @@ class ItemsController < ApplicationController
   end
 
   def check_login 
-    logger.warn "loading user"
     user
-    logger.warn "found user"
     render nothing: true, status: :ok
   rescue StandardError => e
-    logger.warn e.message
     render json:e.modal_response, status: :bad_request
   end
 
