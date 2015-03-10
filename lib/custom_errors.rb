@@ -1,6 +1,13 @@
 module CustomErrors
   # Test coverage is in test/modules/custom_errors.rb
 
+  # NOTE!! The following code must be added to config/environments/development.rb, test.rb and production.rb
+  #           be sure to change the url appropriately
+  # Add URL host path for testing:
+  # config.after_initialize do 
+  #   Rails.application.routes.default_url_options[:host] = "https://sharey.ngrok.com"
+  # end
+
   # TODO: Write a test to ensure that if the user is not found,
   #         a link to the login URL will be contained somewhere in 
   #         one of the response messages.
