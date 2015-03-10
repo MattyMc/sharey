@@ -19,6 +19,14 @@ class ItemsControllerTest < ActionController::TestCase
     cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie + "blah"
     get :check_login
     assert_response :bad_request
+    assert_equal "modal", json_response['type']
+  end
+
+  test "should return a modal if there is no user cookie" do 
+    # cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie + "blah"
+    get :check_login
+    assert_response :bad_request
+    assert_equal "modal", json_response
   end
 
   # -------------------------------------------------------------------------------------------
