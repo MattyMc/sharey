@@ -8,6 +8,11 @@ gem 'omniauth', '~> 1.2.2'
 gem 'omniauth-google-oauth2'
 gem 'json'
 
+# Install bootstrap
+gem 'bootstrap-sass', '~> 3.3.3'
+gem "autoprefixer-rails"  # required by bootstrap
+gem "font-awesome-rails"  # required by social-signin buttons
+
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.0'
 # Use postgresql as the database for Active Record
@@ -58,5 +63,8 @@ group :development, :test do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+
+  # Use thin for local SSL development: thin start --ssl 
+  gem 'thin'
 end
 
