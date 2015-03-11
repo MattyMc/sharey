@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-  layout false
+  # layout false
   before_filter :get_current_user, :only => [:index]
 
   def index

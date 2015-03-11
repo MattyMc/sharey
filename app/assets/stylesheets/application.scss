@@ -10,6 +10,26 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
- *= require_tree .
- *= require_self
  */
+/* "bootstrap-sprockets" must be imported before "bootstrap" and "bootstrap/variables"*/
+@import "bootstrap-sprockets";
+
+
+/* Override default SASS variables */
+@import "variables";
+
+/* Import bootstrap */
+@import "bootstrap";
+
+/* Extend with Paper theme */
+@import "bootswatch";
+
+// Import font-awesome, required by bootstrap-social
+@import "font-awesome";
+
+// Import social buttons
+@import "bootstrap-social";
+
+.btn-google-plus {
+	margin: 13.5px 0px;
+}
