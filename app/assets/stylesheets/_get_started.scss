@@ -1,0 +1,58 @@
+#get-started {
+	@media (max-width: 479px) {	
+		.chevron {
+			font-size: 1.5em;
+		}
+		#sharey-icon {
+			width: 64px;
+		}
+	}
+
+	@media (min-width: 480px) and (max-width: $screen-xs-max) { // 767px
+		.chevron {
+			font-size: 1.5em;
+		}
+		#sharey-icon {
+			width: 64px;
+		}
+		img {
+			max-width: 500px;
+		}
+	}
+
+	@media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) { // 768px and 991px
+		.chevron {
+			padding-left: 0px;
+			padding-right: 0px;
+			font-size: 2em;
+		}
+		.vertical-align {
+			display: flex;
+			align-items: center;
+		}
+	}
+
+	@media (min-width: $screen-md-min) and (max-width: $screen-md-max) { // 992 and 1199
+		.chevron {
+			padding-left: 0px;
+			padding-right: 0px;
+			font-size: 2em;
+		}
+		.vertical-align {
+			display: flex;
+			align-items: center;
+		}
+	}
+	
+	@media (min-width: $screen-lg-min) { // 1200
+		.chevron {
+			padding-left: 0px;
+			padding-right: 0px;
+			font-size: 3em;
+		}
+		.vertical-align {
+			display: flex;
+			align-items: center;
+		}
+	}
+}

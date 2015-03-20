@@ -23,71 +23,11 @@
 /* Import bootstrap */
 @import "bootstrap";
 
-// @media (max-width: 768px) { //768
-// 	h1 {
-// 		font-size: 20vw;
-// 		line-height: 15vw;
-// 	}
-// 	#meet-sharey {
-// 		padding-left: 0px;
-// 	}
-// }
-@media (max-width: 1199px) { //1200
-	#sharey-img {
-		width:262px;
-		// padding-left: 0px;
-		// padding-right: 0px;
-	}
-}
+// Div with Sharey image and description
+@import "headline";
 
-@media (max-width: 991px) { //992
-	#sharey-img {
-		width:162px;
-		padding-left: 0px;
-		padding-right: 0px;
-	}
-}
-
-@media (max-width: 767px) { //768
-	#headline {
-		h1 {
-			font-size: 5em;
-			line-height: 1.1em;
-		}
-		h4 { 
-			font-size: 2em;
-		}
-		#meet-sharey {
-			// padding-left: 0px;
-		}#sharey-img {
-			width: 192px;
-			padding-left: 0px;
-			padding-right: 0px;
-		}
-	}
-}
-
-@media (max-width: 479px) { //480
-	#headline {
-		h1 {
-			font-size: 48px;
-			line-height: 50px;
-		}
-		h4 {
-			font-size: 1.8em;
-		}
-		#meet-sharey {
-			padding-left: 0px;
-		}
-		#sharey-img {
-			// Calcuulated by 768/12 * 3 - 30 (gutter)
-			width: 120px;  
-			padding-left: 0px;
-			padding-right: 0px;
-		}
-	}
-}
-
+// Navigation custom styling
+@import "nav";
 
 /* Extend with Paper theme */
 @import "bootswatch";
@@ -98,6 +38,6 @@
 // Import social buttons
 @import "bootstrap-social";
 
-.btn-google-plus {
-	margin: 13.5px 0px;
-}
+// Get started div
+@import "get_started";
+
