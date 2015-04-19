@@ -252,7 +252,7 @@ class FriendTest < ActiveSupport::TestCase
     tags = ["@mau"]
     share_with_users, missing_tags = Friend.find_valid_friends_for_user(users(:matt), tags)
 
-    assert_equal( {"@Mau" => users(:mau).id}, share_with_users)
+    assert_equal( {"@Mau" => users(:mau)}, share_with_users)
     assert_equal [], missing_tags
   end
 
@@ -260,7 +260,7 @@ class FriendTest < ActiveSupport::TestCase
     tags = ["@jay", "@mau"]
     share_with_users, missing_tags = Friend.find_valid_friends_for_user(users(:matt), tags)
 
-    assert_equal( {"@Jay" => users(:jay).id, "@Mau" => users(:mau).id}, share_with_users)
+    assert_equal( {"@Jay" => users(:jay), "@Mau" => users(:mau)}, share_with_users)
     assert_equal [], missing_tags
   end
 
@@ -268,7 +268,7 @@ class FriendTest < ActiveSupport::TestCase
     tags = ["@jay", "@frank_the_tank"]
     share_with_users, missing_tags = Friend.find_valid_friends_for_user(users(:matt), tags)
 
-    assert_equal( {"@Jay" => users(:jay).id}, share_with_users)
+    assert_equal( {"@Jay" => users(:jay)}, share_with_users)
     assert_equal ["@frank_the_tank"], missing_tags
   end
 
@@ -276,7 +276,7 @@ class FriendTest < ActiveSupport::TestCase
     tags = ["@jay", "@mau", "@frank_the_tank", "@mancho_man"]
     share_with_users, missing_tags = Friend.find_valid_friends_for_user(users(:matt), tags)
 
-    assert_equal( {"@Jay" => users(:jay).id, "@Mau" => users(:mau).id}, share_with_users)
+    assert_equal( {"@Jay" => users(:jay), "@Mau" => users(:mau)}, share_with_users)
     assert_equal ["@frank_the_tank", "@mancho_man"], missing_tags
   end
 
@@ -284,7 +284,7 @@ class FriendTest < ActiveSupport::TestCase
     tags = ["@jay", "@frank_the_tank", "@mancho_man", "@dick"]
     share_with_users, missing_tags = Friend.find_valid_friends_for_user(users(:matt), tags)
 
-    assert_equal( {"@Jay" => users(:jay).id}, share_with_users)
+    assert_equal( {"@Jay" => users(:jay)}, share_with_users)
     assert_equal ["@frank_the_tank", "@mancho_man", "@dick"], missing_tags
   end
 
@@ -292,7 +292,7 @@ class FriendTest < ActiveSupport::TestCase
     tags = ["@jay", "@frank", "@tank", "@fart", "@mancho_man", "@dick"]
     share_with_users, missing_tags = Friend.find_valid_friends_for_user(users(:matt), tags)
 
-    assert_equal( {"@Jay" => users(:jay).id}, share_with_users)
+    assert_equal( {"@Jay" => users(:jay)}, share_with_users)
     assert_equal ["@frank", "@tank", "@fart", "@mancho_man", "@dick"], missing_tags
   end
 
@@ -300,7 +300,7 @@ class FriendTest < ActiveSupport::TestCase
     tags = ["@Jay", "@frank"]
     share_with_users, missing_tags = Friend.find_valid_friends_for_user(users(:matt), tags)
 
-    assert_equal( {"@Jay" => users(:jay).id}, share_with_users)
+    assert_equal( {"@Jay" => users(:jay)}, share_with_users)
     assert_equal ["@frank"], missing_tags
   end   
 

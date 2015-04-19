@@ -98,8 +98,8 @@ class Item < ActiveRecord::Base
     # TODO: Do this hitting the db less
     if !share_with_users.nil? and !share_with_users.empty?
       
-      share_with_users.each do |tag, u_id|
-        shared_item = Item.where(document:document, user_id:u_id).first_or_initialize
+      share_with_users.each do |tag, receiving_user|
+        shared_item = Item.where(document:document, user:receiving_user).first_or_initialize
         if shared_item.new_record?
           shared_item.from_user = user
           shared_item.description = description

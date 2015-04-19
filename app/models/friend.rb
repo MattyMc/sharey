@@ -27,18 +27,18 @@ class Friend < ActiveRecord::Base
     return {},[] if user.nil? or tag_array.nil? or tag_array.empty?
     
     tag_array.map!(&:downcase).map!(&:strip)
-    friends = Friend.where(user: user, downcase_tag:tag_array)
+    friends = Friend.where(user: user, downcase_tag:tag_array).includes(:receiving_user)
 
     missing_tags = []
-    if friends.count < tag_array.count # find the tag taht was missing
+    if friends.count < tag_array.count # find the tags that were missing
       friend_tags = friends.pluck :downcase_tag
       missing_tags = tag_array - friend_tags
     end
 
-    # Structure our return value as: {"@tag" => user, "@tag2" => user2, ...}
+    # Structure our return value as: {"@tag" => receiving_user, "@tag2" => receiving_user2, ...}
      
     tag_hash = {}
-    friends.each {|f| tag_hash[f.tag] = f.receiving_user_id} unless friends.empty?
+    friends.each {|f| tag_hash[f.tag] = f.receiving_user} unless friends.empty?
       
     return tag_hash, missing_tags
   end

@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
 
   # Relationships -----------------------------------------------------------------------------
   has_many :items
+  has_many :friends
   has_many :shared_items, class_name:"Item", foreign_key: "originator_id"
   has_many :categories
   has_many :usage_data
