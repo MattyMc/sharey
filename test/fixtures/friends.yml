@@ -8,7 +8,7 @@
 
 matt_jay:
   user: matt
-  receiving_user: jay
+  receiving_user: jay (User)
   downcase_tag: "@jay"
   tag: "@Jay"
   confirmed: true
@@ -16,7 +16,7 @@ matt_jay:
 
 jay_matt:
   user: jay
-  receiving_user: matt
+  receiving_user: matt (User)
   downcase_tag: "@matt"
   tag: "@Matt"
   confirmed: true
@@ -24,7 +24,7 @@ jay_matt:
 
 matt_mau:
   user: matt
-  receiving_user: mau
+  receiving_user: mau (User)
   downcase_tag: "@mau"
   tag: "@Mau"
   confirmed: true
@@ -32,7 +32,7 @@ matt_mau:
 
 mau_matt:
   user: mau
-  receiving_user: matt
+  receiving_user: matt (User)
   downcase_tag: "@matt"
   tag: "@Matt"
   confirmed: true
@@ -40,7 +40,7 @@ mau_matt:
 
 jay_mau:
   user: jay
-  receiving_user: mau
+  receiving_user: mau (User)
   downcase_tag: "@mau"
   tag: "@Mau"
   confirmed: true
@@ -48,7 +48,7 @@ jay_mau:
 
 mau_jay:
   user: mau
-  receiving_user: jay
+  receiving_user: jay (User)
   downcase_tag: "@jay"
   tag: "@jay"
   confirmed: true
@@ -56,7 +56,7 @@ mau_jay:
 
 matt_pam:
   user: matt
-  receiving_user: pam
+  receiving_user: pam (User)
   downcase_tag: "@pam"
   tag: "@pam"
   confirmed: true
@@ -64,8 +64,25 @@ matt_pam:
 
 pam_matt:
   user: pam
-  receiving_user: matt
+  receiving_user: matt (User)
   downcase_tag: "@matt"
   tag: "@Matt"
+  confirmed: true
+  group_id: 
+
+# Unregistered Users
+matt_pat: 
+  user: matt
+  receiving_user: pat (UnregisteredUser)
+  downcase_tag: "@pat"
+  tag: "@Pat"
+  confirmed: true
+  group_id: 
+
+mau_pat: 
+  user: mau
+  receiving_user: pat (UnregisteredUser)
+  downcase_tag: "@pat"
+  tag: "@Pat"
   confirmed: true
   group_id: 

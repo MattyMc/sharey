@@ -2,7 +2,7 @@ class Friend < ActiveRecord::Base
   
   # Relationships -----------------------------------------------------------------------------
   belongs_to :user
-  belongs_to :receiving_user, class_name: "User", foreign_key: "receiving_user_id"
+  belongs_to :receiving_user, polymorphic: true
 
   # Validations -------------------------------------------------------------------------------
   def check_user_and_receiving_user
@@ -16,7 +16,9 @@ class Friend < ActiveRecord::Base
   validates :downcase_tag, :tag, format:{ without: /\s/ }
   validates :downcase_tag, :tag, format:{ without: /\./ }
   validates :downcase_tag, :tag, format:{ without: /\,/ }
-  validates :user_id, uniqueness: { scope: :receiving_user_id }
+  validates :user_id, uniqueness: { scope: [:receiving_user_id, :receiving_user_type] }
+  validates :user_id, uniqueness: { scope: :tag }
+  validates :user_id, uniqueness: { scope: :downcase_tag }
   validate  :check_user_and_receiving_user
   validate  :check_first_character
 
@@ -27,7 +29,8 @@ class Friend < ActiveRecord::Base
     return {},[] if user.nil? or tag_array.nil? or tag_array.empty?
     
     tag_array.map!(&:downcase).map!(&:strip)
-    friends = Friend.where(user: user, downcase_tag:tag_array).includes(:receiving_user)
+    # TODO: Fix the line below to avoid the N+1 problem (find a way to eager load a polymorphic relationship)
+    friends = Friend.where(user: user, downcase_tag:tag_array)
 
     missing_tags = []
     if friends.count < tag_array.count # find the tags that were missing

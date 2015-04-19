@@ -2,7 +2,7 @@ require 'test_helper'
 
 class FriendTest < ActiveSupport::TestCase
   should belong_to :user
-  should belong_to(:receiving_user).class_name('User').with_foreign_key('receiving_user_id')
+  should belong_to :receiving_user
 
   should validate_presence_of :user
   should validate_presence_of :receiving_user
@@ -384,5 +384,74 @@ class FriendTest < ActiveSupport::TestCase
     description, tag_array = Friend.parse_tag_array "This is a simple @matt, @pam description @john,@mau"
     assert_equal "This is a simple description", description
     assert_equal ["@matt", "@pam", "@john", "@mau"], tag_array
+  end
+
+  # -------------------------------------------------------------------------------------------
+  # testing polymorphic relationship ----------------------------------------------------------
+  # -------------------------------------------------------------------------------------------  
+  test "should create a new friend with receiving_user an unregistered_user" do
+    f = Friend.new(
+      user: users(:pam),
+      receiving_user: unregistered_users(:pat),
+      downcase_tag: "@pat",
+      tag: "@pat",
+      confirmed: true,
+      group_id: nil)
+    f.save!
+  end  
+
+  test "should not create a new user friend if tag is already used by an unregistered_user friend" do
+    f = Friend.new(
+      user: users(:mau),
+      receiving_user: users(:pam),
+      downcase_tag: "@pat",
+      tag: "@pat",
+      confirmed: true,
+      group_id: nil) 
+    assert_raises(ActiveRecord::RecordInvalid) { f.save! }
+  end
+
+  test "should not create a new unregistered_user friend if tag is already used by an user friend" do
+    f = Friend.new(
+      user: users(:mau),
+      receiving_user: unregistered_users(:ben),
+      downcase_tag: "@jay",
+      tag: "@jay",
+      confirmed: true,
+      group_id: nil) 
+    assert_raises(ActiveRecord::RecordInvalid) { f.save! }
+  end
+
+  test "should not create a new unregistered_user friend if tag is already used by an unregistered_user friend" do
+    f = Friend.new(
+      user: users(:mau),
+      receiving_user: unregistered_users(:ben),
+      downcase_tag: "@pat",
+      tag: "@pat",
+      confirmed: true,
+      group_id: nil) 
+    assert_raises(ActiveRecord::RecordInvalid) { f.save! }
+  end
+
+  test "should not create a new unregistered_user friend if already friends" do
+    f = Friend.new(
+      user: users(:mau),
+      receiving_user: unregistered_users(:pat),
+      downcase_tag: "@patrick",
+      tag: "@patrick",
+      confirmed: true,
+      group_id: nil) 
+    assert_raises(ActiveRecord::RecordInvalid) { f.save! }
+  end
+
+  test "should not allow creation of a new friendship that already exists" do
+    f = Friend.new(
+      user: users(:matt),
+      receiving_user: users(:pam),
+      downcase_tag: "@patrick",
+      tag: "@patrick",
+      confirmed: true,
+      group_id: nil) 
+    assert_raises(ActiveRecord::RecordInvalid) { f.save! }
   end
 end

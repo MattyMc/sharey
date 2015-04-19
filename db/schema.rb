@@ -35,16 +35,17 @@ ActiveRecord::Schema.define(version: 20150419191934) do
 
   create_table "friends", force: :cascade do |t|
     t.integer  "user_id"
-    t.integer  "receiving_user_id",                 null: false
+    t.integer  "receiving_user_id",                   null: false
+    t.string   "receiving_user_type",                 null: false
     t.string   "downcase_tag"
     t.string   "tag"
-    t.boolean  "confirmed",         default: false
+    t.boolean  "confirmed",           default: false
     t.integer  "group_id"
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
   end
 
-  add_index "friends", ["user_id", "receiving_user_id"], name: "index_friends_on_user_id_and_receiving_user_id", unique: true, using: :btree
+  add_index "friends", ["user_id", "receiving_user_id", "receiving_user_type"], name: "by_receiving_user", unique: true, using: :btree
   add_index "friends", ["user_id"], name: "index_friends_on_user_id", using: :btree
 
   create_table "items", force: :cascade do |t|

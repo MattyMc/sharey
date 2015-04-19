@@ -7,6 +7,7 @@ class UserTest < ActiveSupport::TestCase
   should have_many :friends
 
   should have_many(:shared_items).class_name('Item').with_foreign_key('originator_id') 
+  should have_many :friends_with_me
 
   should validate_presence_of :uid
   should validate_presence_of :name
