@@ -9,6 +9,7 @@ class ItemTest < ActiveSupport::TestCase
   
   should validate_presence_of :document_id
   should validate_presence_of :user_id
+  should validate_presence_of :user_type
   should validate_presence_of :description
   should validate_presence_of :original_request
 
@@ -20,22 +21,29 @@ class ItemTest < ActiveSupport::TestCase
     assert_equal Hash, item.notes.class
   end  
   
-  test "should raise an exception if user_id and document_id are not unique" do
+  test "should raise an exception if user_id user_type and document_id are not unique" do
     Item.create!(
       document_id:documents(:some_video).id, 
-      user_id:users(:pam).id, 
+      user:users(:pam), 
       description:"y", 
       original_request:"y")
 
     assert_raises(ActiveRecord::RecordInvalid) {
       Item.create!(
         document_id:documents(:some_video).id, 
-        user_id:users(:pam).id, 
+        user:users(:pam), 
         description:"y", 
         original_request:"y")
     }
   end
 
+  # -------------------------------------------------------------------------------------------
+  # testing the polymorphic relationship  -----------------------------------------------------
+  # -------------------------------------------------------------------------------------------
+  test "should allow user to be an unregistered_user" do
+    item = Item.new document:Document.first, user:unregistered_users(:pat), from_user:users(:matt), description:"blah", original_request:"blah"
+    assert item.save!
+  end
 
   # -------------------------------------------------------------------------------------------
   # clicked  ----------------------------------------------------------------------------------

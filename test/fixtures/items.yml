@@ -6,7 +6,7 @@
 # A simple item for matt
 matts_item:
   document: some_video
-  user: matt
+  user: matt (User)
   from_user: 
   category: videos
   description: this is some item that matt shared
@@ -16,7 +16,7 @@ matts_item:
 
 matts_item_1:
   document: some_site_1
-  user: matt
+  user: matt (User)
   from_user: 
   category: videos
   description: this is some item1 that matt shared
@@ -26,7 +26,7 @@ matts_item_1:
 
 matts_item_2:
   document: some_site_2
-  user: matt
+  user: matt (User)
   from_user: 
   category: 
   description: this is some item2 that matt shared
@@ -37,7 +37,7 @@ matts_item_2:
 # Pam made an item, shared it with matt and jay
 pams_shared_item:
   document: insightful_story
-  user: pam
+  user: pam (User)
   from_user: 
   category: funny
   description: you guys should read this
@@ -45,7 +45,7 @@ pams_shared_item:
 
 to_matt_from_pam:
   document: insightful_story
-  user: matt
+  user: matt (User)
   from_user: pam
   category: 
   description: you guys should read this
@@ -56,7 +56,7 @@ to_matt_from_pam:
 # Jay made an item, shared it with Matt
 jays_item_1:
   document: some_site_3
-  user: jay
+  user: jay (User)
   from_user: 
   category: 
   description: this is some item2 that jay shared
@@ -64,10 +64,21 @@ jays_item_1:
 
 to_matt_from_jay:
   document: some_site_3
-  user: matt
+  user: matt (User)
   from_user: jay
   category: 
   description: this is some item2 that jay shared
   original_request: this is some item that jay shared
+  updated_at: <%= Time.now - 4.days %>
+  created_at: <%= Time.now - 4.days %>
+
+# Shared with unregistered_users
+to_pat_from_matt:
+  document: some_site_3
+  user: pat (UnregisteredUser)
+  from_user: matt
+  category:
+  description: some item from Matt to pat
+  original_request: some item from Matt to @pat
   updated_at: <%= Time.now - 4.days %>
   created_at: <%= Time.now - 4.days %>

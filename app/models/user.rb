@@ -8,11 +8,11 @@ class User < ActiveRecord::Base
   include CustomErrors
 
   # Relationships -----------------------------------------------------------------------------
-  has_many :items
+  has_many :items, as: :user
   has_many :friends
   has_many :shared_items, class_name:"Item", foreign_key: "originator_id"
   has_many :categories
-  has_many :usage_data
+  has_many :usage_data, as: :user
 
   # Validations -------------------------------------------------------------------------------
   validates :uid, :name, :first_name, :last_name, :email, :token, :expires_at, :image, presence: true

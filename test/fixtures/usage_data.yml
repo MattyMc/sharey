@@ -3,7 +3,7 @@
 
 matts_item_data:
   item: matts_item
-  user: matt
+  user: matt (User)
   viewed: true
   deleted: false
   click_count: 0
@@ -11,7 +11,7 @@ matts_item_data:
 
 matts_item_1_data:
   item: matts_item_1
-  user: matt
+  user: matt (User)
   viewed: true
   deleted: false
   click_count: 0
@@ -19,7 +19,7 @@ matts_item_1_data:
 
 matts_item_2_data:
   item: matts_item_2
-  user: matt
+  user: matt (User)
   viewed: true
   deleted: false
   click_count: 0
@@ -27,7 +27,7 @@ matts_item_2_data:
 
 pams_item_data:
   item: pams_shared_item
-  user: pam
+  user: pam (User)
   viewed: true
   deleted: false
   click_count: 0
@@ -35,7 +35,7 @@ pams_item_data:
 
 to_matt_from_pam_item_data:
   item: to_matt_from_pam
-  user: matt
+  user: matt (User)
   viewed: false
   deleted: false
   click_count: 0
@@ -43,7 +43,7 @@ to_matt_from_pam_item_data:
 
 jays_item_1_data:
   item: jays_item_1
-  user: jay
+  user: jay (User)
   viewed: true
   deleted: false
   click_count: 0
@@ -51,7 +51,7 @@ jays_item_1_data:
 
 to_matt_from_jay_item_data:
   item: to_matt_from_jay
-  user: matt
+  user: matt (User)
   viewed: false
   deleted: false
   click_count: 0

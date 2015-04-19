@@ -50,6 +50,7 @@ ActiveRecord::Schema.define(version: 20150419191934) do
   create_table "items", force: :cascade do |t|
     t.integer  "document_id",      null: false
     t.integer  "user_id",          null: false
+    t.string   "user_type",        null: false
     t.integer  "from_user_id"
     t.integer  "category_id"
     t.string   "description",      null: false
@@ -61,7 +62,7 @@ ActiveRecord::Schema.define(version: 20150419191934) do
   add_index "items", ["category_id"], name: "index_items_on_category_id", using: :btree
   add_index "items", ["document_id"], name: "index_items_on_document_id", using: :btree
   add_index "items", ["from_user_id"], name: "index_items_on_from_user_id", using: :btree
-  add_index "items", ["user_id", "document_id"], name: "index_items_on_user_id_and_document_id", unique: true, using: :btree
+  add_index "items", ["user_id", "user_type", "document_id"], name: "index_items_on_user_id_and_user_type_and_document_id", unique: true, using: :btree
   add_index "items", ["user_id"], name: "index_items_on_user_id", using: :btree
 
   create_table "unregistered_users", force: :cascade do |t|
@@ -73,6 +74,7 @@ ActiveRecord::Schema.define(version: 20150419191934) do
   create_table "usage_data", force: :cascade do |t|
     t.integer  "item_id",                     null: false
     t.integer  "user_id",                     null: false
+    t.string   "user_type",                   null: false
     t.boolean  "viewed",      default: true
     t.boolean  "deleted",     default: false
     t.integer  "click_count", default: 0
@@ -106,7 +108,5 @@ ActiveRecord::Schema.define(version: 20150419191934) do
   add_foreign_key "friends", "users"
   add_foreign_key "items", "categories"
   add_foreign_key "items", "documents"
-  add_foreign_key "items", "users"
   add_foreign_key "usage_data", "items"
-  add_foreign_key "usage_data", "users"
 end

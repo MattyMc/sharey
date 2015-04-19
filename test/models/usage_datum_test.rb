@@ -6,6 +6,7 @@ class UsageDatumTest < ActiveSupport::TestCase
 
   should validate_presence_of :item_id
   should validate_presence_of :user_id
+  should validate_presence_of :user_type
   should_not allow_value(nil).for(:viewed)
   should_not allow_value(nil).for(:deleted)
   should_not allow_value(nil).for(:shared)
@@ -24,4 +25,7 @@ class UsageDatumTest < ActiveSupport::TestCase
     assert_equal users(:matt).id, usage_data.user_id
   end
 
+  test "should create a usage_data with default attributes for an unregistered_user" do
+    usage_data = UsageDatum.new item:items(:matts_item), user:unregistered_users(:pat)
+  end
 end

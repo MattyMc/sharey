@@ -10,14 +10,14 @@ class Item < ActiveRecord::Base
   attr_accessor :notes
 
   # Relationships -----------------------------------------------------------------------------
-  belongs_to :user
+  belongs_to :user, polymorphic: true
   belongs_to :document
   belongs_to :category
   belongs_to :from_user, class_name: "User", foreign_key: "from_user_id"
   has_one    :usage_datum
   
   # Validations -------------------------------------------------------------------------------
-  validates :document_id, :user_id, :description, :original_request, presence: true
+  validates :document_id, :user_id, :user_type, :description, :original_request, presence: true
   validates :user_id, uniqueness: { scope: :document_id }
 
   # Filters -----------------------------------------------------------------------------------
