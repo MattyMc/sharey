@@ -1,5 +1,11 @@
 Rails.application.routes.draw do
-  
+
+  # API - ItemsController ------------------------------------------------  
+  root 'pages_controller#home'
+  get 'my_friends' => 'pages_controller#my_friends'
+  get 'saved_items' => 'pages_controller#saved_items'
+  get 'about' => 'pages_controller#about'
+
   # API - ItemsController ------------------------------------------------
   get 'items/create_or_update'
   get 'items/number_of_unviewed_items'
@@ -11,7 +17,6 @@ Rails.application.routes.draw do
   get 'check_login' => 'items#check_login'
 
   # Users - SessionsController -------------------------------------------
-  root 'sessions#index'
   get '/sign_out' => 'sessions#destroy', :as => :sign_out
   get "/auth/:provider/callback" => 'sessions#create'
   
