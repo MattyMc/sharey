@@ -18,7 +18,7 @@ class Item < ActiveRecord::Base
   
   # Validations -------------------------------------------------------------------------------
   validates :document_id, :user_id, :user_type, :description, :original_request, presence: true
-  validates :user_id, uniqueness: { scope: :document_id }
+  validates :user_id, uniqueness: { scope: [:user_type, :document_id] }
 
   # Filters -----------------------------------------------------------------------------------
   after_create :create_usage_datum  # Item will automatically create and manage its data
