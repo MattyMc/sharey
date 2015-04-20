@@ -25,8 +25,12 @@ some_site_3:
   title: My favourite underpants
   originator: pam
 
-# Not yet used
-# some_site_4:
-#   url: www.somesite4.com/
-#   title: My favourite underpants4
-#   originator: jay
+some_site_4:
+  url: www.somesite4.com/
+  title: My favourite underpants4
+  originator: jay
+
+some_site_5:
+  url: www.somesite5.com/
+  title: My favourite underpants4
+  originator: mau

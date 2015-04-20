@@ -453,6 +453,50 @@ class ItemsControllerTest < ActionController::TestCase
     assert_equal String, json_response["data"]["subheading"].class
   end
 
+  test "should save multiple items to one user from different users with the same tags" do
+    matts_items = users(:matt).items.count
+
+    cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
+    post :create_or_update, {
+    item: {
+      url: "https://www.somesite43.com", # pam has this already saved
+      category: "some category",
+      description: "here's something I'd like to save @matt",
+      title: "some website title"
+      }
+    }
+    assert_equal matts_items+1, users(:matt).items.count 
+    assert_response :success 
+
+    cookies[:sharey_session_cookie] = users(:jay).sharey_session_cookie
+    post :create_or_update, {
+    item: {
+      url: "www.somecrazysite.ca", # pam has this already saved
+      category: "some category",
+      description: "here's something I'd like to save @matt",
+      title: "some website title"
+      }
+    }
+    assert_response :success 
+    assert_equal matts_items+2, users(:matt).items.count 
+  end
+
+  test "should save items for unregistered_users" do
+    pats_items = unregistered_users(:pat).items.count
+
+    cookies[:sharey_session_cookie] = users(:matt).sharey_session_cookie
+    post :create_or_update, {
+    item: {
+      url: "https://www.somesite43.com", # pam has this already saved
+      category: "some category",
+      description: "here's something I'd like to save @pat",
+      title: "some website title"
+      }
+    }
+    assert_equal pats_items+1, unregistered_users(:pat).items.count 
+    assert_response :success 
+  end
+
   # --------------- these tests are  covered in unit tests now --------------------------------
   test "should raise an exception if user cannot be found by their sharey_session_cookie" do
     cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie + "thjakgdha"
