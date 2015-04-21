@@ -8,7 +8,7 @@ class FriendTest < ActiveSupport::TestCase
   should validate_presence_of :receiving_user
   should validate_presence_of :downcase_tag
   should validate_presence_of :tag
-  should validate_presence_of :confirmed
+  should_not allow_value(nil).for(:confirmed)
 
   # Validations -------------------------------------------------------------------------------
   test "should raise an exception if Friend is created with spaces in downcase_tag" do
@@ -241,6 +241,98 @@ class FriendTest < ActiveSupport::TestCase
         group_id: nil) }
   end
 
+  
+  # -------------------------------------------------------------------------------------------
+  # self.create_from_user_email_and_tag -------------------------------------------------------
+  # -------------------------------------------------------------------------------------------  
+  test "should respond to create_from_user_email_and_tag" do
+    assert Friend.respond_to? :create_from_user_email_and_tag
+  end
+
+  test "should create a new friend and unregistered_user" do
+    unreg_count = UnregisteredUser.count
+    user_count = User.count
+    friend_count = Friend.count
+
+    friend = Friend.create_from_user_email_and_tag users(:matt), "porkchops@gmail.com", "@Pork"
+
+    assert_equal unreg_count+1, UnregisteredUser.count 
+    assert_equal user_count, User.count 
+    assert_equal friend_count+1, Friend.count 
+  end
+
+  test "should create a new friend and unregistered_user with proper attributes" do
+    unreg_count = UnregisteredUser.count
+    user_count = User.count
+    friend_count = Friend.count
+
+    friend = Friend.create_from_user_email_and_tag users(:matt), "porkchops@gmail.com", "@Pork"
+
+    assert_equal "UnregisteredUser", friend.receiving_user_type
+    assert_equal "@Pork", friend.tag
+    assert_equal "@pork", friend.downcase_tag
+    assert_equal users(:matt), friend.user
+  end
+
+  test "should create a new friend but not a new user" do
+    unreg_count = UnregisteredUser.count
+    user_count = User.count
+    friend_count = Friend.count
+
+    friend = Friend.create_from_user_email_and_tag users(:jay), "pam@email.com", "@Pam"
+
+    assert_equal unreg_count, UnregisteredUser.count 
+    assert_equal user_count, User.count 
+    assert_equal friend_count+1, Friend.count 
+  end
+
+  test "should create a new friend but not a new unregistered_user" do
+    unreg_count = UnregisteredUser.count
+    user_count = User.count
+    friend_count = Friend.count
+
+    friend = Friend.create_from_user_email_and_tag users(:jay), "pat@gmail.com", "@Pat"
+
+    assert_equal unreg_count, UnregisteredUser.count 
+    assert_equal user_count, User.count 
+    assert_equal friend_count+1, Friend.count 
+  end
+
+  test "should raise an exception if tag is already used" do
+    unreg_count = UnregisteredUser.count
+    user_count = User.count
+    friend_count = Friend.count
+
+    friend = Friend.create_from_user_email_and_tag users(:jay), "pam@email.com", "@Pam"
+    assert_raises(ActiveRecord::RecordInvalid) {Friend.create_from_user_email_and_tag users(:jay), "pat@gmail.com", "@pam"}
+  end
+
+  test "should not create friends if they already exist" do
+    unreg_count = UnregisteredUser.count
+    user_count = User.count
+    friend_count = Friend.count
+
+    assert_raises(ActiveRecord::RecordInvalid) {Friend.create_from_user_email_and_tag users(:matt), "pam@email.com", "@pam"}
+  end
+
+  test "should find a user even if their email is spelled with capital letters" do
+    unreg_count = UnregisteredUser.count
+    user_count = User.count
+    friend_count = Friend.count
+
+    friend = Friend.create_from_user_email_and_tag users(:jay), "PAM@email.com", "@Pam"
+
+    assert_equal unreg_count, UnregisteredUser.count 
+    assert_equal user_count, User.count 
+    assert_equal friend_count+1, Friend.count 
+    
+    friend = Friend.create_from_user_email_and_tag users(:jay), "pat@GMAIL.com", "@Pat"
+
+    assert_equal unreg_count, UnregisteredUser.count 
+    assert_equal user_count, User.count 
+    assert_equal friend_count+2, Friend.count 
+  end
+
   # -------------------------------------------------------------------------------------------
   # find_valid_friends_for_user ---------------------------------------------------------------
   # -------------------------------------------------------------------------------------------  
@@ -454,4 +546,5 @@ class FriendTest < ActiveSupport::TestCase
       group_id: nil) 
     assert_raises(ActiveRecord::RecordInvalid) { f.save! }
   end
+
 end

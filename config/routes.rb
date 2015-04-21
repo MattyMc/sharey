@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
 
+  post 'friends' => 'friends#create'
+  patch 'friends/:id' => 'friends#update'
+  delete 'friends/:id' => 'friends#destroy'
+
   # API - ItemsController ------------------------------------------------  
   root 'pages_controller#home'
   get 'my_friends' => 'pages_controller#my_friends'
