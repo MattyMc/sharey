@@ -57,3 +57,19 @@ to_matt_from_jay_item_data:
   click_count: 0
   shared: false
 
+# Unregistered_users
+to_pat_from_matt_item_data:
+  item: to_matt_from_matt
+  user: pat (UnregisteredUser)
+  viewed: false
+  deleted: false
+  click_count: 0
+  shared: false
+
+to_pat_from_matt_2_item_data:
+  item: to_matt_from_matt_2
+  user: pat (UnregisteredUser)
+  viewed: false
+  deleted: false
+  click_count: 0
+  shared: false

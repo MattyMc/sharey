@@ -82,3 +82,13 @@ to_pat_from_matt:
   original_request: some item from Matt to @pat
   updated_at: <%= Time.now - 4.days %>
   created_at: <%= Time.now - 4.days %>
+
+to_pat_from_matt_2:
+  document: some_site_1
+  user: pat (UnregisteredUser)
+  from_user: matt
+  category:
+  description: some item from Matt to pat
+  original_request: some item from Matt to @pat
+  updated_at: <%= Time.now - 4.days %>
+  created_at: <%= Time.now - 4.days %>

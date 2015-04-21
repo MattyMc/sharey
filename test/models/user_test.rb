@@ -510,6 +510,67 @@ class UserTest < ActiveSupport::TestCase
     assert_equal User.find_by(uid: "123456789"), user
   end  
 
+  test "should create a new user from Google's callback params while removing an unregistered_user" do
+    google_response = {
+        :provider => "google_oauth2",
+        :uid => "123456789",
+        :info => {
+            :name => "Pat Atatat",
+            :email => unregistered_users(:pat).email,
+            :first_name => "Pat",
+            :last_name => "Atatat",
+            :image => "https://lh3.googleusercontent.com/url/photo.jpg"
+        },
+        :credentials => {
+            :token => "token",
+            :refresh_token => "another_token",
+            :expires_at => 1354920555,
+            :expires => true
+        },
+        :extra => {
+            :raw_info => {
+                :sub => "123456789",
+                :email => unregistered_users(:pat).email,
+                :email_verified => true,
+                :name => "Pat Atatat",
+                :given_name => "Pat",
+                :family_name => "Atatat",
+                :profile => "https://plus.google.com/123456789",
+                :picture => "https://lh3.googleusercontent.com/url/photo.jpg",
+                :gender => "male",
+                :birthday => "0000-06-25",
+                :locale => "en",
+                :hd => "company_name.com"
+            }
+        }
+    }
+    user_count = User.count
+    unreg_count = UnregisteredUser.count
+    pats_item_count = Item.where(user: unregistered_users(:pat)).count
+    pats_usage_datum_count = UsageDatum.where(user: unregistered_users(:pat)).count
+
+    user = User.find_or_create_from_google_callback google_response
+    
+    assert_equal "pat@gmail.com", user.email
+
+    assert_equal (user_count+1), User.count, "should create a new user"
+    assert_equal unreg_count-1, UnregisteredUser.count, "should destroy old unregistered_user"
+    assert_equal pats_item_count, Item.where(user: user).count, "should have all items"
+    assert_equal pats_usage_datum_count, UsageDatum.where(user: user).count, "should have all usage_datum"
+
+    item = Item.where(user: user).first
+    assert_equal "User", item.user_type, "polymorphic attribute should point to correct table"
+
+    assert_nil UnregisteredUser.where(email: "pat@gmail.com").first
+
+    # Matts friend Pat
+    friendship_1 = Friend.where(user: users(:matt), downcase_tag:"@pat").first
+    friendship_2 = Friend.where(user: users(:mau), downcase_tag:"@pat").first
+    assert_equal user, friendship_1.receiving_user, "should reassociate friendship"
+    assert_equal user, friendship_2.receiving_user, "should reassociate friendship"
+    assert_equal "User", friendship_1.receiving_user_type, "should point to correct table"
+  end  
+
   test "should find and return an existing user from Google's callback params" do
     google_response = {
         :provider => "google_oauth2",

@@ -101,6 +101,10 @@ class User < ActiveRecord::Base
     user = User.find_by uid:google_response[:uid]
     return user unless user.nil?
 
+    # Check if an unregistered user exists by the same email address
+    # TODO: Make this case insensitive
+    unregistered_user = UnregisteredUser.where(email: google_response[:info][:email]).first
+
     # Lets extract the parameters we're interested in
     user_params = {
       uid: google_response[:uid],
@@ -114,7 +118,16 @@ class User < ActiveRecord::Base
       expires_at: Time.at(google_response[:credentials][:expires_at].to_i).to_datetime
     }
 
-    User.create! user_params
+    user = User.create! user_params
+    return user if unregistered_user.nil?
+
+    # Reassociate all items, friends, usage_data
+    Item.where(user: unregistered_user).update_all("user_id = '#{user.id}', user_type = 'User'")
+    Friend.where(receiving_user: unregistered_user).update_all("receiving_user_id = '#{user.id}', receiving_user_type = 'User'")
+    UsageDatum.where(user: unregistered_user).update_all("user_id = '#{user.id}', user_type = 'User'")
+
+    unregistered_user.destroy!
+    return user
   end
 
 
