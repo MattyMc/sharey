@@ -1,9 +1,9 @@
 class SessionsController < ApplicationController
   # layout false
-  before_filter :get_current_user, :only => [:index]
+  # before_filter :get_current_user, :only => [:index]
 
-  def index
-  end
+  # def index
+  # end
 
   # Action catches the callback from Google's API
   def create
@@ -30,10 +30,6 @@ class SessionsController < ApplicationController
   end
 
   private
-
-  def get_current_user
-    @current_user ||= current_user
-  end
 
   def google_response
     raise "Missing parameters" if request.nil?

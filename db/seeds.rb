@@ -5,3 +5,11 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+require 'active_record/fixtures'
+ActiveRecord::Fixtures.create_fixtures("#{Rails.root}/test/fixtures", "categories")
+ActiveRecord::Fixtures.create_fixtures("#{Rails.root}/test/fixtures", "documents")
+ActiveRecord::Fixtures.create_fixtures("#{Rails.root}/test/fixtures", "friends")
+ActiveRecord::Fixtures.create_fixtures("#{Rails.root}/test/fixtures", "items")
+ActiveRecord::Fixtures.create_fixtures("#{Rails.root}/test/fixtures", "unregistered_users")
+ActiveRecord::Fixtures.create_fixtures("#{Rails.root}/test/fixtures", "usage_data")
+ActiveRecord::Fixtures.create_fixtures("#{Rails.root}/test/fixtures", "users")

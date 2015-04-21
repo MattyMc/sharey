@@ -10,6 +10,7 @@ gem 'json'
 
 # Install bootstrap
 gem 'bootstrap-sass', '~> 3.3.3'
+gem 'bootstrap_form'
 gem "autoprefixer-rails"  # required by bootstrap
 gem "font-awesome-rails"  # required by social-signin buttons
 
@@ -53,6 +54,9 @@ gem 'shoulda', group: :test
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
+
+# Added for compatibility issues
+gem 'sprockets', '2.12.3'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

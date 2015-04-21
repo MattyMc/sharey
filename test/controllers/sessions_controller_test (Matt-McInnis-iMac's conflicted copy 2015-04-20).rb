@@ -173,7 +173,6 @@ class SessionsControllerTest < ActionController::TestCase
     assert_equal old_sharey_session_cookie, pam.reload.sharey_session_cookie, "nothing has changed, should not update"
   end
 
-
   test "should destroy session and redirect to root_path" do
     # cookies[:sharey_session_cookie] = users(:pam).sharey_session_cookie
     session['current_user_id'] = users(:pam).id

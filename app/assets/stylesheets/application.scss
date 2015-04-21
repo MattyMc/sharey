@@ -44,3 +44,11 @@ html {
 // Get started div
 @import "get_started";
 
+#friends-table {
+	td {
+		vertical-align: middle;
+	}
+	#tag-header {
+		padding-left: 0px;
+	}
+}

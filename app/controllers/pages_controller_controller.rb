@@ -3,6 +3,8 @@ class PagesControllerController < ApplicationController
   end
 
   def my_friends
+    matt = User.last
+    @friends = Friend.where user:matt
   end
 
   def saved_items
