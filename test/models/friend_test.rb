@@ -255,6 +255,7 @@ class FriendTest < ActiveSupport::TestCase
     friend_count = Friend.count
 
     friend = Friend.create_from_user_email_and_tag users(:matt), "porkchops@gmail.com", "@Pork"
+    friend.save!
 
     assert_equal unreg_count+1, UnregisteredUser.count 
     assert_equal user_count, User.count 
@@ -267,6 +268,7 @@ class FriendTest < ActiveSupport::TestCase
     friend_count = Friend.count
 
     friend = Friend.create_from_user_email_and_tag users(:matt), "porkchops@gmail.com", "@Pork"
+    friend.save!
 
     assert_equal "UnregisteredUser", friend.receiving_user_type
     assert_equal "@Pork", friend.tag
@@ -280,6 +282,7 @@ class FriendTest < ActiveSupport::TestCase
     friend_count = Friend.count
 
     friend = Friend.create_from_user_email_and_tag users(:jay), "pam@email.com", "@Pam"
+    friend.save!
 
     assert_equal unreg_count, UnregisteredUser.count 
     assert_equal user_count, User.count 
@@ -292,6 +295,7 @@ class FriendTest < ActiveSupport::TestCase
     friend_count = Friend.count
 
     friend = Friend.create_from_user_email_and_tag users(:jay), "pat@gmail.com", "@Pat"
+    friend.save!
 
     assert_equal unreg_count, UnregisteredUser.count 
     assert_equal user_count, User.count 
@@ -304,7 +308,11 @@ class FriendTest < ActiveSupport::TestCase
     friend_count = Friend.count
 
     friend = Friend.create_from_user_email_and_tag users(:jay), "pam@email.com", "@Pam"
-    assert_raises(ActiveRecord::RecordInvalid) {Friend.create_from_user_email_and_tag users(:jay), "pat@gmail.com", "@pam"}
+    friend.save!
+    assert_raises(ActiveRecord::RecordInvalid) {
+      friend = Friend.create_from_user_email_and_tag users(:jay), "pat@gmail.com", "@pam"
+      friend.save!
+    }
   end
 
   test "should not create friends if they already exist" do
@@ -312,7 +320,10 @@ class FriendTest < ActiveSupport::TestCase
     user_count = User.count
     friend_count = Friend.count
 
-    assert_raises(ActiveRecord::RecordInvalid) {Friend.create_from_user_email_and_tag users(:matt), "pam@email.com", "@pam"}
+    assert_raises(ActiveRecord::RecordInvalid) {
+      friend = Friend.create_from_user_email_and_tag users(:matt), "pam@email.com", "@pam"
+      friend.save!
+    }
   end
 
   test "should find a user even if their email is spelled with capital letters" do
@@ -321,12 +332,14 @@ class FriendTest < ActiveSupport::TestCase
     friend_count = Friend.count
 
     friend = Friend.create_from_user_email_and_tag users(:jay), "PAM@email.com", "@Pam"
+    friend.save!
 
     assert_equal unreg_count, UnregisteredUser.count 
     assert_equal user_count, User.count 
     assert_equal friend_count+1, Friend.count 
     
     friend = Friend.create_from_user_email_and_tag users(:jay), "pat@GMAIL.com", "@Pat"
+    friend.save!
 
     assert_equal unreg_count, UnregisteredUser.count 
     assert_equal user_count, User.count 

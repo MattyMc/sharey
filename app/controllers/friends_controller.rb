@@ -3,12 +3,7 @@ class FriendsController < ApplicationController
   # POST /friends
   # POST /friends.json
   def create
-    @friend = Friend.new(
-      user:current_user, 
-      tag: friend_params["tag"],
-      downcase_tag: friend_params["tag"].strip.downcase,
-      confirmed: false,
-      receiving_user: User.last)
+    @friend = Friend.create_from_user_email_and_tag current_user, friend_params["email"], friend_params["tag"]
 
     respond_to do |format|
       if @friend.save

@@ -20,6 +20,13 @@ class UserTest < ActiveSupport::TestCase
   should validate_uniqueness_of :uid
   should validate_uniqueness_of :email
 
+  test "should not allow a new user with the same email address" do
+    user = users(:matt)
+    user.uid = 1239218302123
+    user.email = user.email.upcase
+    assert_raises(ActiveRecord::RecordInvalid) { User.create! user.serializable_hash }
+  end
+
   # -------------------------------------------------------------------------------------------
   # name_as_hash  -----------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------

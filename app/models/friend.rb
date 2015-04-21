@@ -32,7 +32,7 @@ class Friend < ActiveRecord::Base
     # If not, does it exist in UnregisteredUsers?
     rec_user = UnregisteredUser.where(email: email).first_or_create! if rec_user.nil?
 
-    Friend.create! user:user, receiving_user:rec_user, tag:tag, downcase_tag:tag.strip.downcase, confirmed: true
+    Friend.new user:user, receiving_user:rec_user, tag:tag, downcase_tag:tag.strip.downcase, confirmed: true
   end
 
   def self.find_valid_friends_for_user user, tag_array
