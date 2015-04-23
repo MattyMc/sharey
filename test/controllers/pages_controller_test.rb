@@ -1,9 +1,9 @@
 require 'test_helper'
 
-class PagesControllerControllerTest < ActionController::TestCase
+class PagesControllerTest < ActionController::TestCase
 
   test "should route root_path to pages#home" do
-    assert_routing({ path: '/', method: :get }, { controller: 'pages_controller', action: 'home' })
+    assert_routing({ path: '/', method: :get }, { controller: 'pages', action: 'home' })
   end  
 
   # -------------------------------------------------------------------------------------------

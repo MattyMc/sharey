@@ -20,6 +20,16 @@ class FriendTest < ActiveSupport::TestCase
         tag: "@jay",
         confirmed: true,
         group_id: nil) }
+  end  
+  test "should raise an exception if Friend is created with only an @ as the tag" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: users(:jay),
+        downcase_tag: "@",
+        tag: "@",
+        confirmed: true,
+        group_id: nil) }
   end
 
   test "should raise an exception if user and receiving_user are the same" do
@@ -558,6 +568,18 @@ class FriendTest < ActiveSupport::TestCase
       confirmed: true,
       group_id: nil) 
     assert_raises(ActiveRecord::RecordInvalid) { f.save! }
+  end
+
+  # -------------------------------------------------------------------------------------------
+  # testing tag update ------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------  
+  test "should update downcase tag when we update tag" do
+    user = users(:matt)
+    friend = user.friends.first
+    friend.update! tag:"@BLAHHHH"
+
+    assert_equal "@BLAHHHH", friend.reload.tag
+    assert_equal "@blahhhh", friend.reload.downcase_tag
   end
 
 end

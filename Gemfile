@@ -70,5 +70,14 @@ group :development, :test do
 
   # Use thin for local SSL development: thin start --ssl 
   gem 'thin'
+  
+  
+  # Great gems for debugging front end, from: http://railscasts.com/episodes/402-better-errors-railspanel
+  #   Also, added the initializer better_errors.rb 
+  #   Also, added Chrome Extension Rails Panel: https://github.com/dejan/rails_panel
+  gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'meta_request'
+
 end
 

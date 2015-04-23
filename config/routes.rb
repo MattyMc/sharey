@@ -5,10 +5,10 @@ Rails.application.routes.draw do
   delete 'friends/:id' => 'friends#destroy'
 
   # API - ItemsController ------------------------------------------------  
-  root 'pages_controller#home'
-  get 'my_friends' => 'pages_controller#my_friends'
-  get 'saved_items' => 'pages_controller#saved_items'
-  get 'about' => 'pages_controller#about'
+  root 'pages#home'
+  get 'my_friends' => 'pages#my_friends'
+  get 'saved_items' => 'pages#saved_items'
+  get 'about' => 'pages#about'
 
   # API - ItemsController ------------------------------------------------
   get 'items/create_or_update'

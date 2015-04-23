@@ -6,6 +6,10 @@ class FriendsControllerTest < ActionController::TestCase
     ActiveSupport::JSON.decode @response.body
   end
 
+  # -------------------------------------------------------------------------------------------
+  # post :create ------------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------  
+
   test "should not create a friend from existing friends" do
     session['current_user_id'] = users(:matt).id
     friend_count = users(:matt).friends.count
@@ -22,13 +26,12 @@ class FriendsControllerTest < ActionController::TestCase
     unreg_count = UnregisteredUser.count
     user_count = User.count
 
-    assert_difference('Friend.count') do
-      post :create, friend: { tag: "@Charles", email: "charles@gmail.com" }
-      assert_response :success
-      assert_equal friend_count+1, Friend.count
-      assert_equal unreg_count+1, UnregisteredUser.count
-      assert_equal user_count, User.count
-    end
+    post :create, friend: { tag: "@Charles", email: "charles@gmail.com" }
+    assert_redirected_to my_friends_path
+    assert_equal friend_count+1, users(:matt).friends.count
+    assert_equal unreg_count+1, UnregisteredUser.count
+    assert_equal user_count, User.count
+    
   end
 
   test "should create a friend from a registered user" do
@@ -36,29 +39,25 @@ class FriendsControllerTest < ActionController::TestCase
     friend_count = users(:jay).friends.count
     unreg_count = UnregisteredUser.count
     user_count = User.count
-
-    assert_difference('Friend.count') do
-      post :create, friend: { tag: "@Pam", email: "pam@email.com" }
-      assert_response :success
-      assert_equal friend_count+1, Friend.count
-      assert_equal unreg_count, UnregisteredUser.count
-      assert_equal user_count+1, User.count
-    end
+    
+    post :create, friend: { tag: "@Pam", email: "pam@email.com" }
+    assert_redirected_to my_friends_path
+    assert_equal friend_count+1, users(:jay).friends.count
+    assert_equal unreg_count, UnregisteredUser.count
+    assert_equal user_count, User.count    
   end
 
-  test "should create a friend from an unregistered user" do
+  test "should create a friend from an existing friend who is an unregistered user" do
     session['current_user_id'] = users(:jay).id
     friend_count = users(:jay).friends.count
     unreg_count = UnregisteredUser.count
     user_count = User.count
-
-    assert_difference('Friend.count') do
-      post :create, friend: { tag: "@Pat", email: "pat@gmail.com" }
-      assert_response :success
-      assert_equal friend_count+1, Friend.count
-      assert_equal unreg_count, UnregisteredUser.count
-      assert_equal user_count, User.count
-    end
+   
+    post :create, friend: { tag: "@Pat", email: "pat@gmail.com" }
+    assert_redirected_to my_friends_path
+    assert_equal friend_count+1, users(:jay).friends.count
+    assert_equal unreg_count, UnregisteredUser.count
+    assert_equal user_count, User.count
   end
 
   test "should not create a friend from a bad email address" do
@@ -67,14 +66,90 @@ class FriendsControllerTest < ActionController::TestCase
     unreg_count = UnregisteredUser.count
     user_count = User.count
 
-    assert_difference('Friend.count') do
-      post :create, friend: { tag: "@Pat", email: "sillyquackquack.com" }
-      assert_response :failure
-      assert_equal friend_count, Friend.count
-      assert_equal unreg_count, UnregisteredUser.count
-      assert_equal user_count, User.count
-    end
+    post :create, friend: { tag: "@Pat", email: "sillyquackquack.com" }
+    assert_response :unprocessable_entity
+    assert_equal friend_count, users(:jay).friends.count
+    assert_equal unreg_count, UnregisteredUser.count
+    assert_equal user_count, User.count
   end
+
+  test "should not create a friend if the user is not logged in" do
+    session['current_user_id'] = 123151512224
+    friend_count = Friend.count
+    unreg_count = UnregisteredUser.count
+    user_count = User.count
+
+    post :create, friend: { tag: "@Pat", email: "sillyquackquack.com" }
+    assert_response :unprocessable_entity
+    assert_equal friend_count, Friend.count
+    assert_equal unreg_count, UnregisteredUser.count
+    assert_equal user_count, User.count
+  end
+
+  # -------------------------------------------------------------------------------------------
+  # patch :update -----------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------  
+
+  test "should not update friend if no user is defined" do 
+    friend = friends(:matt_jay)
+    patch :update, id:friend.id, friend: {tag: "@JAMES"}
+
+    refute_equal "@JAMES", friends(:matt_jay).reload.tag
+    refute_equal "@james", friends(:matt_jay).reload.downcase_tag
+  end  
+
+  test "should not update friend if wrong user is defined" do 
+    session['current_user_id'] = users(:jay).id
+    friend = friends(:matt_jay)
+    patch :update, id:friend.id, friend: {tag: "@JAMES"}
+
+    refute_equal "@JAMES", friends(:matt_jay).reload.tag
+    refute_equal "@james", friends(:matt_jay).reload.downcase_tag
+  end  
+
+  test "should update friend and render message" do 
+    session['current_user_id'] = users(:matt).id
+    friend = friends(:matt_jay)
+    patch :update, id:friend.id, friend: {tag: "@JAMES"}
+
+    assert_redirected_to my_friends_path
+    assert_equal "@JAMES", friends(:matt_jay).reload.reload.tag, "should update tag"
+    assert_equal "@james", friends(:matt_jay).reload.reload.downcase_tag, "should update downcase_tag"
+  end
+
+  # -------------------------------------------------------------------------------------------
+  # delete :destroy ---------------------------------------------------------------------------
+  # -------------------------------------------------------------------------------------------  
+
+  test "should not destroy friend if no user is defined" do 
+    friend = friends(:matt_jay)
+    friend_count = Friend.count
+    delete :destroy, id:friend.id
+
+    refute_nil Friend.where(user: users(:matt), receiving_user:users(:jay)).first, "Should not have been destroyed"
+    assert_equal friend_count, Friend.count
+  end  
+
+  test "should not destroy friend if wrong user is defined" do 
+    session['current_user_id'] = users(:jay).id
+    friend = friends(:matt_jay)
+    friend_count = Friend.count
+    delete :destroy, id:friend.id
+
+    refute_nil Friend.where(user: users(:matt), receiving_user:users(:jay)).first, "Should not have been destroyed"
+    assert_equal friend_count, Friend.count
+  end  
+
+  test "should destroy friend and render message" do 
+    session['current_user_id'] = users(:matt).id
+    friend = friends(:matt_jay)
+    friend_count = Friend.count
+    delete :destroy, id:friend.id
+
+    assert_nil Friend.where(user: users(:matt), receiving_user:users(:jay)).first, "Should have been destroyed"
+    assert_equal friend_count-1, Friend.count
+  end
+
 
   # test "should update friend" do
   #   patch :update, id: @friend, friend: { age: @friend.age, name: @friend.name, tag: @friend.tag }

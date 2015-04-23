@@ -9,8 +9,8 @@ class Friend < ActiveRecord::Base
     errors.add(:user, "can't be the same as receiving_user") if user_id == receiving_user_id
   end
   def check_first_character
-    return errors.add(:tag, "must not be nil") unless !tag.nil? and !downcase_tag.nil?
-    errors.add(:tag, "must begin with an @ symbol") unless tag.start_with?("@") and downcase_tag.start_with?("@")
+    return errors.add(:tag, "must not be empty") unless !tag.nil? and !downcase_tag.nil? 
+    errors.add(:tag, "must begin with an @ symbol") unless tag.start_with?("@") and downcase_tag.start_with?("@") and tag.length > 1
   end
   validates :downcase_tag, :tag, :user, :receiving_user, presence: true
   validates :downcase_tag, :tag, format:{ without: /\s/ }
@@ -22,17 +22,22 @@ class Friend < ActiveRecord::Base
   validate  :check_user_and_receiving_user
   validate  :check_first_character
 
+  before_validation(on: :update) do 
+    self.downcase_tag = self.tag.strip.downcase
+  end
+
   # -------------------------------------------------------------------------------------------
   # Class methods -----------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------  
   def self.create_from_user_email_and_tag user, email, tag
-    # Look to see if email exists in Users
-    rec_user = User.where(email: email).first
+    # Look to see if email exists in Users (downcase email)
+    rec_user = User.where("lower(email) = ?", email.downcase).first
 
     # If not, does it exist in UnregisteredUsers?
-    rec_user = UnregisteredUser.where(email: email).first_or_create! if rec_user.nil?
+    rec_user = UnregisteredUser.where("lower(email) = ?", email.downcase).first if rec_user.nil?
+    rec_user = UnregisteredUser.create!(email: email) if rec_user.nil?
 
-    Friend.new user:user, receiving_user:rec_user, tag:tag, downcase_tag:tag.strip.downcase, confirmed: true
+    Friend.create! user:user, receiving_user:rec_user, tag:tag, downcase_tag:tag.strip.downcase, confirmed: true
   end
 
   def self.find_valid_friends_for_user user, tag_array
