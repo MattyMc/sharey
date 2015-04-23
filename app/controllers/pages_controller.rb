@@ -4,8 +4,10 @@ class PagesController < ApplicationController
 
   def my_friends
     # This is just for debugging
-    matt = User.last
-    @friends = Friend.where user:matt
+    # matt = User.last
+    redirect_to(root_url, alert:"You need to login first!") if current_user.nil? 
+    @friends = Friend.where user:current_user
+
 
     # Keep this:
     @new_friend = Friend.new # This will ultimately be delivered to Friends controller
