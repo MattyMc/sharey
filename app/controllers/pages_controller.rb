@@ -41,6 +41,7 @@ class PagesController < ApplicationController
     elsif (model_name == "Item")
       records.map! do |r|
         r["user_type"] = "User"
+        r["description"] = r["description"].gsub("'", "\'")
         r
       end
     end
