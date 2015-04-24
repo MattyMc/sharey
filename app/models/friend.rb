@@ -9,21 +9,21 @@ class Friend < ActiveRecord::Base
     errors.add(:user, "can't be the same as receiving_user") if user_id == receiving_user_id
   end
   def check_first_character
-    return errors.add(:tag, "must not be empty") unless !tag.nil? and !downcase_tag.nil? 
-    errors.add(:tag, "must begin with an @ symbol") unless tag.start_with?("@") and downcase_tag.start_with?("@") and tag.length > 1
+    return errors.add(:tag, "must not be empty") unless !tag.nil?
+    errors.add(:tag, "must begin with an @ symbol") unless tag.start_with?("@") and tag.length > 1
   end
-  validates :downcase_tag, :tag, :user, :receiving_user, presence: true
-  validates :downcase_tag, :tag, format:{ without: /\s/ }
-  validates :downcase_tag, :tag, format:{ without: /\./ }
-  validates :downcase_tag, :tag, format:{ without: /\,/ }
+  validates :tag, :user, :receiving_user, presence: true
+  validates :tag, format:{ without: /\s/ }
+  validates :tag, format:{ without: /\./ }
+  validates :tag, format:{ without: /\,/ }
   validates :user_id, uniqueness: { scope: [:receiving_user_id, :receiving_user_type] }
-  validates :user_id, uniqueness: { scope: :downcase_tag }
+  validates :tag,  uniqueness: { case_sensitive: false, scope: :user_id }
   validates :confirmed, inclusion: [true, false]
   validate  :check_user_and_receiving_user
   validate  :check_first_character
 
   before_validation(on: :update) do 
-    self.downcase_tag = self.tag.strip.downcase
+    self.tag = self.tag.strip
   end
 
   # -------------------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ class Friend < ActiveRecord::Base
     rec_user = UnregisteredUser.where("lower(email) = ?", email.downcase).first if rec_user.nil?
     rec_user = UnregisteredUser.create!(email: email) if rec_user.nil?
 
-    Friend.create! user:user, receiving_user:rec_user, tag:tag, downcase_tag:tag.strip.downcase, confirmed: true
+    Friend.create! user:user, receiving_user:rec_user, tag:tag, confirmed: true
   end
 
   def self.find_valid_friends_for_user user, tag_array
@@ -45,12 +45,12 @@ class Friend < ActiveRecord::Base
     
     tag_array.map!(&:downcase).map!(&:strip)
     # TODO: Fix the line below to avoid the N+1 problem (find a way to eager load a polymorphic relationship)
-    friends = Friend.where(user: user, downcase_tag:tag_array)
+    friends = Friend.where(user: user).where("lower(tag) IN (?)", tag_array)
 
     missing_tags = []
     if friends.count < tag_array.count # find the tags that were missing
-      friend_tags = friends.pluck :downcase_tag
-      missing_tags = tag_array - friend_tags
+      friend_tags = friends.pluck :tag
+      missing_tags = tag_array - friend_tags.map!(&:downcase).map!(&:strip)
     end
 
     # Structure our return value as: {"@tag" => receiving_user, "@tag2" => receiving_user2, ...}

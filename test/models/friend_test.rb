@@ -6,27 +6,25 @@ class FriendTest < ActiveSupport::TestCase
 
   should validate_presence_of :user
   should validate_presence_of :receiving_user
-  should validate_presence_of :downcase_tag
   should validate_presence_of :tag
   should_not allow_value(nil).for(:confirmed)
 
   # Validations -------------------------------------------------------------------------------
-  test "should raise an exception if Friend is created with spaces in downcase_tag" do
+  test "should raise an exception if Friend is created with spaces in tag" do
     assert_raises(ActiveRecord::RecordInvalid){
       Friend.create!(
         user: users(:pam),
         receiving_user: users(:jay),
-        downcase_tag: " @jay",
-        tag: "@jay",
+        tag: "@j ay",
         confirmed: true,
         group_id: nil) }
   end  
+  
   test "should raise an exception if Friend is created with only an @ as the tag" do
     assert_raises(ActiveRecord::RecordInvalid){
       Friend.create!(
         user: users(:pam),
         receiving_user: users(:jay),
-        downcase_tag: "@",
         tag: "@",
         confirmed: true,
         group_id: nil) }
@@ -37,7 +35,6 @@ class FriendTest < ActiveSupport::TestCase
       Friend.create!(
         user: users(:pam),
         receiving_user: users(:pam),
-        downcase_tag: "@jay",
         tag: "@jay",
         confirmed: true,
         group_id: nil) }
@@ -48,7 +45,6 @@ class FriendTest < ActiveSupport::TestCase
       Friend.create!(
         user: users(:pam),
         receiving_user: users(:jay),
-        downcase_tag: "@jay",
         tag: " @jay",
         confirmed: true,
         group_id: nil) }
@@ -58,20 +54,8 @@ class FriendTest < ActiveSupport::TestCase
     assert_raises(ActiveRecord::RecordInvalid){
       Friend.create!(
         user: users(:pam),
-        receiving_user: users(:jay),
-        downcase_tag: "@jay",
+        receiving_user: users(:jay), 
         tag: "jay",
-        confirmed: true,
-        group_id: nil) }
-  end
-
-  test "should raise an exception if downcase_tag does not begin with at-sign" do
-    assert_raises(ActiveRecord::RecordInvalid){
-      Friend.create!(
-        user: users(:pam),
-        receiving_user: users(:jay),
-        downcase_tag: "jay",
-        tag: "@jay",
         confirmed: true,
         group_id: nil) }
   end
@@ -80,8 +64,7 @@ class FriendTest < ActiveSupport::TestCase
     assert_raises(ActiveRecord::RecordInvalid){
       Friend.create!(
         user: users(:pam),
-        receiving_user: users(:jay),
-        downcase_tag: "@jay",
+        receiving_user: users(:jay), 
         tag: " @j ay",
         confirmed: true,
         group_id: nil) }
@@ -92,7 +75,7 @@ class FriendTest < ActiveSupport::TestCase
       Friend.create!(
         user: users(:pam),
         receiving_user: users(:jay),
-        downcase_tag: "@jay",
+ 
         tag: "@j,ay",
         confirmed: true,
         group_id: nil) }
@@ -102,8 +85,7 @@ class FriendTest < ActiveSupport::TestCase
     assert_raises(ActiveRecord::RecordInvalid){
       Friend.create!(
         user: users(:pam),
-        receiving_user: users(:jay),
-        downcase_tag: "@jay",
+        receiving_user: users(:jay), 
         tag: "@,jay",
         confirmed: true,
         group_id: nil) }
@@ -113,8 +95,7 @@ class FriendTest < ActiveSupport::TestCase
     assert_raises(ActiveRecord::RecordInvalid){
       Friend.create!(
         user: users(:pam),
-        receiving_user: users(:jay),
-        downcase_tag: "@jay",
+        receiving_user: users(:jay), 
         tag: "@jay,",
         confirmed: true,
         group_id: nil) }
@@ -124,8 +105,7 @@ class FriendTest < ActiveSupport::TestCase
     assert_raises(ActiveRecord::RecordInvalid){
       Friend.create!(
         user: users(:pam),
-        receiving_user: users(:jay),
-        downcase_tag: "@jay",
+        receiving_user: users(:jay), 
         tag: "@j.ay",
         confirmed: true,
         group_id: nil) }
@@ -135,8 +115,7 @@ class FriendTest < ActiveSupport::TestCase
     assert_raises(ActiveRecord::RecordInvalid){
       Friend.create!(
         user: users(:pam),
-        receiving_user: users(:jay),
-        downcase_tag: "@jay",
+        receiving_user: users(:jay), 
         tag: "@.jay",
         confirmed: true,
         group_id: nil) }
@@ -146,86 +125,8 @@ class FriendTest < ActiveSupport::TestCase
     assert_raises(ActiveRecord::RecordInvalid){
       Friend.create!(
         user: users(:pam),
-        receiving_user: users(:jay),
-        downcase_tag: "@jay",
+        receiving_user: users(:jay), 
         tag: "@jay.",
-        confirmed: true,
-        group_id: nil) }
-  end
-
-  test "should raise an exception if downcase_tag contains a comma in the middle" do
-    assert_raises(ActiveRecord::RecordInvalid){
-      Friend.create!(
-        user: users(:pam),
-        receiving_user: users(:jay),
-        downcase_tag: "@ja,y",
-        tag: "@jay",
-        confirmed: true,
-        group_id: nil) }
-  end
-
-  test "should raise an exception if downcase_tag contains a comma in front" do
-    assert_raises(ActiveRecord::RecordInvalid){
-      Friend.create!(
-        user: users(:pam),
-        receiving_user: users(:jay),
-        downcase_tag: "@,jay",
-        tag: "@jay",
-        confirmed: true,
-        group_id: nil) }
-  end
-
-  test "should raise an exception if downcase_tag contains a comma at the end" do
-    assert_raises(ActiveRecord::RecordInvalid){
-      Friend.create!(
-        user: users(:pam),
-        receiving_user: users(:jay),
-        downcase_tag: "@jay,",
-        tag: "@jay",
-        confirmed: true,
-        group_id: nil) }
-  end
-
-  test "should raise an exception if downcase_tag contains a period in the middle" do
-    assert_raises(ActiveRecord::RecordInvalid){
-      Friend.create!(
-        user: users(:pam),
-        receiving_user: users(:jay),
-        downcase_tag: "@ja.y",
-        tag: "@jay",
-        confirmed: true,
-        group_id: nil) }
-  end
-
-  test "should raise an exception if downcase_tag contains a period in front" do
-    assert_raises(ActiveRecord::RecordInvalid){
-      Friend.create!(
-        user: users(:pam),
-        receiving_user: users(:jay),
-        downcase_tag: "@.jay",
-        tag: "@jay",
-        confirmed: true,
-        group_id: nil) }
-  end
-
-  test "should raise an exception if downcase_tag contains a period at the end" do
-    assert_raises(ActiveRecord::RecordInvalid){
-      Friend.create!(
-        user: users(:pam),
-        receiving_user: users(:jay),
-        downcase_tag: "@jay.",
-        tag: "@jay",
-        confirmed: true,
-        group_id: nil) }
-  end
-
-  test "should raise an exception if downcase_tag contains space in middle" do
-    assert_raises(ActiveRecord::RecordInvalid){
-      Friend.create!(
-        user: users(:pam),
-        receiving_user: users(:jay),
-        downcase_tag: "@j ay",
-        tag: "@jay",
         confirmed: true,
         group_id: nil) }
   end
@@ -234,23 +135,11 @@ class FriendTest < ActiveSupport::TestCase
     assert_raises(ActiveRecord::RecordInvalid){
       Friend.create!(
         user: users(:matt),
-        receiving_user: users(:jay),
-        downcase_tag: "@james",
+        receiving_user: users(:jay), 
         tag: "@james",
         confirmed: true,
         group_id: nil) }
   end
-
-  test "should automatically set downcase_tag on create" do
-    assert_raises(ActiveRecord::RecordInvalid){
-      Friend.create!(
-        user: users(:pam),
-        receiving_user: users(:jay),
-        tag: "@Jay",
-        confirmed: true,
-        group_id: nil) }
-  end
-
   
   # -------------------------------------------------------------------------------------------
   # self.create_from_user_email_and_tag -------------------------------------------------------
@@ -282,7 +171,6 @@ class FriendTest < ActiveSupport::TestCase
 
     assert_equal "UnregisteredUser", friend.receiving_user_type
     assert_equal "@Pork", friend.tag
-    assert_equal "@pork", friend.downcase_tag
     assert_equal users(:matt), friend.user
   end
 
@@ -508,7 +396,6 @@ class FriendTest < ActiveSupport::TestCase
     f = Friend.new(
       user: users(:pam),
       receiving_user: unregistered_users(:pat),
-      downcase_tag: "@pat",
       tag: "@pat",
       confirmed: true,
       group_id: nil)
@@ -519,7 +406,6 @@ class FriendTest < ActiveSupport::TestCase
     f = Friend.new(
       user: users(:mau),
       receiving_user: users(:pam),
-      downcase_tag: "@pat",
       tag: "@pat",
       confirmed: true,
       group_id: nil) 
@@ -530,7 +416,6 @@ class FriendTest < ActiveSupport::TestCase
     f = Friend.new(
       user: users(:mau),
       receiving_user: unregistered_users(:ben),
-      downcase_tag: "@jay",
       tag: "@jay",
       confirmed: true,
       group_id: nil) 
@@ -541,7 +426,6 @@ class FriendTest < ActiveSupport::TestCase
     f = Friend.new(
       user: users(:mau),
       receiving_user: unregistered_users(:ben),
-      downcase_tag: "@pat",
       tag: "@pat",
       confirmed: true,
       group_id: nil) 
@@ -552,7 +436,6 @@ class FriendTest < ActiveSupport::TestCase
     f = Friend.new(
       user: users(:mau),
       receiving_user: unregistered_users(:pat),
-      downcase_tag: "@patrick",
       tag: "@patrick",
       confirmed: true,
       group_id: nil) 
@@ -563,7 +446,6 @@ class FriendTest < ActiveSupport::TestCase
     f = Friend.new(
       user: users(:matt),
       receiving_user: users(:pam),
-      downcase_tag: "@patrick",
       tag: "@patrick",
       confirmed: true,
       group_id: nil) 
@@ -579,7 +461,6 @@ class FriendTest < ActiveSupport::TestCase
     friend.update! tag:"@BLAHHHH"
 
     assert_equal "@BLAHHHH", friend.reload.tag
-    assert_equal "@blahhhh", friend.reload.downcase_tag
   end
 
 end

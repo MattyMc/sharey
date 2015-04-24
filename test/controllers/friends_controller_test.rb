@@ -94,7 +94,6 @@ class FriendsControllerTest < ActionController::TestCase
     patch :update, id:friend.id, friend: {tag: "@JAMES"}
 
     refute_equal "@JAMES", friends(:matt_jay).reload.tag
-    refute_equal "@james", friends(:matt_jay).reload.downcase_tag
   end  
 
   test "should not update friend if wrong user is defined" do 
@@ -103,7 +102,6 @@ class FriendsControllerTest < ActionController::TestCase
     patch :update, id:friend.id, friend: {tag: "@JAMES"}
 
     refute_equal "@JAMES", friends(:matt_jay).reload.tag
-    refute_equal "@james", friends(:matt_jay).reload.downcase_tag
   end  
 
   test "should update friend and render message" do 
@@ -113,7 +111,6 @@ class FriendsControllerTest < ActionController::TestCase
 
     assert_redirected_to my_friends_path
     assert_equal "@JAMES", friends(:matt_jay).reload.reload.tag, "should update tag"
-    assert_equal "@james", friends(:matt_jay).reload.reload.downcase_tag, "should update downcase_tag"
   end
 
   # -------------------------------------------------------------------------------------------

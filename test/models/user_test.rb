@@ -571,8 +571,8 @@ class UserTest < ActiveSupport::TestCase
     assert_nil UnregisteredUser.where(email: "pat@gmail.com").first
 
     # Matts friend Pat
-    friendship_1 = Friend.where(user: users(:matt), downcase_tag:"@pat").first
-    friendship_2 = Friend.where(user: users(:mau), downcase_tag:"@pat").first
+    friendship_1 = Friend.where(user: users(:matt)).where("lower(tag) = ?", "@pat").first
+    friendship_2 = Friend.where(user: users(:mau)).where("lower(tag) = ?", "@pat").first
     assert_equal user, friendship_1.receiving_user, "should reassociate friendship"
     assert_equal user, friendship_2.receiving_user, "should reassociate friendship"
     assert_equal "User", friendship_1.receiving_user_type, "should point to correct table"

@@ -37,7 +37,6 @@ ActiveRecord::Schema.define(version: 20150419191934) do
     t.integer  "user_id"
     t.integer  "receiving_user_id",                   null: false
     t.string   "receiving_user_type",                 null: false
-    t.string   "downcase_tag"
     t.string   "tag"
     t.boolean  "confirmed",           default: false
     t.integer  "group_id"
