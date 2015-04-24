@@ -6,10 +6,28 @@ class FriendTest < ActiveSupport::TestCase
 
   should validate_presence_of :user
   should validate_presence_of :receiving_user
-  should validate_presence_of :tag
   should_not allow_value(nil).for(:confirmed)
 
   # Validations -------------------------------------------------------------------------------
+  test "should raise an exception if Friend is created with a nil tag and confirmed true" do
+    assert_raises(ActiveRecord::RecordInvalid){
+      Friend.create!(
+        user: users(:pam),
+        receiving_user: unregistered_users(:pat),
+        tag: nil,
+        confirmed: true,
+        group_id: nil) }
+  end    
+
+  test "should create a new friend with a nil tag and confirmed false" do
+    assert Friend.create!(
+      user: users(:jay),
+      receiving_user: users(:pam),
+      tag: nil,
+      confirmed: false,
+      group_id: nil) 
+  end    
+
   test "should raise an exception if Friend is created with spaces in tag" do
     assert_raises(ActiveRecord::RecordInvalid){
       Friend.create!(

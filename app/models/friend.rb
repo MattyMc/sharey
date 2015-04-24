@@ -9,10 +9,11 @@ class Friend < ActiveRecord::Base
     errors.add(:user, "can't be the same as receiving_user") if user_id == receiving_user_id
   end
   def check_first_character
+    return true unless confirmed
     return errors.add(:tag, "must not be empty") unless !tag.nil?
     errors.add(:tag, "must begin with an @ symbol") unless tag.start_with?("@") and tag.length > 1
   end
-  validates :tag, :user, :receiving_user, presence: true
+  validates :user, :receiving_user, presence: true
   validates :tag, format:{ without: /\s/ }
   validates :tag, format:{ without: /\./ }
   validates :tag, format:{ without: /\,/ }
