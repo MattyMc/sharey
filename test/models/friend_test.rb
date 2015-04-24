@@ -176,7 +176,7 @@ class FriendTest < ActiveSupport::TestCase
 
     assert_equal unreg_count+1, UnregisteredUser.count 
     assert_equal user_count, User.count 
-    assert_equal friend_count+1, Friend.count 
+    assert_equal friend_count+2, Friend.count 
   end
 
   test "should create a new friend and unregistered_user with proper attributes" do
@@ -190,6 +190,22 @@ class FriendTest < ActiveSupport::TestCase
     assert_equal "UnregisteredUser", friend.receiving_user_type
     assert_equal "@Pork", friend.tag
     assert_equal users(:matt), friend.user
+    assert_equal true, friend.confirmed
+  end
+
+  test "should create a new friend and unregistered_user with proper attributes for both new Friend records" do
+    unreg_count = UnregisteredUser.count
+    user_count = User.count
+    friend_count = Friend.count
+
+    Friend.create_from_user_email_and_tag users(:matt), "porkchops@gmail.com", "@Pork"
+    friend = Friend.where(user: UnregisteredUser.last, receiving_user: users(:matt)).first
+
+    assert friend, "should have created a two-way friendship"
+    assert_nil friend.tag, "tag should be nil"
+    assert_equal "UnregisteredUser", friend.user_type
+    assert_equal false, friend.confirmed
+    assert_equal users(:matt), friend.receiving_user
   end
 
   test "should create a new friend but not a new user" do
@@ -197,12 +213,18 @@ class FriendTest < ActiveSupport::TestCase
     user_count = User.count
     friend_count = Friend.count
 
-    friend = Friend.create_from_user_email_and_tag users(:jay), "pam@email.com", "@Pam"
-    friend.save!
+    jays_friendship = Friend.create_from_user_email_and_tag users(:jay), "pam@email.com", "@Pam"
 
+    assert_equal true, jays_friendship.confirmed
     assert_equal unreg_count, UnregisteredUser.count 
     assert_equal user_count, User.count 
-    assert_equal friend_count+1, Friend.count 
+    assert_equal friend_count+2, Friend.count 
+
+    pams_friendship = Friend.where(user: users(:pam), receiving_user:users(:jay)).first
+
+    assert_equal nil, pams_friendship.tag
+    assert_equal false, pams_friendship.confirmed
+    assert_equal users(:jay), pams_friendship.receiving_user
   end
 
   test "should create a new friend but not a new unregistered_user" do
@@ -215,7 +237,7 @@ class FriendTest < ActiveSupport::TestCase
 
     assert_equal unreg_count, UnregisteredUser.count 
     assert_equal user_count, User.count 
-    assert_equal friend_count+1, Friend.count 
+    assert_equal friend_count+2, Friend.count 
   end
 
   test "should raise an exception if tag is already used" do
@@ -252,14 +274,14 @@ class FriendTest < ActiveSupport::TestCase
 
     assert_equal unreg_count, UnregisteredUser.count 
     assert_equal user_count, User.count 
-    assert_equal friend_count+1, Friend.count 
+    assert_equal friend_count+2, Friend.count 
     
     friend = Friend.create_from_user_email_and_tag users(:jay), "pat@GMAIL.com", "@Pat"
     friend.save!
 
     assert_equal unreg_count, UnregisteredUser.count 
     assert_equal user_count, User.count 
-    assert_equal friend_count+2, Friend.count 
+    assert_equal friend_count+4, Friend.count 
   end
 
   # -------------------------------------------------------------------------------------------

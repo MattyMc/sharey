@@ -7,56 +7,56 @@
 # 	Pam -> Matt
 
 matt_jay:
-  user: matt
+  user: matt (User)
   receiving_user: jay (User)
   tag: "@Jay"
   confirmed: true
   group_id: 
 
 jay_matt:
-  user: jay
+  user: jay (User)
   receiving_user: matt (User)
   tag: "@Matt"
   confirmed: true
   group_id: 
 
 matt_mau:
-  user: matt
+  user: matt (User)
   receiving_user: mau (User)
   tag: "@Mau"
   confirmed: true
   group_id: 
 
 mau_matt:
-  user: mau
+  user: mau (User)
   receiving_user: matt (User)
   tag: "@Matt"
   confirmed: true
   group_id: 
 
 jay_mau:
-  user: jay
+  user: jay (User)
   receiving_user: mau (User)
   tag: "@Mau"
   confirmed: true
   group_id: 
 
 mau_jay:
-  user: mau
+  user: mau (User)
   receiving_user: jay (User)
   tag: "@jay"
   confirmed: true
   group_id: 
 
 matt_pam:
-  user: matt
+  user: matt (User)
   receiving_user: pam (User)
   tag: "@pam"
   confirmed: true
   group_id: 
 
 pam_matt:
-  user: pam
+  user: pam (User)
   receiving_user: matt (User)
   tag: "@Matt"
   confirmed: true
@@ -64,15 +64,36 @@ pam_matt:
 
 # Unregistered Users
 matt_pat: 
-  user: matt
+  user: matt (User)
   receiving_user: pat (UnregisteredUser)
   tag: "@Pat"
   confirmed: true
   group_id: 
 
+pat_matt: 
+  user: pat (UnregisteredUser)
+  receiving_user: matt (User)
+  tag: 
+  confirmed: false
+  group_id: 
+
 mau_pat: 
-  user: mau
+  user: mau (User)
   receiving_user: pat (UnregisteredUser)
   tag: "@Pat"
   confirmed: true
   group_id: 
+
+pat_mau: 
+  user: pat (UnregisteredUser)
+  receiving_user: mau (User)
+  tag: 
+  confirmed: false
+  group_id: 
+
+ben_matt:
+  user: matt (User)
+  receiving_user: ben (UnregisteredUser)
+  tag:
+  confirmed: false
+  group_id:

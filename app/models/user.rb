@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
 
   # Relationships -----------------------------------------------------------------------------
   has_many :items, as: :user
-  has_many :friends
+  has_many :friends, as: :user
   has_many :friends_with_me, class_name: "Friend", as: :receiving_user
   has_many :shared_items, class_name:"Item", foreign_key: "originator_id"
   has_many :categories
@@ -124,6 +124,7 @@ class User < ActiveRecord::Base
     # Reassociate all items, friends, usage_data
     Item.where(user: unregistered_user).update_all("user_id = '#{user.id}', user_type = 'User'")
     Friend.where(receiving_user: unregistered_user).update_all("receiving_user_id = '#{user.id}', receiving_user_type = 'User'")
+    Friend.where(user: unregistered_user).update_all("user_id = '#{user.id}', user_type = 'User'")
     UsageDatum.where(user: unregistered_user).update_all("user_id = '#{user.id}', user_type = 'User'")
 
     unregistered_user.destroy!

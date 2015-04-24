@@ -555,6 +555,7 @@ class UserTest < ActiveSupport::TestCase
     unreg_count = UnregisteredUser.count
     pats_item_count = Item.where(user: unregistered_users(:pat)).count
     pats_usage_datum_count = UsageDatum.where(user: unregistered_users(:pat)).count
+    pats_friendships = Friend.where(user: unregistered_users(:pat)).count
 
     user = User.find_or_create_from_google_callback google_response
     
@@ -576,6 +577,9 @@ class UserTest < ActiveSupport::TestCase
     assert_equal user, friendship_1.receiving_user, "should reassociate friendship"
     assert_equal user, friendship_2.receiving_user, "should reassociate friendship"
     assert_equal "User", friendship_1.receiving_user_type, "should point to correct table"
+
+    # Pats friendships should be reassociated with user
+    assert_equal pats_friendships, Friend.where(user: user).count, "should have all the same friendships"
   end  
 
   test "should find and return an existing user from Google's callback params" do

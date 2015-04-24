@@ -110,7 +110,19 @@ class FriendsControllerTest < ActionController::TestCase
     patch :update, id:friend.id, friend: {tag: "@JAMES"}
 
     assert_redirected_to my_friends_path
-    assert_equal "@JAMES", friends(:matt_jay).reload.reload.tag, "should update tag"
+    assert_equal "@JAMES", friends(:matt_jay).reload.tag, "should update tag"
+  end
+
+  test "should update confirmed attribute if tag was nil" do 
+    session['current_user_id'] = users(:pam).id
+    Friend.create! user:users(:pam), receiving_user:users(:jay), tag:nil, confirmed: false 
+
+    friend = Friend.last
+    patch :update, id:friend.id, friend: {tag: "@JAMES"}
+
+    assert_redirected_to my_friends_path
+    assert_equal "@JAMES", Friend.last.tag, "should update tag"
+    assert_equal true, Friend.last.confirmed, "should confirmed attribute"
   end
 
   # -------------------------------------------------------------------------------------------

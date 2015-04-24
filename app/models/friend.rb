@@ -1,7 +1,7 @@
 class Friend < ActiveRecord::Base
   
   # Relationships -----------------------------------------------------------------------------
-  belongs_to :user
+  belongs_to :user, polymorphic: true
   belongs_to :receiving_user, polymorphic: true
 
   # Validations -------------------------------------------------------------------------------
@@ -13,18 +13,18 @@ class Friend < ActiveRecord::Base
     return errors.add(:tag, "must not be empty") unless !tag.nil?
     errors.add(:tag, "must begin with an @ symbol") unless tag.start_with?("@") and tag.length > 1
   end
-  validates :user, :receiving_user, presence: true
+  validates :user, :receiving_user, :user_type, :receiving_user_type, presence: true
   validates :tag, format:{ without: /\s/ }
   validates :tag, format:{ without: /\./ }
   validates :tag, format:{ without: /\,/ }
   validates :user_id, uniqueness: { scope: [:receiving_user_id, :receiving_user_type] }
-  validates :tag,  uniqueness: { case_sensitive: false, scope: :user_id }
+  validates :tag,  allow_nil: true, uniqueness: { case_sensitive: false, scope: :user_id }
   validates :confirmed, inclusion: [true, false]
   validate  :check_user_and_receiving_user
   validate  :check_first_character
 
   before_validation(on: :update) do 
-    self.tag = self.tag.strip
+    self.tag = self.tag.strip unless self.tag.nil?
   end
 
   # -------------------------------------------------------------------------------------------
@@ -38,7 +38,8 @@ class Friend < ActiveRecord::Base
     rec_user = UnregisteredUser.where("lower(email) = ?", email.downcase).first if rec_user.nil?
     rec_user = UnregisteredUser.create!(email: email) if rec_user.nil?
 
-    Friend.create! user:user, receiving_user:rec_user, tag:tag, confirmed: true
+    Friend.create! user:rec_user, receiving_user: user, tag: nil, confirmed: false
+    Friend.create! user:user, receiving_user:rec_user, tag:tag, confirmed: true 
   end
 
   def self.find_valid_friends_for_user user, tag_array

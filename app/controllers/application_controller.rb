@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
   private
 
   def current_user
+    return User.find_by(first_name: "Matt") if Rails.env.development? # For debugging purposes
     begin
       @current_user ||= User.find(session[:current_user_id]) if session[:current_user_id]
     rescue Exception => e

@@ -14,7 +14,7 @@ class FriendsController < ApplicationController
   # PATCH/PUT /friends/1
   # PATCH/PUT /friends/1.json
   def update
-    @friend.update! tag:friend_params["tag"]
+    @friend.confirmed ? @friend.update!(tag:friend_params["tag"]) : @friend.update!(tag:friend_params["tag"], confirmed: true)
     redirect_to my_friends_path, notice: "Updated the tag!"
   rescue StandardError => e
     flash[:alert] = e.record.errors.full_messages.join ", "
@@ -34,9 +34,8 @@ class FriendsController < ApplicationController
   # DELETE /friends/1
   # DELETE /friends/1.json
   def destroy
-    first_name = @friend.receiving_user.first_name
     @friend.destroy! 
-    redirect_to my_friends_path, notice: "Sharey ended your friendship with #{first_name} :("
+    redirect_to my_friends_path, notice: "Sharey ended your friendship. One less friend :("
   
   rescue StandardError => e
     flash[:alert] = e.record.errors.full_messages.join ", "

@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 20150419191934) do
 
   create_table "friends", force: :cascade do |t|
     t.integer  "user_id"
+    t.string   "user_type",                           null: false
     t.integer  "receiving_user_id",                   null: false
     t.string   "receiving_user_type",                 null: false
     t.string   "tag"
@@ -44,7 +45,7 @@ ActiveRecord::Schema.define(version: 20150419191934) do
     t.datetime "updated_at",                          null: false
   end
 
-  add_index "friends", ["user_id", "receiving_user_id", "receiving_user_type"], name: "by_receiving_user", unique: true, using: :btree
+  add_index "friends", ["user_id", "user_type", "receiving_user_id", "receiving_user_type"], name: "by_receiving_user", unique: true, using: :btree
   add_index "friends", ["user_id"], name: "index_friends_on_user_id", using: :btree
 
   create_table "items", force: :cascade do |t|
@@ -105,7 +106,6 @@ ActiveRecord::Schema.define(version: 20150419191934) do
   add_index "users", ["uid"], name: "index_users_on_uid", unique: true, using: :btree
 
   add_foreign_key "categories", "users"
-  add_foreign_key "friends", "users"
   add_foreign_key "items", "categories"
   add_foreign_key "items", "documents"
   add_foreign_key "usage_data", "items"
