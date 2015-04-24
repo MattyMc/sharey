@@ -25,15 +25,15 @@
 
 		  <tbody>
 		    <% @friends.each do |friend| %>
-				<%= bootstrap_form_for friend, url:(friends_path+"/#{friend.id}"), layout: :horizontal do |f| %>
-			      <tr>
-			        <td><%= f.text_field :tag, hide_label: true, placeholder: "@Tag" %></td>
-			        <td><%= friend.receiving_user_type == 'User' ? friend.receiving_user.name : friend.receiving_user.email %></td>
-			        <td><%= friend.receiving_user.created_at.strftime("%m/%d/%Y") %></td>
-			        <td><%= f.submit class: "btn btn-default btn-xs", :data => {:disable_with => 'Submitting...'} %></td>
-        		<% end %>
+			    <tr>
+					<%= bootstrap_form_for friend, url:(friends_path+"/#{friend.id}"), layout: :horizontal do |f| %>
+				        <td><%= f.text_field :tag, hide_label: true, placeholder: "@Tag" %></td>
+				        <td><%= friend.receiving_user_type == 'User' ? friend.receiving_user.name : friend.receiving_user.email %></td>
+				        <td><%= friend.receiving_user.created_at.strftime("%m/%d/%Y") %></td>
+				        <td><%= f.submit class: "btn btn-default btn-xs", :data => {:disable_with => 'Submitting...'} %></td>
+	        		<% end %>
 			        <td><%= button_to("Delete friend", (friends_path+"/#{friend.id}"), class:"btn btn-default btn-xs", method: :delete, data: {confirm: "Do you really want to end your friendship? They'll likely never forgive you." }) %></td>
-			      </tr>
+			     </tr>
 			    
 		    <% end %>
 
