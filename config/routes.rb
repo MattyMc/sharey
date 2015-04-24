@@ -1,10 +1,11 @@
 Rails.application.routes.draw do
 
+  # Friends Controller --------------------------------------------------- 
   post 'friends' => 'friends#create'
   patch 'friends/:id' => 'friends#update'
   delete 'friends/:id' => 'friends#destroy'
 
-  # API - ItemsController ------------------------------------------------  
+  # PagesController ------------------------------------------------------  
   root 'pages#home'
   get 'my_friends' => 'pages#my_friends'
   get 'saved_items' => 'pages#saved_items'
@@ -23,7 +24,11 @@ Rails.application.routes.draw do
   # Users - SessionsController -------------------------------------------
   get '/sign_out' => 'sessions#destroy', :as => :sign_out
   get "/auth/:provider/callback" => 'sessions#create'
-  
+
+  # ItemsController ------------------------------------------------ 
+  get '/retrieve_all_records_from/:model' => "pages#retrieve_all_records_from"
+
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

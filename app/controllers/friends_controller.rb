@@ -34,7 +34,8 @@ class FriendsController < ApplicationController
   # DELETE /friends/1
   # DELETE /friends/1.json
   def destroy
-    @friend.destroy! 
+    Friend.find_by(user: @friend.receiving_user, receiving_user: current_user).destroy! # Destroy other end of the friendship
+    @friend.destroy!  # Destroy friendship belonging to user 
     redirect_to my_friends_path, notice: "Sharey ended your friendship. One less friend :("
   
   rescue StandardError => e

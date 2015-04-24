@@ -148,14 +148,15 @@ class FriendsControllerTest < ActionController::TestCase
     assert_equal friend_count, Friend.count
   end  
 
-  test "should destroy friend and render message" do 
+  test "should destroy friend and receiving_users friend and render message" do 
     session['current_user_id'] = users(:matt).id
     friend = friends(:matt_jay)
     friend_count = Friend.count
     delete :destroy, id:friend.id
 
     assert_nil Friend.where(user: users(:matt), receiving_user:users(:jay)).first, "Should have been destroyed"
-    assert_equal friend_count-1, Friend.count
+    assert_nil Friend.where(user: users(:jay), receiving_user:users(:matt)).first, "Should have been destroyed"
+    assert_equal friend_count-2, Friend.count
   end
 
 

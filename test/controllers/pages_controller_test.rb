@@ -33,7 +33,7 @@ class PagesControllerTest < ActionController::TestCase
 
     get :my_friends
     assert_response :success
-    assert_equal users(:matt).friends, assigns["friends"]
+    assert_equal users(:matt).friends.sort, assigns["friends"].sort
   end
 
   test "should redirect user to login if no user_id" do 
