@@ -1,3 +1,59 @@
 // Place all the styles related to the Friends controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+// @import "_bootstrap.scss";
+div.my-friends-div-table {
+  .table 
+  {
+      display: table;
+      @extend table;
+      margin-bottom: 0px;
+
+      .tr
+      { 
+          display:table-row;
+          @extend tr;
+      }
+      .th
+      { 
+          display: table-cell;
+          font-weight: bold;
+          @extend th;
+      }
+      .td
+      {
+          display:table-cell;
+          @extend td;
+      }
+      .thead {
+        display: table-header-group;
+        @extend thead;
+      }
+      .tbody {
+        display: table-row-group;
+        @extend tbody;
+      }
+      .footer {
+        display: table-footer-group;
+        @extend footer;
+      }
+      #first-row .td {
+        border-top-width: 0px;
+      }
+      .tbody .tr .td {
+        vertical-align: middle;
+      }
+  }
+  
+  form {
+    display: table-cell;
+  }
+  
+  .tr .td .form-group label {
+    padding: 0px
+  }
+  .tr .td .form-group {
+    margin-bottom: 0px
+  }
+  
+}

@@ -95,5 +95,12 @@ ben_matt:
   user: matt (User)
   receiving_user: ben (UnregisteredUser)
   tag:
+  confirmed: true
+  group_id:
+
+matt_ben:
+  user: ben (UnregisteredUser)
+  receiving_user: matt (User)
+  tag:
   confirmed: false
   group_id:

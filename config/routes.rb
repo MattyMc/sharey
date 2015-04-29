@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   # Friends Controller --------------------------------------------------- 
   post 'friends' => 'friends#create'
   patch 'friends/:id' => 'friends#update'
-  delete 'friends/:id' => 'friends#destroy'
+  get 'friends/:id/destroy' => 'friends#destroy' # Horrible. But I want the destroy button in the same form in friends_table.rb
 
   # PagesController ------------------------------------------------------  
   root 'pages#home'

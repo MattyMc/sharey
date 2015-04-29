@@ -63,3 +63,17 @@ if (Rails.env.production?)
     UsageDatum.create record
   end
 end 
+# A nice line of code to update all the primary key tracking feature in PG 
+ActiveRecord::Base.connection.tables.each { |t| ActiveRecord::Base.connection.reset_pk_sequence!(t) }
+
+triggers = [['FIZZ', ->(i) {i % 3 == 0}], ['BUZZ', -> (i) {i % 5 == 0}]]
+
+def fizzbuzz range, triggers
+  range.each { |i|
+    result = ''
+    triggers.each { |val, cond|
+      result << val if cond.call(i) 
+    }
+    puts (result == '' ? i : result)
+  }
+end

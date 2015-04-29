@@ -14,6 +14,11 @@ class FriendsController < ApplicationController
   # PATCH/PUT /friends/1
   # PATCH/PUT /friends/1.json
   def update
+    # Workaround for putting two buttons in one form. See friends_table.rb
+    if params["Delete Button"]
+      redirect_to(:action => :destroy)
+      return true
+    end
     @friend.confirmed ? @friend.update!(tag:friend_params["tag"]) : @friend.update!(tag:friend_params["tag"], confirmed: true)
     redirect_to my_friends_path, notice: "Updated the tag!"
   rescue StandardError => e

@@ -6,54 +6,6 @@
 	</div>
 </div>
 
-<div class="row">
-		<table class="table" id="friends-table">
-		  <thead>
-		    <tr>
-		      <th class="col-sm-2">
-			      <div class="row">
-			      	<div class="col-sm-1"></div>
-			      	<div class="col-sm-10" id="tag-header">Tag</div>
-			      </div>
-		      </th>
-		      <th class="col-sm-4">Name</th>
-		      <th class="col-sm-2">Date Added</th>
-		      <th class="col-sm-2"></th>
-		      <th class="col-sm-2"></th>
-		    </tr>
-		  </thead>
-
-		  <tbody>
-		    <% @friends.each do |friend| %>
-	<tr>
-		    	<%= bootstrap_form_for(friend, url:(friends_path+"/#{friend.id}"), layout: :horizontal) do |f| %>
-			    
-					
-				        <td><%= f.text_field :tag, hide_label: true, placeholder: "@Tag" %></td>
-				        <td><%= friend.receiving_user_type == 'User' ? friend.receiving_user.name : friend.receiving_user.email %></td>
-				        <td><%= friend.receiving_user.created_at.strftime("%m/%d/%Y") %></td>
-				        <td><%= f.submit class: "btn btn-default btn-xs", :data => {:disable_with => 'Submitting...'} %></td>
-	        		
-			        <td><%= button_to("Delete friend", (friends_path+"/#{friend.id}"), class:"btn btn-default btn-xs", method: :delete, data: {confirm: "Do you really want to end your friendship? They'll likely never forgive you." }) %></td>
-			     
-			    <% end %>
-			    </tr>
-		    <% end %>
-
-				<tr> 
-					<%= bootstrap_form_tag url:friends_path, layout: :horizontal do |f| %>
-						<td><%= f.text_field :tag, hide_label: true, placeholder:"@Tag", title:"Must start with an @ symbol" %></td>
-						<td><%= f.email_field :email, hide_label: true, placeholder: "their_email@gmail.com", class:"remove-left-padding" %></td>
-						<td><%= button_tag(class: "btn btn-success btn-xs", :data => {:disable_with => 'Submitting...'}) do %>
-								<i class='fa fa-hand-o-left'></i>  Add a New Friend!
-							<% end %>
-						</td>
-					<% end %>
-					<td></td>
-					<td></td>
-				</tr>
-		  </tbody>
-		</table>
-</div>
+<%= render "partials/friends_table" %>
 
 </br>

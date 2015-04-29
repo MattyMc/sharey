@@ -88,10 +88,9 @@ class FriendsControllerTest < ActionController::TestCase
   # -------------------------------------------------------------------------------------------
   # patch :update -----------------------------------------------------------------------------
   # -------------------------------------------------------------------------------------------  
-
   test "should not update friend if no user is defined" do 
     friend = friends(:matt_jay)
-    patch :update, id:friend.id, friend: {tag: "@JAMES"}
+    patch :update, id:friend.id, friend: {tag: "@JAMES"}, "Update Button" => "Update Friend"
 
     refute_equal "@JAMES", friends(:matt_jay).reload.tag
   end  
@@ -99,7 +98,7 @@ class FriendsControllerTest < ActionController::TestCase
   test "should not update friend if wrong user is defined" do 
     session['current_user_id'] = users(:jay).id
     friend = friends(:matt_jay)
-    patch :update, id:friend.id, friend: {tag: "@JAMES"}
+    patch :update, id:friend.id, friend: {tag: "@JAMES"}, "Update Button" => "Update Friend"
 
     refute_equal "@JAMES", friends(:matt_jay).reload.tag
   end  
@@ -107,7 +106,7 @@ class FriendsControllerTest < ActionController::TestCase
   test "should update friend and render message" do 
     session['current_user_id'] = users(:matt).id
     friend = friends(:matt_jay)
-    patch :update, id:friend.id, friend: {tag: "@JAMES"}
+    patch :update, id:friend.id, friend: {tag: "@JAMES"}, "Update Button" => "Update Friend"
 
     assert_redirected_to my_friends_path
     assert_equal "@JAMES", friends(:matt_jay).reload.tag, "should update tag"
@@ -118,7 +117,7 @@ class FriendsControllerTest < ActionController::TestCase
     Friend.create! user:users(:pam), receiving_user:users(:jay), tag:nil, confirmed: false 
 
     friend = Friend.last
-    patch :update, id:friend.id, friend: {tag: "@JAMES"}
+    patch :update, id:friend.id, friend: {tag: "@JAMES"}, "Update Button" => "Update Friend"
 
     assert_redirected_to my_friends_path
     assert_equal "@JAMES", Friend.last.tag, "should update tag"
@@ -158,6 +157,17 @@ class FriendsControllerTest < ActionController::TestCase
     assert_nil Friend.where(user: users(:jay), receiving_user:users(:matt)).first, "Should have been destroyed"
     assert_equal friend_count-2, Friend.count
   end
+
+  # test "should destroy friend and receiving_users friend through the update action" do 
+  #   session['current_user_id'] = users(:matt).id
+  #   friend = friends(:matt_jay)
+  #   friend_count = Friend.count
+  #   patch :update, id:friend.id, "Delete Button" => "Delete Friend"
+
+  #   assert_nil Friend.where(user: users(:matt), receiving_user:users(:jay)).first, "Should have been destroyed"
+  #   assert_nil Friend.where(user: users(:jay), receiving_user:users(:matt)).first, "Should have been destroyed"
+  #   assert_equal friend_count-2, Friend.count
+  # end
 
 
   # test "should update friend" do
